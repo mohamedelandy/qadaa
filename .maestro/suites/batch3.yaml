@@ -1,0 +1,31 @@
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/113_widget_initial_payload.yaml
+- runFlow: ../flows/114_weekly_grid_multiple_days_intensity.yaml
+- runFlow: ../flows/115_weekly_grid_month_boundary.yaml
+- runFlow: ../flows/116_dashboard_rapid_log_undo.yaml
+- runFlow: ../flows/117_stats_estimate_exactly_3_days.yaml
+- runFlow: ../flows/118_notification_hour_wrap_midnight.yaml
+- runFlow: ../flows/119_wizard_step1_empty_inputs.yaml
+- runFlow: ../flows/120_batch_preset_capped_at_remaining.yaml
+- runFlow: ../flows/121_batch_custom_exact_remaining.yaml
+- runFlow: ../flows/122_batch_then_undo_recovered_count.yaml
+- runFlow: ../flows/123_batch_on_done_prayer_no_popover.yaml
+- runFlow: ../flows/124_progress_label_updates_after_log.yaml
+- runFlow: ../flows/125_language_relaunch_no_flash.yaml
+- runFlow: ../flows/126_longpress_batch_dhuhr.yaml
+- runFlow: ../flows/127_notification_error_text_content.yaml
+- runFlow: ../flows/128_streak_broken_two_day_gap.yaml
+- runFlow: ../flows/129_streak_at_risk_grace_day_consumed.yaml
+- runFlow: ../flows/130_grace_day_previous_month_available.yaml
+- runFlow: ../flows/131_sync_clipboard_copied_state.yaml
+- runFlow: ../flows/132_sync_import_empty_paste_disabled.yaml
+- runFlow: ../flows/133_sync_tab_cycle_all_tabs.yaml
+- runFlow: ../flows/134_widget_sync_after_batch_log.yaml
+- runFlow: ../flows/135_widget_sync_after_full_day_log.yaml
+- runFlow: ../flows/136_stats_display_fields_complete.yaml
+- runFlow: ../flows/97_test_step4_text.yaml
+- runFlow: ../flows/98_wizard_debug.yaml
+- runFlow: ../flows/99_rtl_wizard_check.yaml
+- runFlow: ../flows/140_wizard_step1_tooltips.yaml
+- runFlow: ../flows/141_wizard_step2_tooltips.yaml

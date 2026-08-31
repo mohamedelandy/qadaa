@@ -1,0 +1,68 @@
+# Flow: 73 - Settings Custom Target Validation
+# Suite: regression
+# Covers: an out-of-range custom daily target (51 > 50) shows the validation
+#         error under the settings input and keeps Save inert; a valid value
+#         (7) clears the error, saves, and flips the dashboard pill to 0/7.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+- scrollUntilVisible:
+    element:
+      id: settings-presets-grid
+    direction: DOWN
+- tapOn:
+    id: settings-pace-custom-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-pace-custom-input
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+# Empty custom target → "required" error.
+- assertVisible:
+    id: settings-target-error
+# Out-of-range value (51) → error stays, Save stays inert.
+- tapOn:
+    id: settings-pace-custom-input
+- inputText: "51"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-target-error
+- tapOn:
+    id: settings-target-save-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-target-error
+- assertVisible:
+    id: settings-screen
+# Valid value (7) → error clears, Save persists to the dashboard pill.
+- tapOn:
+    id: settings-pace-custom-input
+- eraseText
+- inputText: "7"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- assertNotVisible:
+    id: settings-target-error
+- tapOn:
+    id: settings-target-save-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: tab-dashboard
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-screen
+- assertVisible: "0/7"

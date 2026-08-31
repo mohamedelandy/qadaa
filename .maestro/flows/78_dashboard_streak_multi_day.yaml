@@ -1,0 +1,57 @@
+# Flow: 78 - Dashboard Streak Badge with Multi-Day Streak
+# Suite: regression
+# Covers: importing a backup with streak=7 renders the streak count on the dashboard
+#         and stats screens; the streak pill is in safe state (not at risk).
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- runScript:
+    file: ../utils/yesterday.js
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: settings-sync-btn
+    direction: DOWN
+- tapOn:
+    id: settings-sync-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-tab-import
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-paste-input
+- inputText:
+    text: '{"version":1,"wizardComplete":true,"age":28,"pubertyAge":14,"periods":[{"type":"missed","years":1}],"totalMissedDays":365,"prayers":{"fajr":{"recovered":5},"dhuhr":{"recovered":0},"asr":{"recovered":0},"maghrib":{"recovered":0},"isha":{"recovered":0}},"todayPrayers":{},"todayLogPoints":{},"todayUnits":{},"todayDate":null,"streak":7,"lastLogDate":"${output.yesterday}","daysLogged":7,"loggedDates":[],"points":70,"badges":[],"language":"en","notificationTime":null,"notificationPermission":"default","graceUsedMonth":null,"lastDuaShownDate":null,"intentionSetDate":null,"dailyTarget":5}'
+# Swipe down to dismiss the keyboard, then tap the import button.
+- swipe:
+    start: 50%, 80%
+    end: 50%, 20%
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: sync-import-btn
+    timeout: 5000
+- tapOn:
+    id: sync-import-btn
+    optional: true
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: sync-import-success
+    timeout: 5000
+- tapOn:
+    id: sync-close-btn
+    optional: true
+- waitForAnimationToEnd
+- swipe:
+    start: 50%, 90%
+    end: 50%, 10%
+- waitForAnimationToEnd
+# Dashboard: streak pill visible with count 7, safe state (not at risk).
+

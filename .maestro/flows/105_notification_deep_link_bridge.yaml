@@ -1,0 +1,27 @@
+# Flow: 105 - NotificationTapBridge Mounted on Launch
+# Suite: regression
+# Covers: the NotificationTapBridge component is mounted in _layout.tsx and
+#         doesn't interfere with the app launch flow. Maestro cannot simulate
+#         a real notification tap, so we verify the component doesn't break
+#         the cold-start sequence.
+# Prerequisites: none (fresh state via clearState)
+# clearState: true (cold start must begin at onboarding)
+appId: com.melnady.qadaa
+---
+- launchApp:
+    clearState: true
+    arguments:
+      AppleLanguages: "(en)"
+      AppleLocale: "en_UK"
+    permissions:
+      notifications: granted
+- waitForAnimationToEnd
+- assertVisible:
+    id: onboarding-slide-1
+- tapOn:
+    id: onboarding-skip-btn
+- waitForAnimationToEnd
+- runFlow: ../utils/setup_wizard.yaml
+- assertVisible:
+    id: dashboard-screen
+- takeScreenshot: notification-bridge-launch

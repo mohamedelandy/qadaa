@@ -1,0 +1,104 @@
+# Flow: 72 - Notification AM/PM Toggle
+# Suite: regression
+# Covers: the AM/PM buttons in the notification picker are tappable without
+#         disturbing the hour, and saving with PM selected persists the 12-hour
+#         value across remounts (permission pre-granted → no prompt). The
+#         AM/PM selection itself is a style state Maestro cannot read back, so
+#         the assertions target the hour value + picker survival.
+# Prerequisites: none (standalone — own launchApp with clearState + permission grant)
+# clearState: true (cold start; do NOT runFlow 02 — it would double-launch)
+appId: com.melnady.qadaa
+---
+- launchApp:
+    clearState: true
+    arguments:
+      AppleLanguages: "(en)"
+      AppleLocale: "en_UK"
+    permissions:
+      notifications: granted
+- waitForAnimationToEnd
+- assertVisible:
+    id: onboarding-slide-1
+- tapOn:
+    id: onboarding-skip-btn
+- waitForAnimationToEnd
+- runFlow: ../utils/setup_wizard.yaml
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+- scrollUntilVisible:
+    element:
+      id: notification-ampm-pm-btn
+    direction: DOWN
+- assertVisible:
+    id: notification-ampm-am-btn
+# Default 9 AM → switch to PM, hour must stay 9.
+- tapOn:
+    id: notification-ampm-pm-btn
+- waitForAnimationToEnd
+- copyTextFrom:
+    id: notification-hour-value
+- assertTrue: "${maestro.copiedText.includes('9')}"
+# 9 → 11 with PM selected, minute 00, save (11 PM → 23:00 stored).
+- tapOn:
+    id: hour-up
+- waitForAnimationToEnd
+- tapOn:
+    id: hour-up
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: settings-minute-00
+    direction: DOWN
+- tapOn:
+    id: settings-minute-00
+- waitForAnimationToEnd
+- tapOn:
+    id: notification-save-btn
+- waitForAnimationToEnd
+# Re-mount settings: the PM 11 re-reads as 11.
+- tapOn:
+    id: tab-dashboard
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+- scrollUntilVisible:
+    element:
+      id: notification-hour-value
+    direction: DOWN
+- copyTextFrom:
+    id: notification-hour-value
+- assertTrue: "${maestro.copiedText.includes('11')}"
+# The re-mounted picker still shows PM selected (state readback).
+- scrollUntilVisible:
+    element:
+      id: notification-ampm-pm-btn
+    direction: DOWN
+- assertVisible:
+    id: notification-ampm-pm-btn
+    selected: true
+- assertVisible:
+    id: notification-ampm-am-btn
+    selected: false
+# Switching back to AM keeps the picker intact and reflects the new selection.
+- tapOn:
+    id: notification-ampm-am-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: notification-ampm-am-btn
+    selected: true
+- assertVisible:
+    id: notification-ampm-pm-btn
+    selected: false
+- assertVisible:
+    id: notification-hour-value
+- assertVisible:
+    id: settings-screen

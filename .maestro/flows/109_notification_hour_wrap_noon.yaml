@@ -1,0 +1,60 @@
+# Flow: 109 - Notification Hour Wrap-Around at 12
+# Suite: regression
+# Covers: incrementing the hour from 11 → 12 (noon) and verifying the picker
+#         shows 12; then verifying the hour stays at 12 after save/remount.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: hour-up
+    direction: DOWN
+- assertVisible:
+    id: notification-hour-value
+# Default hour is 9 → up 3 times → 12.
+- tapOn:
+    id: hour-up
+- waitForAnimationToEnd
+- tapOn:
+    id: hour-up
+- waitForAnimationToEnd
+- tapOn:
+    id: hour-up
+- waitForAnimationToEnd
+- copyTextFrom:
+    id: notification-hour-value
+- assertTrue: "${maestro.copiedText.includes('12')}"
+# Minute 00, save.
+- scrollUntilVisible:
+    element:
+      id: settings-minute-00
+    direction: DOWN
+- tapOn:
+    id: settings-minute-00
+- waitForAnimationToEnd
+- tapOn:
+    id: notification-save-btn
+- waitForAnimationToEnd
+# Re-mount settings → hour persists at 12.
+- tapOn:
+    id: tab-dashboard
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: notification-hour-value
+    direction: DOWN
+- copyTextFrom:
+    id: notification-hour-value
+- assertTrue: "${maestro.copiedText.includes('12')}"

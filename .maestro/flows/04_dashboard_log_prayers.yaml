@@ -1,0 +1,101 @@
+# Flow: 04 - Dashboard Log Prayers
+# Suite: smoke
+# Covers: log all 5 prayers individually, dismiss DuaModal after the 5th, verify streak updates,
+#         every prayer row's progress bar renders and undo buttons appear.
+# Prerequisites: flow 02 (cold launch) + setup_wizard (wizard + IntentionSheet dismissed).
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- scrollUntilVisible:
+    element:
+      id: dashboard-fajr-increment-btn
+    direction: DOWN
+- assertVisible:
+    id: dashboard-fajr-increment-btn
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+# Live-update assertions: hero card must reflect the log immediately.
+- assertVisible: "1/5"
+- assertVisible:
+    id: dashboard-today-logged-count
+- assertVisible:
+    id: dashboard-hero-nudge
+# Prayer-row progress bar renders with a fill segment after the log.
+- assertVisible:
+    id: dashboard-fajr-progress
+- assertVisible:
+    id: dashboard-fajr-progress-fill
+- scrollUntilVisible:
+    element:
+      id: dashboard-dhuhr-increment-btn
+    direction: DOWN
+- assertVisible:
+    id: dashboard-dhuhr-increment-btn
+- tapOn:
+    id: dashboard-dhuhr-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-dhuhr-progress
+- assertVisible:
+    id: dashboard-dhuhr-progress-fill
+- scrollUntilVisible:
+    element:
+      id: dashboard-asr-increment-btn
+    direction: DOWN
+- assertVisible:
+    id: dashboard-asr-increment-btn
+- tapOn:
+    id: dashboard-asr-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-asr-progress
+- assertVisible:
+    id: dashboard-asr-progress-fill
+- scrollUntilVisible:
+    element:
+      id: dashboard-maghrib-increment-btn
+    direction: DOWN
+- assertVisible:
+    id: dashboard-maghrib-increment-btn
+- tapOn:
+    id: dashboard-maghrib-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-maghrib-progress
+- assertVisible:
+    id: dashboard-maghrib-progress-fill
+- scrollUntilVisible:
+    element:
+      id: dashboard-isha-increment-btn
+    direction: DOWN
+- assertVisible:
+    id: dashboard-isha-increment-btn
+- tapOn:
+    id: dashboard-isha-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-isha-progress
+- assertVisible:
+    id: dashboard-isha-progress-fill
+- assertVisible:
+    id: dua-modal
+- tapOn:
+    id: dua-close-btn
+- waitForAnimationToEnd
+# After all five logged: pill reads 5/5 and footer flips to the done state.
+- assertVisible: "5/5"
+- assertVisible:
+    id: dashboard-hero-done
+- assertNotVisible:
+    id: dashboard-hero-nudge
+- scrollUntilVisible:
+    element:
+      id: dashboard-fajr-increment-btn
+    direction: UP
+- assertVisible:
+    id: dashboard-streak-count
+- assertVisible:
+    id: dashboard-dhuhr-undo-btn

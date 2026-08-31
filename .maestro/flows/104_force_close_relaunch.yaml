@@ -1,0 +1,28 @@
+# Flow: 104 - Force-Close and Relaunch (killApp)
+# Suite: regression
+# Covers: using killApp (force-kill) instead of stopApp (graceful) to verify
+#         data survives a force-close. This is a different OS path than flow 13.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-fajr-undo-btn
+# Force-kill the app.
+- killApp
+# Relaunch without clearState — data must survive.
+- launchApp
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-screen
+- scrollUntilVisible:
+    element:
+      id: dashboard-fajr-undo-btn
+    direction: DOWN
+- assertVisible:
+    id: dashboard-fajr-undo-btn

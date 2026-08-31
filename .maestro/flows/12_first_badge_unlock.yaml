@@ -1,0 +1,38 @@
+# Flow: 12 - First Badge Unlock
+# Suite: regression
+# Covers: log one prayer, then verify the first badge renders on the Stats screen
+#         with its unlock date (in-session unlock, not imported), while the other
+#         badges stay locked on the fresh account.
+#         (Confetti is WebView-based — assert the badge state instead.)
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: tab-stats
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: stats-screen
+- scrollUntilVisible:
+    element:
+      id: stats-badge-first_log
+    direction: DOWN
+- assertVisible:
+    id: stats-badge-first_log
+- assertVisible:
+    id: stats-badge-first_log-date
+# Fresh account: the un-earned badges remain locked (no unlock date).
+- scrollUntilVisible:
+    element:
+      id: stats-badge-first_week-locked
+    direction: DOWN
+- assertVisible:
+    id: stats-badge-first_week-locked
+- assertNotVisible:
+    id: stats-badge-first_week-date

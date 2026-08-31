@@ -1,0 +1,32 @@
+# Flow: 116 - Dashboard Rapid Log and Undo
+# Suite: regression
+# Covers: logging a prayer and immediately undoing it in rapid succession to
+#         verify the UI handles the race without crashing.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- scrollUntilVisible:
+    element:
+      id: dashboard-fajr-increment-btn
+    direction: DOWN
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-fajr-undo-btn
+- tapOn:
+    id: dashboard-fajr-undo-btn
+- waitForAnimationToEnd
+- assertNotVisible:
+    id: dashboard-fajr-undo-btn
+# Log again, verify the row recovers correctly.
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-fajr-undo-btn
+- assertVisible:
+    id: dashboard-fajr-progress-fill

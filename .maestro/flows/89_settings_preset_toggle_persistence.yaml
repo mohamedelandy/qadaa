@@ -1,0 +1,67 @@
+# Flow: 89 - Settings Preset Target Toggle Persistence
+# Covers: saving custom target 3, then switching back to preset 5 and saving,
+#         verifies the dashboard hero pill reads 0/5 (default restored).
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+# Save custom target 3.
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: settings-presets-grid
+    direction: DOWN
+- tapOn:
+    id: settings-pace-custom-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: settings-pace-custom-input
+- eraseText
+- inputText: "3"
+# Dismiss keyboard without scrolling the settings list.
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+# Tap save target (keyboard dismissed).
+- tapOn:
+    id: settings-target-save-btn
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+# Verify dashboard shows 0/3.
+- tapOn:
+    id: tab-dashboard
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible:
+      id: dashboard-screen
+    timeout: 10000
+- assertVisible: "0/3"
+# Switch back to preset 5 and save.
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: settings-presets-grid
+    direction: DOWN
+- tapOn:
+    id: settings-pace-5-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: settings-target-save-btn
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+# Verify dashboard shows 0/5 (default restored).
+- tapOn:
+    id: tab-dashboard
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible:
+      id: dashboard-screen
+    timeout: 10000
+- assertVisible: "0/5"

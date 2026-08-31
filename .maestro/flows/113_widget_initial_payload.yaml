@@ -1,0 +1,25 @@
+# Flow: 113 - Widget Initial Payload After Wizard Completion
+# Suite: regression
+# Covers: after completing the wizard (before any prayers logged), the widget
+#         sync path is exercised by verifying the dashboard reflects the initial
+#         state (0 recovered, streak 0). Maestro cannot read the home-screen
+#         widget, so we assert the in-app effects.
+# Prerequisites: flow 02 (cold launch). Do NOT runFlow setup_wizard — we drive the wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+# Wizard complete → dashboard with 0 recovered, streak 0.
+- assertVisible:
+    id: dashboard-screen
+- assertVisible:
+    id: dashboard-hero-card
+- assertVisible: "0/5"
+- scrollUntilVisible:
+    element:
+      id: dashboard-streak-count
+    direction: UP
+- copyTextFrom:
+    id: dashboard-streak-count
+- assertTrue: "${maestro.copiedText.includes('0')}"

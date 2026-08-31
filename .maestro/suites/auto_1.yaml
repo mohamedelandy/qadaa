@@ -1,0 +1,12 @@
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/56_settings_grace_day_used.yaml
+- runFlow: ../flows/57_dashboard_batch_preset10.yaml
+- runFlow: ../flows/58_dashboard_batch_cancel.yaml
+- runFlow: ../flows/59_settings_notification_hour_down.yaml
+- runFlow: ../flows/60_settings_notification_minute_variants.yaml
+- runFlow: ../flows/61_settings_target_preset_persistence.yaml
+- runFlow: ../flows/62_wizard_pace1.yaml
+- runFlow: ../flows/63_wizard_pace10.yaml
+- runFlow: ../flows/64_wizard_celebration_modal.yaml
+- runFlow: ../flows/65_settings_dark_mode_persistence.yaml

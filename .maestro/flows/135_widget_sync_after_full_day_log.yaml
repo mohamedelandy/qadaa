@@ -1,0 +1,56 @@
+# Flow: 135 - Widget Sync After Full-Day Log
+# Suite: regression
+# Covers: full-day logging triggers a widget payload push, verified by the
+#         in-app hero card reflecting all 5 prayers logged. Flow 32 only tests
+#         single-prayer log for widget sync; this proves full-day logging also
+#         triggers the same sync path.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+# --- Log 2 prayers first, then full-day for the rest ---
+- scrollUntilVisible:
+    element:
+      id: dashboard-fajr-increment-btn
+    direction: DOWN
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: dashboard-dhuhr-increment-btn
+- waitForAnimationToEnd
+# --- Tap full-day log to complete remaining 3 prayers ---
+- scrollUntilVisible:
+    element:
+      id: dashboard-fullday-btn
+    direction: DOWN
+- tapOn:
+    id: dashboard-fullday-btn
+- waitForAnimationToEnd
+# DuaModal appears after all 5 prayers are logged — dismiss it.
+- assertVisible:
+    id: dua-modal
+- tapOn:
+    id: dua-close-btn
+- waitForAnimationToEnd
+# --- Verify hero card reflects full completion (widget payload push) ---
+- assertVisible:
+    id: dashboard-hero-card
+# All 5 prayers logged — streak should have incremented.
+- assertVisible:
+    id: dashboard-streak-count
+# Verify on stats that points were awarded.
+- tapOn:
+    id: tab-stats
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: stats-screen
+- scrollUntilVisible:
+    element:
+      id: stats-streak-count
+    direction: DOWN
+- assertVisible:
+    id: stats-streak-count

@@ -1,0 +1,11 @@
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/36_wizard_step2_roundtrip.yaml
+- runFlow: ../flows/37_wizard_step2_add_disabled.yaml
+- runFlow: ../flows/38_wizard_step2_back_advanced.yaml
+- runFlow: ../flows/39_dashboard_hadith_card.yaml
+- runFlow: ../flows/40_dashboard_dua_guard.yaml
+- runFlow: ../flows/41_settings_target_empty.yaml
+- runFlow: ../flows/42_stats_level_growth.yaml
+- runFlow: ../flows/43_wizard_step1_validation.yaml
+- runFlow: ../flows/44_settings_custom_target_save.yaml

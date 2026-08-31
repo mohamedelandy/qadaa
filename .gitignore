@@ -1,0 +1,290 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# =============================================================================
+# SUPERWOWERS SDD SCRATCH (plan-ledger, briefs, reports, review packages)
+# =============================================================================
+.superpowers/
+
+# =============================================================================
+# ENVIRONMENT VARIABLES
+# =============================================================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+.env.*
+!.env.example
+!.env.sample
+
+# =============================================================================
+# DEPENDENCIES
+# =============================================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# =============================================================================
+# EXPO / REACT NATIVE
+# =============================================================================
+.expo/
+.expo-shared/
+dist/
+web-build/
+expo-env.d.ts
+
+# EAS Build
+.eas/
+eas.json.local
+
+# Expo CLI
+.expo-cli/
+
+# =============================================================================
+# NATIVE BUILD FILES
+# =============================================================================
+# Android
+/android/
+android/app/build/
+android/build/
+android/.gradle/
+android/local.properties
+android/app/release/
+android/app/debug/
+android/gradle/
+android/.idea/
+android/captures/
+android/keystore.properties
+*.apk
+*.aab
+
+# iOS
+/ios/
+/ios/build/
+/ios/Pods/
+/ios/*.xcworkspace/xcuserdata/
+/ios/*.xcodeproj/xcuserdata/
+/ios/*.xcodeproj/project.xcworkspace/xcuserdata/
+/ios/Podfile.lock
+*.ipa
+*.dSYM.zip
+
+# React Native Misc
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.keystore
+
+# =============================================================================
+# METRO BUNDLER & RUNTIME
+# =============================================================================
+.metro-health-check*
+.metro/
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# =============================================================================
+# TESTING & COVERAGE
+recordings/
+# =============================================================================
+coverage/
+.nyc_output/
+junit.xml
+test-results/
+allure-results/
+mochawesome-report/
+
+# Jest
+jest_coverage/
+jest-results.json
+
+# =============================================================================
+# LOGS
+# =============================================================================
+logs/
+*.log
+
+# =============================================================================
+# SECURITY & CERTIFICATES
+# =============================================================================
+*.pem
+*.crt
+*.cert
+*.pfx
+
+# =============================================================================
+# DEVELOPMENT TOOLS
+# =============================================================================
+# TypeScript
+*.tsbuildinfo
+
+# ESLint
+.eslintcache
+
+# Internationalization
+.localazy/
+.crowdin/
+.transifex/
+i18n-extract/
+locale-temp/
+
+# =============================================================================
+# OPERATING SYSTEM FILES
+# =============================================================================
+# macOS
+.DS_Store
+**/.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.nfs*
+
+# =============================================================================
+# EDITOR & IDE FILES
+# =============================================================================
+# VS Code
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+.vscode/tasks.json
+.vscode/.ropeproject
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Vim / Emacs / General
+*.swp
+*.swo
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# =============================================================================
+# TEMPORARY & CACHE FILES
+# =============================================================================
+tmp/
+temp/
+.tmp/
+.temp/
+
+# =============================================================================
+# CUSTOM PROJECT IGNORES
+# =============================================================================
+# Translation verification reports
+translation-report.json
+translation-report-*.json
+reports/
+
+# Example app
+app-example/
+
+# Performance test outputs
+performance-results/
+performance-test-results/
+
+# Documentation files and folders
+# Keep only the three approved root documentation files.
+docs/
+**/docs/
+*.md
+*.mdx
+*.markdown
+!/README.md
+!/CONTRIBUTING.md
+!/LICENSE.md
+!/CODE_OF_CONDUCT.md
+# Maestro flow inventory: generated by scripts/generate-maestro-inventory.sh and
+# verified in CI (test:maestro-inventory), so it must be tracked.
+!/.maestro/README.md
+
+# Backup / Archive files
+*.backup
+*.bak
+*.zip
+*.tar.gz
+*.rar
+
+# Debug outputs
+debug-output/
+debug-*.txt
+
+# Script outputs
+scripts/output/
+scripts/logs/
+
+# Local configuration overrides
+config.local.json
+config.override.json
+
+# Husky hooks
+.husky/_/
+
+# =============================================================================
+# PACKAGE MANAGER LOCK FILES (Optional)
+# =============================================================================
+# package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# =============================================================================
+# FIREBASE
+# =============================================================================
+google-services.json
+GoogleService-Info.plist
+
+# =============================================================================
+# TASKS
+# =============================================================================
+tasks/
+
+# =============================================================================
+# Kiro Folder
+# =============================================================================
+.kiro
+
+# =============================================================================
+# Claude
+# =============================================================================
+.claude/
+CLAUDE.md
+.codex/

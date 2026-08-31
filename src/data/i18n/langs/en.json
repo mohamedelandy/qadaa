@@ -1,0 +1,259 @@
+{
+  "app": {
+    "name": "Qadaa"
+  },
+  "errors": {
+    "unexpectedTitle": "Something went wrong",
+    "retry": "Try again"
+  },
+  "prayers": {
+    "fajr": "Fajr",
+    "dhuhr": "Dhuhr",
+    "asr": "Asr",
+    "maghrib": "Maghrib",
+    "isha": "Isha"
+  },
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "begin": "Let's Start",
+    "slides": [
+      {
+        "emoji": "🕌",
+        "title": "Welcome to Qadaa",
+        "body": "A companion to help you make up your missed prayers — step by step, day by day."
+      },
+      {
+        "emoji": "📿",
+        "title": "Log Every Prayer You Make Up",
+        "body": "Tap +1 on any prayer you made up today, or press \"Log Full Day\" to record all five at once."
+      },
+      {
+        "emoji": "🔥",
+        "title": "Keep Your Streak",
+        "body": "Every day you log a prayer adds to your streak. The streak keeps you consistent — don't break it!"
+      },
+      {
+        "emoji": "🏆",
+        "title": "Earn Points & Badges",
+        "body": "Each prayer = 10 points. A full day = 100 points. Climb the ranks and unlock achievement badges."
+      }
+    ]
+  },
+  "wizard": {
+    "step1Title": "Your Info",
+    "ageLabel": "Your current age",
+    "ageTip": "Your age right now. Used only to validate that your puberty age is less than your current age.",
+    "pubertyAgeLabel": "Age at puberty",
+    "pubertyAgeTip": "The age at which you reached puberty and prayer became obligatory for you. Usually between 12–15. Missed prayers are counted from this age onward.",
+    "step2Title": "Missed Prayer Years",
+    "yearsLabel": "How many years did you not pray?",
+    "yearsTip": "Enter the number of years you stopped praying. Each year is counted as 365 days.",
+    "advancedToggle": "Advanced mode",
+    "advancedTip": "If your life had multiple phases — e.g. you prayed for a while, then stopped, then resumed — you can break it into separate periods here.",
+    "addPeriod": "Add period",
+    "removePeriod": "Remove",
+    "periodMissed": "Didn't pray",
+    "periodRegular": "Prayed",
+    "periodMissedTip": "A period when you did not pray. Its days are added to your total to make up.",
+    "periodRegularTip": "A period when you prayed. Its days are not counted toward your missed prayers.",
+    "yearsUsedMeter": "{{used}} / {{total}} years used",
+    "totalMissed": "Total missed days",
+    "totalMissedTip": "The number of days you need to make up, each with 5 prayers.",
+    "step3Title": "Daily Pace",
+    "step3Subtitle": "How many prayers do you want to make up each day?",
+    "pace1": "1 / day",
+    "pace5": "5 / day",
+    "pace10": "10 / day",
+    "paceCustom": "Custom",
+    "paceHint": "Your daily goal helps you track whether you're on schedule",
+    "step4Title": "Summary",
+    "totalPrayers": "Total missed prayers",
+    "confirm": "Start the journey",
+    "back": "Back",
+    "next": "Next",
+    "zeroDaysWarning": "At least one missed period is required.",
+    "yearsPlaceholder": "Years"
+  },
+  "dashboard": {
+    "today": "Today",
+    "logFullDay": "Log Full Day",
+    "recovered": "recovered",
+    "remaining": "{{count}} remaining",
+    "allDone": "✓ Done",
+    "undo": "Undo",
+    "legendLess": "Less",
+    "legendMore": "More",
+    "holdForMore": "hold for more",
+    "targetLabel": "Daily target",
+    "targetSaved": "✓ Saved",
+    "prayers": "Prayers",
+    "emptyTitle": "No prayers logged yet",
+    "emptySubtitle": "Start logging your prayers to see them here",
+    "emptyAction": "Log First Prayer",
+    "allCaughtUpTitle": "You're all caught up",
+    "allCaughtUpSubtitle": "No missed prayers to recover. Keep up the beautiful consistency.",
+    "weeklyGrid": "Recent Consistency",
+    "heroDone": "Daily target reached 🎉",
+    "nudgeBehind": "{{count}} left today ✨",
+    "journey": "Journey",
+    "lastWeeks": "Last 4 weeks",
+    "dayInitials": ["S", "S", "M", "T", "W", "T", "F"]
+  },
+  "batch": {
+    "title": "How many to log?",
+    "custom": "Custom",
+    "confirm": "Log",
+    "cancel": "Cancel"
+  },
+  "dua": {
+    "title": "Well Done 🌟",
+    "subtitle": "You completed today's prayers",
+    "text": "اللهم تقبّل منا، إنك أنت السميع العليم",
+    "subtext": "May Allah accept from you and make it a weight in your good deeds",
+    "close": "Ameen"
+  },
+  "intention": {
+    "title": "Intention",
+    "text": "نويتُ قضاء ما فاتني من الصلوات لله تعالى",
+    "confirm": "Ameen",
+    "auto": "Closing automatically…"
+  },
+  "hadiths": [
+    "\"Say: O My servants who have transgressed against themselves, do not despair of the mercy of Allah.\" (39:53)",
+    "\"Allah accepts the repentance of His servant as long as the soul has not reached the throat.\"",
+    "\"The one who repents from sin is like one who has no sin.\"",
+    "\"Verily, with hardship comes ease.\" (94:6)",
+    "\"Allah does not tire until you tire.\"",
+    "\"Whoever draws near to Me a hand's span, I draw near to him an arm's length.\""
+  ],
+  "stats": {
+    "title": "Your Stats",
+    "streak": "Day Streak",
+    "level": "Level",
+    "levelHint": "Level increases every 30 days",
+    "points": "Points",
+    "badges": "Badges",
+    "emptyTitle": "No stats yet",
+    "emptySubtitle": "Log your first prayer to start tracking your progress",
+    "emptyAction": "Start recovering now",
+    "lockedBadge": "Locked",
+    "nextBadge": "Next Badge",
+    "nextBadgeProgress": "{{pct}}% there",
+    "estimateTitle": "Completion Estimate",
+    "estimateYears": "At this pace you'll finish in ~{{years}} year(s)",
+    "estimateDate": "Estimated date: {{date}}",
+    "estimateNoData": "Log 3 days to calculate your estimate",
+    "estimatePace": "Your pace: {{count}} prayers/day",
+    "ranks": {
+      "bronze": "Bronze",
+      "silver": "Silver",
+      "gold": "Gold",
+      "platinum": "Platinum"
+    },
+    "badges_data": {
+      "first_log": "First Step",
+      "first_week": "Blessed Week",
+      "warrior_30": "30-Day Warrior",
+      "golden_year": "Golden Year",
+      "quarter_way": "Quarter Way",
+      "halfway": "Halfway",
+      "almost_there": "Almost There",
+      "complete": "Prayer Complete"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "ar": "العربية",
+    "en": "English",
+    "notification": "Daily Reminder",
+    "notificationSave": "Save",
+    "targetLabel": "Daily target",
+    "targetTitle": "Daily Pace",
+    "targetSubtitle": "How many prayers do you want to make up each day?",
+    "targetSave": "Save",
+    "targetSaved": "✓ Saved",
+    "notificationDenied": "Please allow notifications in browser settings",
+    "sync": "Sync Across Devices",
+    "export": "Export Backup",
+    "import": "Import Backup",
+    "reset": "Reset Wizard",
+    "resetConfirm": "Are you sure? All your data will be deleted.",
+    "cancel": "Cancel",
+    "graceDay": "Grace Day",
+    "graceDayRemaining_one": "{{count}} remaining this month",
+    "graceDayRemaining_zero": "Used this month",
+    "graceDayHint": "Miss one day without breaking your streak — once per month",
+    "feedback": "Share Your Feedback",
+    "feedbackHint": "Help us improve the app — takes 2 minutes",
+    "appearance": "Appearance",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "am": "AM",
+    "pm": "PM"
+  },
+  "nav": {
+    "dashboard": "Home",
+    "stats": "Stats",
+    "settings": "Settings"
+  },
+  "share": {
+    "title": "Sync Data Across Devices",
+    "tabQr": "QR Code",
+    "tabClipboard": "Copy",
+    "tabImport": "Import",
+    "qrInstructions": "Open the app on your other device → Import → Scan this code",
+    "qrTooLarge": "Data too large for QR, use the Copy tab instead",
+    "qrScanHint": "Works with any QR scanner or phone camera",
+    "clipboardInstructions": "Copy the text and send it to yourself via WhatsApp, Telegram, or Notes",
+    "copyButton": "Copy Data",
+    "copied": "✓ Copied!",
+    "clipboardHint": "On the other device: open app → Sync → Import → paste here",
+    "importInstructions": "Paste the backup data copied from another device",
+    "pastePlaceholder": "Paste data here…",
+    "importButton": "Import Data",
+    "importFailed": "Invalid data — make sure you copied it completely",
+    "importSuccess": "✓ Imported successfully!",
+    "close": "Close"
+  },
+  "notifications": {
+    "reminderBody": "A moment to make up today's missed prayers"
+  },
+  "validation": {
+    "age": {
+      "required": "Age is required",
+      "numeric": "Age must be a whole number",
+      "range": "Age must be between 10 and 120"
+    },
+    "pubertyAge": {
+      "required": "Puberty age is required",
+      "numeric": "Puberty age must be a whole number",
+      "range": "Puberty age must be between 9 and 15",
+      "lessThanAge": "Puberty age must be before your age"
+    },
+    "quickYears": {
+      "required": "Years is required",
+      "numeric": "Years must be a whole number",
+      "min": "Years must be greater than 0"
+    },
+    "custom": {
+      "required": "Daily goal is required",
+      "numeric": "Daily goal must be a number",
+      "range": "Daily goal must be between 1 and 50"
+    },
+    "missedYears": {
+      "exceedsLimit": "Missed years cannot exceed your years of prayer obligation (age − puberty age)"
+    },
+    "totalYears": {
+      "exceedsLimit": "Total reported years cannot exceed your years of prayer obligation (age − puberty age)"
+    }
+  },
+  "a11y": {
+    "close": "Close",
+    "hourDecrease": "Decrease hour",
+    "hourIncrease": "Increase hour",
+    "info": "More information",
+    "logPrayer": "Log prayer"
+  }
+}

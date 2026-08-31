@@ -1,0 +1,97 @@
+# Flow: 121 - Batch Custom Exact Remaining
+# Suite: regression
+# Covers: entering a custom batch count that exactly matches the remaining prayers
+#         for a prayer key; the progress-label should update to 100% and the
+#         remaining text should disappear.
+# Uses new testIDs: dashboard-fajr-remaining, dashboard-fajr-progress-label
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- runScript:
+    file: ../utils/batch_four_state_payload.js
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: settings-sync-btn
+    direction: DOWN
+- tapOn:
+    id: settings-sync-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-tab-import
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-paste-input
+- inputText: ${output.payload}
+- swipe:
+    start: 50%, 80%
+    end: 50%, 20%
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-import-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-close-btn
+    optional: true
+- waitForAnimationToEnd
+- swipe:
+    start: 50%, 90%
+    end: 50%, 10%
+- waitForAnimationToEnd
+# The import returns to settings; scroll to the top to reveal the tab bar.
+- swipe:
+    start: 50%, 20%
+    end: 50%, 90%
+- waitForAnimationToEnd
+- tapOn:
+    id: tab-dashboard
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible:
+      id: dashboard-screen
+    timeout: 10000
+# Verify remaining text exists before entering an exact batch count.
+# Verify remaining text exists.
+- scrollUntilVisible:
+    element:
+      id: dashboard-fajr-remaining
+    direction: DOWN
+- assertVisible:
+    id: dashboard-fajr-remaining
+# Batch custom with exact remaining (4).
+- longPressOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: batch-preset-5-btn
+- tapOn:
+    id: batch-custom-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: batch-custom-input
+- tapOn:
+    id: batch-custom-input
+- inputText: "4"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- tapOn:
+    id: batch-custom-confirm-btn
+- waitForAnimationToEnd
+# After batch: remaining disappears (0 remaining).
+- assertNotVisible:
+    id: dashboard-fajr-remaining
+# Progress label should show 100% (all recovered).
+- scrollUntilVisible:
+    element:
+      id: dashboard-fajr-progress-label
+    direction: DOWN
+- copyTextFrom:
+    id: dashboard-fajr-progress-label
+- assertTrue: "${maestro.copiedText.includes('100%')}"

@@ -1,0 +1,97 @@
+# Flow: 50 - Wizard Step 2 Advanced Meter + Add-Period Limit
+# Suite: regression
+# Covers: the years-used meter (used / total) tracks every period edit in advanced
+#         mode (0/14 → 5/14 → 10/14 → 14/14); at the limit the add-period button
+#         is inert (no 4th period appears); removing a period re-enables it.
+#         Meter digits are Latin (raw i18next interpolation, no locale formatter).
+# Prerequisites: flow 02 (cold launch). Do NOT runFlow setup_wizard — we drive the wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- assertVisible:
+    id: wizard-step1-screen
+- tapOn:
+    id: wizard-age-input
+- eraseText
+- inputText: "28"
+- tapOn:
+    id: wizard-puberty-input
+- eraseText
+- inputText: "14"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-step1-next-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-step2-screen
+- tapOn:
+    id: wizard-step2-advanced-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-add-period-btn
+# prayerActiveYears = 28 - 14 = 14; empty period → meter 0/14
+- assertVisible:
+    id: wizard-step2-meter
+- copyTextFrom:
+    id: wizard-step2-meter
+- assertTrue: "${maestro.copiedText.includes('0 / 14')}"
+# Fill period 0 with 5 years → 5/14
+- tapOn:
+    id: wizard-period-0-years-input
+- eraseText
+- inputText: "5"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- copyTextFrom:
+    id: wizard-step2-meter
+- assertTrue: "${maestro.copiedText.includes('5 / 14')}"
+# Add period, fill with 5 → 10/14
+- tapOn:
+    id: wizard-add-period-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-period-1-years-input
+- eraseText
+- inputText: "5"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- copyTextFrom:
+    id: wizard-step2-meter
+- assertTrue: "${maestro.copiedText.includes('10 / 14')}"
+# Add period, fill with 4 → 14/14 (the limit)
+- tapOn:
+    id: wizard-add-period-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-period-2-years-input
+- eraseText
+- inputText: "4"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- copyTextFrom:
+    id: wizard-step2-meter
+- assertTrue: "${maestro.copiedText.includes('14 / 14')}"
+# At the limit the add button is inert: tapping it must NOT create a 4th period
+- tapOn:
+    id: wizard-add-period-btn
+- waitForAnimationToEnd
+- assertNotVisible:
+    id: wizard-period-3-years-input
+# Removing a period drops below the limit → add works again
+- tapOn:
+    id: wizard-period-2-remove-btn
+- waitForAnimationToEnd
+- copyTextFrom:
+    id: wizard-step2-meter
+- assertTrue: "${maestro.copiedText.includes('10 / 14')}"
+- tapOn:
+    id: wizard-add-period-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-period-2-years-input

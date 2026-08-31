@@ -1,0 +1,164 @@
+name: Qadaa CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  # Manual full-suite runs: Actions → Qadaa CI → Run workflow → suite: regression
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: "Maestro suite to run on the iOS simulator"
+        type: choice
+        default: smoke
+        options:
+          - smoke
+          - regression
+  # Nightly full regression on the default branch.
+  schedule:
+    - cron: "0 2 * * *"
+
+jobs:
+  quality:
+    name: Quality checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - name: Dependency audit report
+        run: npm audit --omit=dev --audit-level=high || true
+      - run: npm run format:check
+      - run: npm run lint
+      - name: Architecture checks
+        run: npm run test:architecture
+      - name: Translation checks
+        run: npm run test:translations
+      - run: npm run build
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - run: npm test
+
+  verify:
+    name: Verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - name: Ensure PyYAML for Maestro checks
+        run: python3 -c "import yaml" || python3 -m pip install --user --break-system-packages pyyaml
+      - run: npm run verify:all
+
+  e2e-ios:
+    name: E2E Maestro (${{ github.event.inputs.suite || (github.event_name == 'schedule' && 'regression') || 'smoke' }})
+    # macos-26 ships Xcode 26.x with the iPhone 17 simulators the flows target.
+    # Expo SDK 57 requires Xcode >= 26.4; older images (macos-15) default to
+    # Xcode 16.4, which fails xcodebuild with SPM resolution errors.
+    runs-on: macos-26
+    timeout-minutes: 90
+    env:
+      EXPO_NO_TELEMETRY: "1"
+      MAESTRO_CLI_NO_ANALYTICS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      # Metro cache (metro.config.js pins it to node_modules/.cache/metro).
+      - name: Cache Metro bundler cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules/.cache/metro
+          key: metro-${{ runner.os }}-${{ hashFiles('package-lock.json', 'metro.config.js') }}
+          restore-keys: |
+            metro-${{ runner.os }}-
+      # Maestro runs on the JVM; macOS runners ship no Java by default.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install Maestro
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+      # Pin the newest Xcode 26.x regardless of the image default so SDK 57
+      # builds stay reproducible as runner images evolve.
+      - name: Select Xcode 26.x
+        run: |
+          echo "Default Xcode: $(xcodebuild -version | head -1)"
+          LATEST=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -z "$LATEST" ]; then
+            echo "::error::No Xcode 26.x found on the runner"
+            exit 1
+          fi
+          sudo xcode-select -s "$LATEST"
+          echo "Selected: $(xcodebuild -version | head -1)"
+      - name: Pick an iPhone simulator
+        id: sim
+        run: |
+          LINE=$(xcrun simctl list devices available | grep -E 'iPhone (17|18|16) \(' | head -1)
+          NAME=$(echo "$LINE" | sed -E 's/^ *([^(]+) \(.*/\1/' | xargs)
+          UDID=$(echo "$LINE" | grep -oE '[0-9A-F-]{36}' | head -1)
+          echo "Using simulator: $NAME ($UDID)"
+          echo "SIM_NAME=$NAME" >> "$GITHUB_ENV"
+          echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
+      - name: Boot the simulator
+        run: |
+          xcrun simctl boot "$SIM_UDID" 2>/dev/null || true
+          xcrun simctl bootstatus "$SIM_UDID" -b
+      - name: Start Metro (debug build needs the bundler)
+        run: |
+          nohup npx expo start --port 8081 > metro.log 2>&1 &
+          echo "Metro started, PID $!"
+      - name: Build and install the iOS app
+        # Expo SDK 57 removed run:ios --simulator in favor of --device, which
+        # accepts a name or UDID. Use the UDID captured above so the target is
+        # unambiguous even if simulator names ever collide.
+        run: npx expo run:ios --device "$SIM_UDID"
+      - name: Run Maestro suite
+        id: maestro
+        continue-on-error: true
+        run: |
+          SUITE="${{ github.event.inputs.suite || (github.event_name == 'schedule' && 'regression') || 'smoke' }}"
+          echo "Running suite: $SUITE"
+          maestro test ".maestro/suites/${SUITE}.yaml"
+      - name: Upload Maestro artifacts (screenshots, logs)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-${{ github.event.inputs.suite || (github.event_name == 'schedule' && 'regression') || 'smoke' }}-artifacts
+          path: |
+            ~/.maestro/tests/**
+            metro.log
+          if-no-files-found: ignore
+      - name: Report Maestro failure
+        if: steps.maestro.outcome == 'failure'
+        run: |
+          echo "::error::Maestro ${{ github.event.inputs.suite || (github.event_name == 'schedule' && 'regression') || 'smoke' }} suite failed — check the artifacts."
+          exit 1
+
+  gate:
+    name: Final gate
+    needs: [quality, test, verify]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "All checks passed"

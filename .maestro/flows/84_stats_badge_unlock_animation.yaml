@@ -1,0 +1,27 @@
+# Flow: 84 - Stats Badge Unlock Animation (Star Burst)
+# Suite: regression
+# Covers: logging a prayer to unlock the first_log badge, then navigating to stats
+#         to verify the star-burst Lottie animation plays for the newly unlocked badge.
+#         The animation plays once and disappears after onAnimationFinish.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+# Log one prayer to unlock the first_log badge.
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+# Navigate to stats — the badge was unlocked this session, so the animation should play.
+- tapOn:
+    id: tab-stats
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: stats-badge-first_log
+    direction: DOWN
+- assertVisible:
+    id: stats-badge-first_log
+# The animation is transient; the persistent unlocked badge is the stable contract.

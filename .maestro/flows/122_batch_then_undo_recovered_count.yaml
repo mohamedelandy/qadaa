@@ -1,0 +1,60 @@
+# Flow: 122 - Batch Then Undo Recovers Correct Count
+# Suite: regression
+# Covers: batch logging +5 fajr, then undoing once, verifies the recovered text
+#         shows the correct decremented count (5 recovered → 4 recovered).
+# Uses new testIDs: dashboard-fajr-recovered, dashboard-fajr-remaining
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+# Batch +5 fajr.
+- scrollUntilVisible:
+    element:
+      id: dashboard-fajr-increment-btn
+    direction: DOWN
+- longPressOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: batch-preset-5-btn
+- tapOn:
+    id: batch-preset-5-btn
+- waitForAnimationToEnd
+# Verify recovered text shows "5".
+- scrollUntilVisible:
+    element:
+      id: dashboard-fajr-recovered
+    direction: DOWN
+- copyTextFrom:
+    id: dashboard-fajr-recovered
+- assertTrue: "${maestro.copiedText.includes('5')}"
+# Undo once → recovered should be 4.
+- tapOn:
+    id: dashboard-fajr-undo-btn
+- waitForAnimationToEnd
+- copyTextFrom:
+    id: dashboard-fajr-recovered
+- assertTrue: "${maestro.copiedText.includes('4')}"
+# Undo 3 more times → recovered should be 1.
+- tapOn:
+    id: dashboard-fajr-undo-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: dashboard-fajr-undo-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: dashboard-fajr-undo-btn
+- waitForAnimationToEnd
+- copyTextFrom:
+    id: dashboard-fajr-recovered
+- assertTrue: "${maestro.copiedText.includes('1')}"
+# Undo last one → recovered disappears, remaining reappears.
+- tapOn:
+    id: dashboard-fajr-undo-btn
+- waitForAnimationToEnd
+- assertNotVisible:
+    id: dashboard-fajr-recovered
+- assertVisible:
+    id: dashboard-fajr-remaining

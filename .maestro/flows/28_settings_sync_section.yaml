@@ -1,0 +1,65 @@
+# Flow: 28 - Settings Sync Section
+# Suite: regression
+# Covers: opening the sync sheet from settings, verifying the copy button
+#         and JSON preview, then importing a backup and verifying the import
+#         success message.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+- scrollUntilVisible:
+    element:
+      id: settings-sync-btn
+    direction: DOWN
+- tapOn:
+    id: settings-sync-btn
+- waitForAnimationToEnd
+# --- Clipboard tab: verify copy button and JSON preview ---
+- tapOn:
+    id: sync-tab-clipboard
+- waitForAnimationToEnd
+- assertVisible:
+    id: sync-copy-btn
+- tapOn:
+    id: sync-copy-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: sync-preview-json
+# --- Import tab: paste JSON and import ---
+- tapOn:
+    id: sync-tab-import
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-paste-input
+- inputText:
+    text: '{"version":1,"wizardComplete":true,"age":25,"pubertyAge":11,"periods":[{"type":"missed","years":2}],"totalMissedDays":365,"prayers":{"fajr":{"recovered":30},"dhuhr":{"recovered":0},"asr":{"recovered":0},"maghrib":{"recovered":0},"isha":{"recovered":0}},"todayPrayers":{},"todayLogPoints":{},"todayUnits":{},"todayDate":null,"streak":0,"lastLogDate":null,"daysLogged":0,"loggedDates":[],"points":0,"badges":[],"language":"en","notificationTime":null}'
+# Swipe down to dismiss the keyboard, then tap the import button.
+- swipe:
+    start: 50%, 80%
+    end: 50%, 20%
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: sync-import-btn
+    timeout: 5000
+- tapOn:
+    id: sync-import-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-close-btn
+    optional: true
+- waitForAnimationToEnd
+- swipe:
+    start: 50%, 90%
+    end: 50%, 10%
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen

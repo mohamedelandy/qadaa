@@ -1,0 +1,12 @@
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/129_streak_at_risk_grace_day_consumed.yaml
+- runFlow: ../flows/130_grace_day_previous_month_available.yaml
+- runFlow: ../flows/131_sync_clipboard_copied_state.yaml
+- runFlow: ../flows/132_sync_import_empty_paste_disabled.yaml
+- runFlow: ../flows/133_sync_tab_cycle_all_tabs.yaml
+- runFlow: ../flows/134_widget_sync_after_batch_log.yaml
+- runFlow: ../flows/135_widget_sync_after_full_day_log.yaml
+- runFlow: ../flows/136_stats_display_fields_complete.yaml
+- runFlow: ../flows/97_test_step4_text.yaml
+- runFlow: ../flows/98_wizard_debug.yaml

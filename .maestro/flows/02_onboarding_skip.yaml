@@ -1,0 +1,22 @@
+# Flow: 02 - Onboarding Skip
+# Suite: smoke
+# Covers: user skips the onboarding carousel, lands on wizard step 1.
+# Prerequisites: none (fresh state via clearState)
+# clearState: true (cold start must begin at onboarding)
+appId: com.melnady.qadaa
+---
+- launchApp:
+    clearState: true
+    # Maestro 2.x removed the `language` property — force the app language via
+    # the `arguments` map instead (device language = Arabic for this suite).
+    arguments:
+      AppleLanguages: "(en)"
+      AppleLocale: "en_UK"
+- waitForAnimationToEnd
+- assertVisible:
+    id: onboarding-slide-1
+- tapOn:
+    id: onboarding-skip-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-step1-screen

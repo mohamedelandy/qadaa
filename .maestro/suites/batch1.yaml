@@ -1,0 +1,31 @@
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/52_streak_rollover.yaml
+- runFlow: ../flows/53_settings_notification_save.yaml
+- runFlow: ../flows/54_stats_empty_state.yaml
+- runFlow: ../flows/55_dashboard_caught_up.yaml
+- runFlow: ../flows/56_settings_grace_day_used.yaml
+- runFlow: ../flows/57_dashboard_batch_preset10.yaml
+- runFlow: ../flows/58_dashboard_batch_cancel.yaml
+- runFlow: ../flows/59_settings_notification_hour_down.yaml
+- runFlow: ../flows/60_settings_notification_minute_variants.yaml
+- runFlow: ../flows/61_settings_target_preset_persistence.yaml
+- runFlow: ../flows/62_wizard_pace1.yaml
+- runFlow: ../flows/63_wizard_pace10.yaml
+- runFlow: ../flows/64_wizard_celebration_modal.yaml
+- runFlow: ../flows/65_settings_dark_mode_persistence.yaml
+- runFlow: ../flows/66_settings_language_persistence.yaml
+- runFlow: ../flows/67_settings_notification_denied.yaml
+- runFlow: ../flows/68_settings_sync_invalid_import.yaml
+- runFlow: ../flows/69_settings_sync_roundtrip.yaml
+- runFlow: ../flows/70_widget_sync_settings.yaml
+- runFlow: ../flows/71_wizard_step3_custom_validation.yaml
+- runFlow: ../flows/72_settings_notification_ampm.yaml
+- runFlow: ../flows/73_settings_target_custom_error.yaml
+- runFlow: ../flows/74_dashboard_streak_at_risk.yaml
+- runFlow: ../flows/75_dashboard_empty_state_today.yaml
+- runFlow: ../flows/76_dashboard_log_fullday_partial.yaml
+- runFlow: ../flows/77_dashboard_weekly_grid_intensity.yaml
+- runFlow: ../flows/78_dashboard_streak_multi_day.yaml
+- runFlow: ../flows/79_dashboard_hadith_after_full_log.yaml
+- runFlow: ../flows/80_stats_platinum_rank.yaml

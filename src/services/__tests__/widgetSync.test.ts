@@ -1,0 +1,76 @@
+/** @format */
+/**
+ * Unit tests for the createWidgetSync factory: payload push, failure swallowing,
+ * debounced fan-out and unsubscribe — all through injected fake ports (no jest.mock).
+ */
+import { createWidgetSync } from "@services/widgetSync";
+import { buildWidgetPayload, type WidgetPayloadInput } from "@domain/widget";
+
+const SNAPSHOT: WidgetPayloadInput = {
+  prayers: {
+    fajr: { recovered: 1 },
+    dhuhr: { recovered: 2 },
+    asr: { recovered: 3 },
+    maghrib: { recovered: 4 },
+    isha: { recovered: 5 },
+  },
+  todayPrayers: { fajr: true },
+  totalMissedDays: 14,
+  streak: 7,
+  language: "ar",
+  hadiths: ["حديث أ", "حديث ب"],
+};
+
+const makePorts = () => {
+  const listeners: Array<() => void> = [];
+  return {
+    ports: {
+      getSnapshot: jest.fn(() => SNAPSHOT),
+      subscribe: jest.fn((l: () => void) => {
+        listeners.push(l);
+        return () => {
+          listeners.splice(listeners.indexOf(l), 1);
+        };
+      }),
+      push: jest.fn(async () => undefined),
+    },
+    emit: () => listeners.forEach((l) => l()),
+  };
+};
+
+afterEach(() => {
+  jest.useRealTimers();
+});
+
+test("pushWidgetPayload builds and pushes a payload", async () => {
+  const { ports } = makePorts();
+  const sync = createWidgetSync(ports);
+  await sync.pushWidgetPayload();
+  expect(ports.push).toHaveBeenCalledTimes(1); // arg === buildWidgetPayload(SNAPSHOT)
+  expect(ports.push).toHaveBeenCalledWith(buildWidgetPayload(SNAPSHOT));
+});
+
+test("pushWidgetPayload swallows port failures", async () => {
+  const { ports } = makePorts();
+  ports.push.mockRejectedValueOnce(new Error("native boom"));
+  const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+  await expect(createWidgetSync(ports).pushWidgetPayload()).resolves.toBeUndefined();
+  expect(warn).toHaveBeenCalled();
+  warn.mockRestore();
+});
+
+test("subscribe fans changes out through debounced pushes", () => {
+  jest.useFakeTimers();
+  const { ports, emit } = makePorts();
+  const sync = createWidgetSync(ports);
+  const unsubscribe = sync.subscribeWidgetSync();
+  emit();
+  emit();
+  emit();
+  jest.advanceTimersByTime(300);
+  expect(ports.push).toHaveBeenCalledTimes(1); // debounced, not 3x
+  unsubscribe();
+  emit();
+  jest.advanceTimersByTime(300);
+  expect(ports.push).toHaveBeenCalledTimes(1); // unsubscribed
+});

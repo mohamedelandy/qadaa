@@ -1,0 +1,57 @@
+# Flow: 132 - Sync Import Empty Paste Disabled
+# Suite: regression
+# Covers: when the paste input in the sync import tab is empty, the import
+#         button is disabled (cannot be tapped). This prevents accidental empty
+#         imports. No existing flow tests the disabled state of this button.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+- scrollUntilVisible:
+    element:
+      id: settings-sync-btn
+    direction: DOWN
+- tapOn:
+    id: settings-sync-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-tab-import
+- waitForAnimationToEnd
+# Import button should be disabled when paste input is empty.
+- assertVisible:
+    id: sync-import-btn
+    enabled: false
+# Type something then clear it — button should re-disable.
+- tapOn:
+    id: sync-paste-input
+- inputText: "test"
+- eraseText
+- assertVisible:
+    id: sync-import-btn
+    enabled: false
+# Type valid JSON — button becomes enabled.
+- inputText: '{"version":1}'
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- assertVisible:
+    id: sync-import-btn
+    enabled: true
+- tapOn:
+    id: sync-close-btn
+    optional: true
+- waitForAnimationToEnd
+- swipe:
+    start: 50%, 90%
+    end: 50%, 10%
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen

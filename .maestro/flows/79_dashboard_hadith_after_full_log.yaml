@@ -1,0 +1,38 @@
+# Flow: 79 - Dashboard Hadith Card After Full Log
+# Suite: regression
+# Covers: the hadith card remains visible and reachable by scrolling after all 5
+#         prayers are logged (the dashboard is longer with the dua modal dismissed).
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+# Log all 5 prayers to trigger DuaModal.
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: dashboard-dhuhr-increment-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: dashboard-asr-increment-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: dashboard-maghrib-increment-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: dashboard-isha-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: dua-modal
+- tapOn:
+    id: dua-close-btn
+- waitForAnimationToEnd
+# Scroll past prayer rows to verify the hadith card is reachable.
+- scrollUntilVisible:
+    element:
+      id: dashboard-hadith-card
+    direction: DOWN
+- assertVisible:
+    id: dashboard-hadith-card

@@ -1,0 +1,64 @@
+# Flow: 29 - Settings Backup Buttons Reachable
+# Suite: regression
+# Covers: settings-backup-export-btn and settings-backup-import-btn are tappable; no crash.
+# Native share/document picker appears after each tap — dismiss it by tapping the dimmed area near the top.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- waitForAnimationToEnd
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+- scrollUntilVisible:
+    element:
+      id: settings-backup-export-btn
+    direction: DOWN
+- assertVisible:
+    id: settings-backup-export-btn
+- tapOn:
+    id: settings-backup-export-btn
+    point: 50%, 30%
+- waitForAnimationToEnd
+# Dismiss the native share/document sheet by tapping the dimmed area near the top.
+- tapOn:
+    point: 50%, 20%
+    optional: true
+- waitForAnimationToEnd
+- swipe:
+    start: 50%, 80%
+    end: 50%, 90%
+    duration: 300
+    optional: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-backup-export-btn
+- scrollUntilVisible:
+    element:
+      id: settings-backup-import-btn
+    direction: DOWN
+- assertVisible:
+    id: settings-backup-import-btn
+- tapOn:
+    id: settings-backup-import-btn
+    point: 50%, 30%
+- waitForAnimationToEnd
+- tapOn:
+    point: 50%, 20%
+    optional: true
+- swipe:
+    start: 50%, 80%
+    end: 50%, 90%
+    duration: 300
+    optional: true
+- tapOn:
+    text: "Cancel"
+    optional: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-backup-import-btn

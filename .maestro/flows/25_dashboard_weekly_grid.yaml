@@ -1,0 +1,39 @@
+# Flow: 25 - Dashboard Weekly Grid
+# Suite: regression
+# Covers: weekly grid renders; today marker, pulse rings, weekday header, ash cells,
+#         intensity legend and placeholders (when present) visible.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- scrollUntilVisible:
+    element:
+      id: dashboard-weekly-grid
+    direction: DOWN
+- assertVisible:
+    id: dashboard-weekly-grid
+- assertVisible:
+    id: heatmap-cell-today
+- assertVisible:
+    id: heatmap-cell
+- assertVisible:
+    id: heatmap-ring
+- assertVisible:
+    id: heatmap-ring-outer
+- assertVisible:
+    id: heatmap-day-header
+- assertVisible:
+    id: heatmap-ash
+- assertVisible:
+    id: dashboard-heatmap-legend
+# Placeholder cells only render when the 28-day grid needs Saturday alignment
+# (none when the window starts on a Saturday) — assert when present.
+- runFlow:
+    when:
+      visible:
+        id: heatmap-placeholder
+    commands:
+      - assertVisible:
+          id: heatmap-placeholder

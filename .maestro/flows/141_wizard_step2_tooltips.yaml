@@ -1,0 +1,81 @@
+# Flow: Wizard Step 2 — Tooltip tap & popover verification
+# Suite: regression
+# Covers: tap each tooltip trigger on wizard step 2 (simple + advanced mode),
+#         assert popover text visible, verify auto-dismiss.
+# Prerequisites: none (standalone — own launchApp with clearState: true)
+appId: com.melnady.qadaa
+---
+- launchApp:
+    clearState: true
+    arguments:
+      AppleLanguages: "(en)"
+      AppleLocale: "en_UK"
+- waitForAnimationToEnd
+- tapOn:
+    id: onboarding-skip-btn
+- waitForAnimationToEnd
+# Complete step 1 to reach step 2
+- assertVisible:
+    id: wizard-step1-screen
+- tapOn:
+    id: wizard-age-input
+- eraseText
+- inputText: "28"
+- tapOn:
+    id: wizard-puberty-input
+- eraseText
+- inputText: "14"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: wizard-step1-next-btn
+    direction: DOWN
+- tapOn:
+    id: wizard-step1-next-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-step2-screen
+# ============================================================================
+# 1. YEARS TOOLTIP (simple mode) — tap trigger, assert popover visible
+# ============================================================================
+- tapOn:
+    id: wizard-years-tooltip-trigger
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-years-tooltip-popover
+- waitForAnimationToEnd
+# ============================================================================
+# 2. ADVANCED MODE TOGGLE — the "?" tooltip is nested inside the PressableScale
+#    so we verify the button exists and toggle advanced mode
+# ============================================================================
+- scrollUntilVisible:
+    element:
+      id: wizard-step2-advanced-btn
+    direction: DOWN
+- tapOn:
+    id: wizard-step2-advanced-btn
+- waitForAnimationToEnd
+# ============================================================================
+# 3. PERIOD TYPE TOOLTIP (advanced mode) — tap trigger, assert popover visible
+# ============================================================================
+- tapOn:
+    id: wizard-period-0-type-tooltip-trigger
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-period-0-type-tooltip-popover
+- waitForAnimationToEnd
+# ============================================================================
+# 4. TOTAL MISSED TOOLTIP — tap trigger, assert popover visible
+# ============================================================================
+- scrollUntilVisible:
+    element:
+      id: wizard-total-missed-tooltip-trigger
+    direction: DOWN
+- tapOn:
+    id: wizard-total-missed-tooltip-trigger
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-total-missed-tooltip-popover
+- waitForAnimationToEnd

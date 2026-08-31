@@ -1,0 +1,11 @@
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/120_batch_preset_capped_at_remaining.yaml
+- runFlow: ../flows/121_batch_custom_exact_remaining.yaml
+- runFlow: ../flows/122_batch_then_undo_recovered_count.yaml
+- runFlow: ../flows/123_batch_on_done_prayer_no_popover.yaml
+- runFlow: ../flows/124_progress_label_updates_after_log.yaml
+- runFlow: ../flows/125_language_relaunch_no_flash.yaml
+- runFlow: ../flows/126_longpress_batch_dhuhr.yaml
+- runFlow: ../flows/127_notification_error_text_content.yaml
+- runFlow: ../flows/128_streak_broken_two_day_gap.yaml

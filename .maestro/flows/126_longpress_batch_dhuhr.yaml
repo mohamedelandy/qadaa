@@ -1,0 +1,27 @@
+# Flow: 126 - Long-Press Batch on Dhuhr
+# Suite: regression, smoke
+# Covers: long-press on a non-fajr prayer (dhuhr) to verify the dynamic testID
+#         pattern resolves correctly and the BatchLogPopover works for all prayer
+#         keys — not just fajr. Preset +5 is selected and verified.
+# Prerequisites: flow 02 (cold launch) + setup_wizard (totalMissedDays large → presets enabled).
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- scrollUntilVisible:
+    element:
+      id: dashboard-dhuhr-increment-btn
+    direction: DOWN
+- longPressOn:
+    id: dashboard-dhuhr-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: batch-preset-5-btn
+- assertVisible:
+    id: batch-preset-10-btn
+- tapOn:
+    id: batch-preset-5-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-dhuhr-undo-btn

@@ -1,0 +1,69 @@
+# Flow: 91 - Wizard Advanced Mode Period with 0 Years
+# Suite: regression
+# Covers: entering "0" in a period's years input in advanced mode — the meter
+#         should show 0 used while the single period remains in place.
+# Prerequisites: flow 02 (cold launch). Do NOT runFlow setup_wizard — we drive the wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- assertVisible:
+    id: wizard-step1-screen
+- tapOn:
+    id: wizard-age-input
+- eraseText
+- inputText: "28"
+- tapOn:
+    id: wizard-puberty-input
+- eraseText
+- inputText: "14"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-step1-next-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-step2-screen
+# Toggle advanced mode.
+- tapOn:
+    id: wizard-step2-advanced-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-add-period-btn
+# Set period 0 to 0 years.
+- tapOn:
+    id: wizard-period-0-years-input
+- eraseText
+- inputText: "0"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+# Meter shows 0/14 (0 years used).
+- copyTextFrom:
+    id: wizard-step2-meter
+- assertTrue: "${maestro.copiedText.includes('0 / 14')}"
+# A single period cannot be removed; add a second period first.
+- tapOn:
+    id: wizard-add-period-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-period-0-remove-btn
+# Remove the zero-year period and verify the editor remains usable.
+- tapOn:
+    id: wizard-period-0-remove-btn
+- waitForAnimationToEnd
+# Now set the remaining period to 5 years to continue the wizard.
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-period-0-years-input
+- eraseText
+- inputText: "5"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-step2-next-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-step3-screen

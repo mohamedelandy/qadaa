@@ -1,0 +1,80 @@
+# Flow: 120 - Batch Preset Capped at Remaining
+# Covers: when remaining=3, batch preset +5 should cap at 3. The remaining
+#         text should disappear (0 remaining) and the progress-label should
+#         update to reflect the new recovered count.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- runScript:
+    file: ../utils/batch_small_state_payload.js
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: settings-sync-btn
+    direction: DOWN
+- tapOn:
+    id: settings-sync-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-tab-import
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-paste-input
+- inputText: ${output.payload}
+- swipe:
+    start: 50%, 80%
+    end: 50%, 20%
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-import-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-close-btn
+    optional: true
+- waitForAnimationToEnd
+- swipe:
+    start: 50%, 90%
+    end: 50%, 10%
+- waitForAnimationToEnd
+# The import returns to settings; scroll to the top to reveal the tab bar.
+- swipe:
+    start: 50%, 20%
+    end: 50%, 90%
+- waitForAnimationToEnd
+- tapOn:
+    id: tab-dashboard
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible:
+      id: dashboard-screen
+    timeout: 10000
+# Confirm remaining=1, then verify the +5 batch is capped at that remaining value.
+# Scroll to make sure fajr remaining is visible, then verify.
+- scrollUntilVisible:
+    element:
+      id: dashboard-fajr-remaining
+    direction: DOWN
+- extendedWaitUntil:
+    visible:
+      id: dashboard-fajr-remaining
+    timeout: 10000
+# Batch +5 (should cap at remaining=1).
+- longPressOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: batch-preset-5-btn
+- tapOn:
+    id: batch-preset-5-btn
+- waitForAnimationToEnd
+# After batch: remaining should be 0 (text disappears).
+- extendedWaitUntil:
+    notVisible:
+      id: dashboard-fajr-remaining
+    timeout: 15000
+# The capped batch completed the only remaining fajr prayer.

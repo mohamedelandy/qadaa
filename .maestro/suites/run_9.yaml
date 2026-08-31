@@ -1,0 +1,11 @@
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/72_settings_notification_ampm.yaml
+- runFlow: ../flows/73_settings_target_custom_error.yaml
+- runFlow: ../flows/74_dashboard_streak_at_risk.yaml
+- runFlow: ../flows/75_dashboard_empty_state_today.yaml
+- runFlow: ../flows/76_dashboard_log_fullday_partial.yaml
+- runFlow: ../flows/77_dashboard_weekly_grid_intensity.yaml
+- runFlow: ../flows/78_dashboard_streak_multi_day.yaml
+- runFlow: ../flows/79_dashboard_hadith_after_full_log.yaml
+- runFlow: ../flows/80_stats_platinum_rank.yaml

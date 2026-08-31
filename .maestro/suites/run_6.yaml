@@ -1,0 +1,11 @@
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/45_sync_qr_tab.yaml
+- runFlow: ../flows/46_stats_estimate.yaml
+- runFlow: ../flows/47_stats_rank_gold.yaml
+- runFlow: ../flows/48_stats_badge_unlocked.yaml
+- runFlow: ../flows/49_batch_undo_points.yaml
+- runFlow: ../flows/50_wizard_step2_meter_limit.yaml
+- runFlow: ../flows/51_full_day_points.yaml
+- runFlow: ../flows/52_streak_rollover.yaml
+- runFlow: ../flows/53_settings_notification_save.yaml

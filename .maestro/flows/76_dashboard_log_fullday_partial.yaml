@@ -1,0 +1,31 @@
+# Flow: 76 - Dashboard Full-Day Log When Partially Logged
+# Suite: regression
+# Covers: logging 2 prayers individually, then tapping Log Full Day to fill the
+#         remaining 3; DuaModal appears; all 5 rows show logged state.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+# Log 2 prayers individually.
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: dashboard-dhuhr-increment-btn
+- waitForAnimationToEnd
+- assertVisible: "2/5"
+# Tap Log Full Day to fill the remaining 3.
+- tapOn:
+    id: dashboard-fullday-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: dua-modal
+- tapOn:
+    id: dua-close-btn
+- waitForAnimationToEnd
+# All 5 logged: pill reads 5/5, hero shows done state.
+- assertVisible: "5/5"
+- assertVisible:
+    id: dashboard-hero-done

@@ -1,0 +1,709 @@
+# Flow: SHOWCASE - Qadaa Portfolio Video
+# Suite: demo
+# Covers: onboarding, wizard (quick/advanced/tooltips/validation errors), dashboard
+#         (single log, undo, batch +10, batch custom with keyboard, full-day, Dua,
+#         weekly grid, hadith), stats (filled + empty), settings (language, theme,
+#         target, notification, sync QR/copy/import, grace day), empty states
+#         (fresh dashboard, caught-up), and persistence.
+# Prerequisites: none (standalone — owns the cold launch)
+appId: com.melnady.qadaa
+---
+# ============================================================================
+# SCENE 1 — FULL JOURNEY (English, LTR, dark mode)
+# ============================================================================
+- launchApp:
+    clearState: true
+    arguments:
+      AppleLanguages: "(en)"
+      AppleLocale: "en_UK"
+      AppleInterfaceStyle: "Dark"
+    permissions:
+      notifications: granted
+- waitForAnimationToEnd
+# Dismiss any leftover iOS permission dialog if it appears. With
+# permissions: notifications: granted the dialog usually never shows, so
+# this MUST be optional — a hard assert kills the whole recording.
+- tapOn:
+    text: "Allow"
+    optional: true
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: onboarding-next-btn
+    timeout: 15000
+
+# --- Onboarding: all four slides ---
+- tapOn:
+    id: onboarding-next-btn
+- tapOn:
+    id: onboarding-next-btn
+- tapOn:
+    id: onboarding-next-btn
+- tapOn:
+    id: onboarding-next-btn
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: wizard-step1-screen
+    timeout: 15000
+
+# --- Wizard step 1: inputs, validation error, tooltip ---
+- tapOn:
+    id: wizard-age-input
+- inputText: "28"
+- tapOn:
+    id: wizard-puberty-input
+- inputText: "28"
+# Invalid: puberty must be strictly less than age — the error renders under the
+# input, above the keyboard, with the Next button disabled below it.
+- extendedWaitUntil:
+    visible:
+      id: wizard-step1-error
+    timeout: 5000
+- swipe:
+    start: 50%, 40%
+    end: 50%, 30%
+    duration: 300
+- waitForAnimationToEnd
+# Fix the value: error clears, Next becomes reachable.
+- tapOn:
+    id: wizard-puberty-input
+- eraseText
+- inputText: "14"
+- swipe:
+    start: 50%, 40%
+    end: 50%, 30%
+    duration: 300
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    notVisible:
+      id: wizard-step1-error
+    timeout: 5000
+- tapOn:
+    id: wizard-age-tooltip-trigger
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-age-tooltip-trigger
+- tapOn:
+    id: wizard-step1-next-btn
+- waitForAnimationToEnd
+
+# --- Wizard step 2: quick years, validation error, tooltip, advanced mode ---
+- extendedWaitUntil:
+    visible:
+      id: wizard-step2-screen
+    timeout: 10000
+- tapOn:
+    id: wizard-years-quick-input
+- inputText: "50"
+# 50 missed years exceeds the active years (28-14) — the meter error shows.
+- extendedWaitUntil:
+    visible:
+      id: wizard-step2-error
+    timeout: 5000
+- swipe:
+    start: 50%, 40%
+    end: 50%, 30%
+    duration: 300
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-years-quick-input
+- eraseText
+- inputText: "5"
+- swipe:
+    start: 50%, 40%
+    end: 50%, 30%
+    duration: 300
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    notVisible:
+      id: wizard-step2-error
+    timeout: 5000
+- tapOn:
+    id: wizard-years-tooltip-trigger
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-years-tooltip-trigger
+- tapOn:
+    id: wizard-step2-advanced-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-period-0-type-tooltip-trigger
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-period-0-type-tooltip-trigger
+- tapOn:
+    id: wizard-step2-advanced-btn
+- tapOn:
+    id: wizard-step2-next-btn
+- waitForAnimationToEnd
+
+# --- Wizard step 3: pace preset ---
+- extendedWaitUntil:
+    visible:
+      id: wizard-step3-screen
+    timeout: 10000
+- tapOn:
+    id: wizard-pace-5-btn
+- tapOn:
+    id: wizard-step3-next-btn
+- waitForAnimationToEnd
+
+# --- Wizard step 4: summary + confirm (celebration auto-confirms) ---
+- extendedWaitUntil:
+    visible:
+      id: wizard-step4-screen
+    timeout: 10000
+- tapOn:
+    id: wizard-confirm-btn
+- waitForAnimationToEnd
+# The intention sheet auto-confirms ~4s after it appears; waiting avoids a
+# stray tap on the LogFullDayBar position once the sheet is gone.
+- extendedWaitUntil:
+    visible:
+      id: dashboard-screen
+    timeout: 20000
+- extendedWaitUntil:
+    notVisible:
+      id: intention-sheet
+    timeout: 15000
+
+# --- Dashboard: single log, undo, batch custom (keyboard), batch +10, dua, full day ---
+- extendedWaitUntil:
+    visible:
+      id: dashboard-fajr-increment-btn
+    timeout: 10000
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-fajr-progress-fill
+- tapOn:
+    id: dashboard-fajr-undo-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+
+# Batch custom: keyboard opens via autoFocus, the typed value stays visible,
+# then the keyboard is dismissed before confirming.
+- longPressOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: batch-custom-btn
+- tapOn:
+    id: batch-custom-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: batch-custom-input
+- inputText: "3"
+- tapOn:
+    point: 50%, 20%
+- waitForAnimationToEnd
+- tapOn:
+    id: batch-custom-confirm-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-fajr-undo-btn
+
+# Batch +10 preset: bigger visible jump for the video.
+- longPressOn:
+    id: dashboard-dhuhr-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: batch-preset-10-btn
+- tapOn:
+    id: batch-preset-10-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-dhuhr-undo-btn
+
+# Full-day log fills the remaining prayers — all 5 keys logged today → the
+# completion Dua modal appears (its trigger is key-based, not unit-based).
+- tapOn:
+    id: dashboard-fullday-btn
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: dua-modal
+    timeout: 10000
+- tapOn:
+    id: dua-close-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-hero-done
+
+# Weekly grid + hadith.
+- scrollUntilVisible:
+    element:
+      id: dashboard-weekly-grid
+    direction: DOWN
+- assertVisible:
+    id: dashboard-hadith-card
+
+# --- Stats: filled state ---
+- tapOn:
+    id: tab-stats
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: stats-streak-count
+    timeout: 10000
+- assertVisible:
+    id: stats-level-count
+- scrollUntilVisible:
+    element:
+      id: stats-rank-text
+    direction: DOWN
+- assertVisible:
+    id: stats-rank-text
+- scrollUntilVisible:
+    element:
+      id: stats-estimate-text
+    direction: DOWN
+- assertVisible:
+    id: stats-estimate-text
+- scrollUntilVisible:
+    element:
+      id: stats-badge-first_log
+    direction: DOWN
+- assertVisible:
+    id: stats-badge-first_log
+
+# --- Settings: language, theme, target, notification, sync, grace day ---
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+
+# Bilingual demo: English → Arabic → English.
+- tapOn:
+    id: settings-lang-ar-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- tapOn:
+    id: settings-lang-en-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+
+# Theme: light → back to dark so the video stays dark.
+- tapOn:
+    id: settings-theme-toggle
+- waitForAnimationToEnd
+- tapOn:
+    id: settings-theme-toggle
+- waitForAnimationToEnd
+
+# Custom daily target (keyboard, save feedback).
+- scrollUntilVisible:
+    element:
+      id: settings-pace-custom-btn
+    direction: DOWN
+- tapOn:
+    id: settings-pace-custom-btn
+- tapOn:
+    id: settings-pace-custom-input
+- inputText: "3"
+- tapOn:
+    point: 50%, 15%
+- tapOn:
+    id: settings-target-save-btn
+- waitForAnimationToEnd
+
+# Notification picker: hour, PM, minute, save.
+- scrollUntilVisible:
+    element:
+      id: hour-up
+    direction: DOWN
+- tapOn:
+    id: hour-up
+- tapOn:
+    id: notification-ampm-pm-btn
+# The minute chips render under the floating tab bar at the bottom of the
+# screen; scroll slightly so the tap cannot hit a tab instead.
+- swipe:
+    start: 50%, 70%
+    end: 50%, 55%
+    duration: 300
+- waitForAnimationToEnd
+- tapOn:
+    id: settings-minute-15
+- scrollUntilVisible:
+    element:
+      id: notification-save-btn
+    direction: UP
+- tapOn:
+    id: notification-save-btn
+- waitForAnimationToEnd
+# The iOS permission dialog may or may not appear when saving the reminder
+# (pre-grant is unreliable on iOS 26 simulators); accept it if shown.
+- tapOn:
+    text: "Allow"
+    optional: true
+- waitForAnimationToEnd
+
+# Sync: QR, clipboard copy, import a backup.
+- scrollUntilVisible:
+    element:
+      id: settings-sync-btn
+    direction: DOWN
+- tapOn:
+    id: settings-sync-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-tab-qr
+- waitForAnimationToEnd
+- assertVisible:
+    id: sync-qr-container
+- tapOn:
+    id: sync-tab-clipboard
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-copy-btn
+- tapOn:
+    id: sync-tab-import
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-paste-input
+# Maestro's pasteText cannot read the app-set clipboard, so type the payload
+# directly (same pattern as the regression flows).
+- inputText: '{"version":1,"wizardComplete":true,"age":25,"pubertyAge":11,"periods":[{"type":"missed","years":2}],"totalMissedDays":365,"prayers":{"fajr":{"recovered":30},"dhuhr":{"recovered":0},"asr":{"recovered":0},"maghrib":{"recovered":0},"isha":{"recovered":0}},"todayPrayers":{},"todayLogPoints":{},"todayUnits":{},"todayDate":null,"streak":0,"lastLogDate":null,"daysLogged":0,"loggedDates":[],"points":0,"badges":[],"language":"en","notificationTime":null}'
+# Dismiss the keyboard with a swipe — tapping the top of the screen would hit
+# the sheet backdrop and close the sync sheet.
+- swipe:
+    start: 50%, 80%
+    end: 50%, 20%
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: sync-import-btn
+    timeout: 5000
+- tapOn:
+    id: sync-import-btn
+# The sheet auto-closes ~1.2s after a successful import. Waiting for the close
+# button to disappear avoids a race where a manual close tap lands on the
+# settings sync row (same on-screen position) and re-opens the sheet.
+- extendedWaitUntil:
+    notVisible:
+      id: sync-close-btn
+    timeout: 10000
+- waitForAnimationToEnd
+
+# Grace day status.
+- swipe:
+    start: 50%, 90%
+    end: 50%, 10%
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: settings-grace-status
+    direction: DOWN
+- assertVisible:
+    id: settings-grace-status
+
+# --- Final persisted dashboard ---
+- swipe:
+    start: 50%, 20%
+    end: 50%, 90%
+- waitForAnimationToEnd
+- tapOn:
+    id: tab-dashboard
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-screen
+- assertVisible:
+    id: dashboard-hero-card
+- assertVisible:
+    id: dashboard-streak-count
+
+# ============================================================================
+# SCENE 2 — EMPTY STATES (fresh dashboard, stats empty, caught-up)
+# ============================================================================
+- launchApp:
+    clearState: true
+    arguments:
+      AppleLanguages: "(en)"
+      AppleLocale: "en_UK"
+      AppleInterfaceStyle: "Dark"
+- waitForAnimationToEnd
+- tapOn:
+    text: "Allow"
+    optional: true
+- waitForAnimationToEnd
+- tapOn:
+    id: onboarding-skip-btn
+- waitForAnimationToEnd
+
+# Quick wizard (fresh account, nothing logged).
+- extendedWaitUntil:
+    visible:
+      id: wizard-step1-screen
+    timeout: 10000
+- tapOn:
+    id: wizard-age-input
+- inputText: "28"
+- tapOn:
+    id: wizard-puberty-input
+- inputText: "14"
+- swipe:
+    start: 50%, 40%
+    end: 50%, 30%
+    duration: 300
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-step1-next-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-years-quick-input
+- inputText: "5"
+- swipe:
+    start: 50%, 40%
+    end: 50%, 30%
+    duration: 300
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-step2-next-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-pace-5-btn
+- tapOn:
+    id: wizard-step3-next-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-confirm-btn
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: dashboard-screen
+    timeout: 20000
+- extendedWaitUntil:
+    notVisible:
+      id: intention-sheet
+    timeout: 15000
+
+# Fresh dashboard: hero nudge, zero logs (no undo buttons).
+- extendedWaitUntil:
+    visible:
+      id: dashboard-fajr-increment-btn
+    timeout: 10000
+- assertVisible:
+    id: dashboard-hero-nudge
+- assertNotVisible:
+    id: dashboard-fajr-undo-btn
+
+# Stats empty state (0 points, 0 streak).
+- tapOn:
+    id: tab-stats
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: stats-empty-state
+- assertVisible:
+    id: lottie-empty-chart
+- assertNotVisible:
+    id: stats-streak-count
+
+# Import a zero-missed-days backup → caught-up empty state on the dashboard.
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: settings-sync-btn
+    direction: DOWN
+- tapOn:
+    id: settings-sync-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-tab-import
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-paste-input
+- inputText: '{"version":1,"wizardComplete":true,"age":28,"pubertyAge":14,"periods":[],"totalMissedDays":0,"prayers":{"fajr":{"recovered":0},"dhuhr":{"recovered":0},"asr":{"recovered":0},"maghrib":{"recovered":0},"isha":{"recovered":0}},"todayPrayers":{},"todayLogPoints":{},"todayUnits":{},"todayDate":null,"streak":0,"lastLogDate":null,"daysLogged":0,"loggedDates":[],"points":0,"badges":[],"language":"en","notificationTime":null,"notificationPermission":"default","graceUsedMonth":null,"lastDuaShownDate":null,"intentionSetDate":null,"dailyTarget":5}'
+- swipe:
+    start: 50%, 80%
+    end: 50%, 20%
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: sync-import-btn
+    timeout: 5000
+- tapOn:
+    id: sync-import-btn
+# Auto-closes ~1.2s on success; wait for the sheet to disappear instead of
+# tapping close (a manual close tap can land on the settings sync row and
+# re-open the sheet, as seen in flaky runs).
+- extendedWaitUntil:
+    notVisible:
+      id: sync-close-btn
+    timeout: 10000
+- waitForAnimationToEnd
+- tapOn:
+    id: tab-dashboard
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-caught-up
+- assertVisible:
+    id: dashboard-hadith-card
+- assertNotVisible:
+    id: dashboard-hero-card
+
+# ============================================================================
+# SCENE 3 — VALIDATION ERRORS (every input shows its error + submit state)
+# ============================================================================
+- launchApp:
+    clearState: true
+    arguments:
+      AppleLanguages: "(en)"
+      AppleLocale: "en_UK"
+      AppleInterfaceStyle: "Dark"
+- waitForAnimationToEnd
+- tapOn:
+    text: "Allow"
+    optional: true
+- waitForAnimationToEnd
+- tapOn:
+    id: onboarding-skip-btn
+- waitForAnimationToEnd
+
+# Step 1: puberty age not below age → error shown under the input.
+- extendedWaitUntil:
+    visible:
+      id: wizard-step1-screen
+    timeout: 10000
+- tapOn:
+    id: wizard-age-input
+- inputText: "10"
+- tapOn:
+    id: wizard-puberty-input
+- inputText: "12"
+- extendedWaitUntil:
+    visible:
+      id: wizard-step1-error
+    timeout: 5000
+- swipe:
+    start: 50%, 40%
+    end: 50%, 30%
+    duration: 300
+- waitForAnimationToEnd
+# Fix: error clears, Next becomes enabled.
+- tapOn:
+    id: wizard-puberty-input
+- eraseText
+- inputText: "9"
+- swipe:
+    start: 50%, 40%
+    end: 50%, 30%
+    duration: 300
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    notVisible:
+      id: wizard-step1-error
+    timeout: 5000
+- tapOn:
+    id: wizard-step1-next-btn
+- waitForAnimationToEnd
+
+# Step 2: quick years exceed the single active year → error, then fix.
+- extendedWaitUntil:
+    visible:
+      id: wizard-step2-screen
+    timeout: 10000
+- tapOn:
+    id: wizard-years-quick-input
+- inputText: "99"
+- extendedWaitUntil:
+    visible:
+      id: wizard-step2-error
+    timeout: 5000
+- swipe:
+    start: 50%, 40%
+    end: 50%, 30%
+    duration: 300
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-years-quick-input
+- eraseText
+- inputText: "1"
+- swipe:
+    start: 50%, 40%
+    end: 50%, 30%
+    duration: 300
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    notVisible:
+      id: wizard-step2-error
+    timeout: 5000
+- tapOn:
+    id: wizard-step2-next-btn
+- waitForAnimationToEnd
+
+# Step 3: custom pace out of range (0) → error, then fix to a valid value.
+- extendedWaitUntil:
+    visible:
+      id: wizard-step3-screen
+    timeout: 10000
+- tapOn:
+    id: wizard-pace-custom-btn
+- tapOn:
+    id: wizard-pace-custom-input
+- inputText: "0"
+- extendedWaitUntil:
+    visible:
+      id: wizard-step3-error
+    timeout: 5000
+- swipe:
+    start: 50%, 40%
+    end: 50%, 30%
+    duration: 300
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-pace-custom-input
+- eraseText
+- inputText: "5"
+- swipe:
+    start: 50%, 40%
+    end: 50%, 30%
+    duration: 300
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    notVisible:
+      id: wizard-step3-error
+    timeout: 5000
+- tapOn:
+    id: wizard-step3-next-btn
+- waitForAnimationToEnd
+
+# Confirm and land on the dashboard — the journey is complete.
+- extendedWaitUntil:
+    visible:
+      id: wizard-step4-screen
+    timeout: 10000
+- tapOn:
+    id: wizard-confirm-btn
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: dashboard-screen
+    timeout: 20000
+- extendedWaitUntil:
+    notVisible:
+      id: intention-sheet
+    timeout: 15000
+- assertVisible:
+    id: dashboard-hero-card
+- assertVisible:
+    id: dashboard-streak-count
+- assertVisible:
+    point: 9%,25%

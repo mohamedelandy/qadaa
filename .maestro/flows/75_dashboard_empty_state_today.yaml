@@ -1,0 +1,27 @@
+# Flow: 75 - Dashboard Initial Empty State (No Prayers Logged Today)
+# Suite: regression
+# Covers: after wizard completion the dashboard shows the hero card + prayer rows with
+#         0 logged today; the "emptyAction" and "emptyTitle" are NOT shown (those are for
+#         totalMissedDays=0). The "Log First Prayer" action only appears when there are
+#         zero recovered prayers across ALL time.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+# Fresh account: hero card visible, prayer rows visible, 0/5 logged.
+- assertVisible:
+    id: dashboard-hero-card
+- assertVisible: "0/5"
+- scrollUntilVisible:
+    element:
+      id: dashboard-fajr-increment-btn
+    direction: DOWN
+- assertVisible:
+    id: dashboard-fajr-increment-btn
+- assertVisible:
+    id: dashboard-fajr-row
+# The "all caught up" empty state should NOT appear (totalMissedDays > 0).
+- assertNotVisible:
+    id: dashboard-caught-up

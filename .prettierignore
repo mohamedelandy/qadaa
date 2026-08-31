@@ -1,0 +1,9 @@
+**/build/
+assets/animations/
+node_modules/
+.agents/skills/
+.expo/
+coverage/
+ios/
+android/
+expo-env.d.ts

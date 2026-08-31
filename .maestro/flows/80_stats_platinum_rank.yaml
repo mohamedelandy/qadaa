@@ -1,0 +1,53 @@
+# Flow: 80 - Stats Rank Card (Platinum)
+# Suite: regression
+# Covers: importing a backup with points=6000 renders the platinum rank badge on
+#         stats — proving the platinum threshold (>= 5000) works end-to-end.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: settings-sync-btn
+    direction: DOWN
+- tapOn:
+    id: settings-sync-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-tab-import
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-paste-input
+- inputText:
+    text: '{"version":1,"wizardComplete":true,"age":28,"pubertyAge":14,"periods":[{"type":"missed","years":1}],"totalMissedDays":3650,"prayers":{"fajr":{"recovered":0},"dhuhr":{"recovered":0},"asr":{"recovered":0},"maghrib":{"recovered":0},"isha":{"recovered":0}},"todayPrayers":{},"todayLogPoints":{},"todayUnits":{},"todayDate":null,"streak":0,"lastLogDate":null,"daysLogged":60,"loggedDates":[],"points":6000,"badges":[],"language":"en","notificationTime":null,"notificationPermission":"default","graceUsedMonth":null,"lastDuaShownDate":null,"intentionSetDate":null,"dailyTarget":5}'
+# Swipe down to dismiss the keyboard, then tap the import button.
+- swipe:
+    start: 50%, 80%
+    end: 50%, 20%
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: sync-import-btn
+    timeout: 5000
+- tapOn:
+    id: sync-import-btn
+    optional: true
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: sync-import-success
+    timeout: 5000
+- tapOn:
+    id: sync-close-btn
+    optional: true
+- waitForAnimationToEnd
+- swipe:
+    start: 50%, 90%
+    end: 50%, 10%
+

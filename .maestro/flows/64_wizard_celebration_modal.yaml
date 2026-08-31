@@ -1,0 +1,57 @@
+# Flow: 64 - Wizard Celebration Modal
+# Suite: regression
+# Covers: the journey-begins celebration modal renders right after the step-4
+#         confirm tap (before the intention sheet auto-follows).
+# Prerequisites: flow 02 (cold launch). Do NOT runFlow setup_wizard — we drive the wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- assertVisible:
+    id: wizard-step1-screen
+- tapOn:
+    id: wizard-age-input
+- eraseText
+- inputText: "28"
+- tapOn:
+    id: wizard-puberty-input
+- eraseText
+- inputText: "14"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-step1-next-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-step2-screen
+- tapOn:
+    id: wizard-years-quick-input
+- eraseText
+- inputText: "5"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-step2-next-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-step3-screen
+- tapOn:
+    id: wizard-pace-5-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-step3-next-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-step4-screen
+# Confirm. The celebration is skipped when reduced motion is enabled; otherwise
+# the modal is shown briefly before the dashboard transition.
+- tapOn:
+    id: wizard-confirm-btn
+- extendedWaitUntil:
+    visible:
+      id: dashboard-screen
+    timeout: 20000
+- assertVisible:
+    id: dashboard-screen

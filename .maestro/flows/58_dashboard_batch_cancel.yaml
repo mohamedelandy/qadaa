@@ -1,0 +1,43 @@
+# Flow: 58 - Batch Log Popover Cancel
+# Suite: regression
+# Covers: canceling the batch popover (preset mode and custom mode) closes it
+#         without logging anything — no undo button, no points.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- scrollUntilVisible:
+    element:
+      id: dashboard-fajr-increment-btn
+    direction: DOWN
+# --- Cancel in preset mode: popover closes, nothing logged ---
+- longPressOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: batch-preset-5-btn
+- tapOn:
+    id: batch-cancel-btn
+- waitForAnimationToEnd
+- assertNotVisible:
+    id: batch-preset-5-btn
+- assertNotVisible:
+    id: dashboard-fajr-undo-btn
+# --- Cancel in custom mode: closes the entire popover ---
+- longPressOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: batch-custom-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: batch-custom-input
+- tapOn:
+    id: batch-cancel-btn
+- waitForAnimationToEnd
+- assertNotVisible:
+    id: batch-preset-5-btn
+- assertNotVisible:
+    id: dashboard-fajr-undo-btn

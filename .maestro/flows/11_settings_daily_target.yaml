@@ -1,0 +1,24 @@
+# Flow: 11 - Settings Daily Target
+# Suite: regression
+# Covers: verify the daily target pace picker is rendered with the default preset selected.
+# Note: The daily target defaults to "5"; the pace-5 button is active by default.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+- assertVisible:
+    id: settings-presets-grid
+- assertVisible:
+    id: settings-pace-5-btn
+- assertVisible:
+    id: settings-pace-custom-btn
+- assertVisible:
+    id: settings-target-save-btn

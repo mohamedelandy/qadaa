@@ -1,0 +1,12 @@
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/66_settings_language_persistence.yaml
+- runFlow: ../flows/67_settings_notification_denied.yaml
+- runFlow: ../flows/68_settings_sync_invalid_import.yaml
+- runFlow: ../flows/69_settings_sync_roundtrip.yaml
+- runFlow: ../flows/70_widget_sync_settings.yaml
+- runFlow: ../flows/71_wizard_step3_custom_validation.yaml
+- runFlow: ../flows/72_settings_notification_ampm.yaml
+- runFlow: ../flows/73_settings_target_custom_error.yaml
+- runFlow: ../flows/74_dashboard_streak_at_risk.yaml
+- runFlow: ../flows/75_dashboard_empty_state_today.yaml

@@ -1,0 +1,12 @@
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/86_settings_appearance_labels.yaml
+- runFlow: ../flows/87_settings_full_scroll_through.yaml
+- runFlow: ../flows/88_settings_custom_target_zero.yaml
+- runFlow: ../flows/89_settings_preset_toggle_persistence.yaml
+- runFlow: ../flows/90_wizard_advanced_all_regular.yaml
+- runFlow: ../flows/91_wizard_advanced_zero_years.yaml
+- runFlow: ../flows/92_wizard_step4_advanced_summary.yaml
+- runFlow: ../flows/93_wizard_recompletion_after_reset.yaml
+- runFlow: ../flows/94_wizard_step2_negative_years.yaml
+- runFlow: ../flows/95_wizard_step2_large_decimal.yaml

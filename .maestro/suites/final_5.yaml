@@ -1,0 +1,12 @@
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/96_wizard_step3_preset_total_prayers.yaml
+- runFlow: ../flows/100_onboarding_swipe_navigation.yaml
+- runFlow: ../flows/101_onboarding_skip_from_each_slide.yaml
+- runFlow: ../flows/102_rapid_language_toggle.yaml
+- runFlow: ../flows/103_language_toggle_from_dashboard.yaml
+- runFlow: ../flows/104_force_close_relaunch.yaml
+- runFlow: ../flows/105_notification_deep_link_bridge.yaml
+- runFlow: ../flows/106_sync_import_missing_fields.yaml
+- runFlow: ../flows/107_sync_import_invalid_prayer_keys.yaml
+- runFlow: ../flows/108_sync_import_verify_dashboard_changed.yaml

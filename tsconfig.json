@@ -1,0 +1,53 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "composite": false,
+    "jsx": "react-jsx",
+    "types": ["jest", "node"],
+    "paths": {
+      "@services/*": ["./src/services/*"],
+      "@mocks/*": ["./src/__mocks__/*"],
+      "@domain/*": ["./src/domain/*"],
+      "@data/*": ["./src/data/*"],
+      "@presentation/*": ["./src/presentation/*"],
+      "@features/*": ["./src/presentation/features/*"],
+      "@components/*": ["./src/presentation/components/*"],
+      "@stores/*": ["./src/stores/*"],
+      "@theme": ["./src/presentation/theme"],
+      "@theme/*": ["./src/presentation/theme/*"],
+      "@lottie-assets/*": ["./assets/*"],
+      "@hooks/*": ["./src/presentation/hooks/*"],
+      "@shared/*": ["./src/types/*"],
+      "@/*": ["./*"]
+    },
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true
+  },
+  "include": ["**/*.ts", "**/*.tsx", "**/*.json", ".expo/types/**/*.ts", "expo-env.d.ts"],
+  "exclude": [
+    "node_modules",
+    "*.config.js",
+    "*.config.mts",
+    "metro.config.js",
+    "jest.config.js",
+    "setupTests.ts"
+  ]
+}

@@ -1,0 +1,63 @@
+# Flow: 129 - Streak At-Risk Saved by Grace Day
+# Suite: regression
+# Covers: importing a backup whose lastLogDate is TWO days ago AND graceUsedMonth
+#         is NOT the current month (grace available). The streak logic's grace-day
+#         saving path is exercised — the 2-day gap is forgiven by the unused grace
+#         day, preserving the streak instead of breaking it.
+#         Flow 74 tests at-risk (1-day gap); this tests grace-saving a 2-day gap.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+# Build the two-day-gap payload with grace available.
+- runScript:
+    file: ../utils/streak_grace_payload.js
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+- scrollUntilVisible:
+    element:
+      id: settings-sync-btn
+    direction: DOWN
+- tapOn:
+    id: settings-sync-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-tab-import
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-paste-input
+# Streak 5 with lastLogDate = 2 days ago AND graceUsedMonth = null (grace available).
+# The grace day should save the streak (5 → 6 after today's log, not reset to 1).
+- inputText: ${output.payload}
+- swipe:
+    start: 50%, 80%
+    end: 50%, 20%
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: sync-import-btn
+    timeout: 5000
+- tapOn:
+    id: sync-import-btn
+- extendedWaitUntil:
+    visible:
+      id: sync-import-success
+    timeout: 10000
+- tapOn:
+    id: sync-close-btn
+    optional: true
+- waitForAnimationToEnd
+- swipe:
+    start: 50%, 90%
+    end: 50%, 10%
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+# Navigate to dashboard — streak should be preserved (grace day consumed).
+

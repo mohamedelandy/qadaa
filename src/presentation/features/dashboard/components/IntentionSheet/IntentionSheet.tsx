@@ -1,0 +1,71 @@
+/** @format */
+/**
+ * Bottom sheet showing pre-logging intention text; confirms on press or auto-confirms after 4s with haptics.
+ */
+import { useEffect, useRef } from "react";
+import * as Haptics from "expo-haptics";
+import { LinearGradient } from "expo-linear-gradient";
+import { Sheet } from "@components/PageSheet/PageSheet";
+import { useIntentionSheetStyles } from "../../hooks/useIntentionSheetStyles";
+import { Text } from "@components/Text/Text";
+import { PressableScale } from "@components/PressableScale/PressableScale";
+import { LottieView } from "@components/Lottie/LottieView";
+interface IntentionSheetProps {
+  visible: boolean;
+  onConfirm: () => void;
+}
+export function IntentionSheet({ visible, onConfirm }: IntentionSheetProps) {
+  const { t, styles, accent, gradients: g } = useIntentionSheetStyles();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const confirmedRef = useRef(false);
+  const onConfirmRef = useRef(onConfirm);
+  useEffect(() => {
+    onConfirmRef.current = onConfirm;
+  }, [onConfirm]);
+  const confirm = () => {
+    if (confirmedRef.current) return;
+    confirmedRef.current = true;
+    onConfirmRef.current();
+  };
+  useEffect(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    confirmedRef.current = false;
+    if (visible) {
+      timerRef.current = setTimeout(confirm, 4000);
+    }
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [visible]);
+  return (
+    <Sheet visible={visible} onClose={confirm} topBorderColor={accent} testID="intention-sheet">
+      <LottieView name="lantern" loop style={{ width: 64, height: 64 }} resizeMode="contain" />
+      <Text style={styles.title}>{t("intention.title")}</Text>
+      <Text style={styles.intentionText}>{t("intention.text")}</Text>
+      <LinearGradient
+        colors={[g.primaryBtn[0], g.primaryBtn[1]]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.ameenBtn}
+      >
+        <PressableScale
+          testID="intention-confirm-btn"
+          style={styles.ameenPressable}
+          onPress={() => {
+            void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            confirm();
+          }}
+        >
+          <Text style={styles.ameenText}>{t("intention.confirm")}</Text>
+        </PressableScale>
+      </LinearGradient>
+      <Text style={styles.autoHint}>{t("intention.auto")}</Text>
+    </Sheet>
+  );
+}

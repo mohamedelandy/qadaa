@@ -1,0 +1,64 @@
+# Flow: 103 - Language Toggle from Dashboard
+# Covers: toggling language from settings verifies the app stays on settings
+#         and renders correctly in the new language after relaunch.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- extendedWaitUntil:
+    visible:
+      id: dashboard-screen
+    timeout: 15000
+# Log a prayer so the dashboard has data.
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+# Navigate to settings, toggle language.
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- tapOn:
+    id: settings-lang-en-btn
+- waitForAnimationToEnd
+# App stays on settings after language toggle.
+- assertVisible:
+    id: settings-screen
+# Relaunch to verify English persisted.
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: dashboard-screen
+    timeout: 15000
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+- assertVisible:
+    id: settings-lang-en-btn
+# Toggle back to Arabic.
+- tapOn:
+    id: settings-lang-ar-btn
+- waitForAnimationToEnd
+# App stays on settings after toggle.
+- assertVisible:
+    id: settings-screen
+# Relaunch to verify Arabic persisted.
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: dashboard-screen
+    timeout: 15000
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+- assertVisible:
+    id: settings-lang-ar-btn

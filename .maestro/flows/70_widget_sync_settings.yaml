@@ -1,0 +1,107 @@
+# Flow: 70 - Widget Sync on Settings Changes
+# Suite: regression
+# Covers: the settings-store widget push on daily-target and notification-time
+#         changes, verified through their in-app effects (flow 32 covered the
+#         prayer-log and language pushes): saving custom target 3 flips the
+#         dashboard pill to 0/3 and saving a new reminder time (9 → 11) persists
+#         across remounts.
+# Prerequisites: none (standalone — own launchApp with clearState + permission grant)
+# clearState: true (cold start; do NOT runFlow 02 — it would double-launch)
+appId: com.melnady.qadaa
+---
+- launchApp:
+    clearState: true
+    arguments:
+      AppleLanguages: "(en)"
+      AppleLocale: "en_UK"
+    permissions:
+      notifications: granted
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: onboarding-slide-1
+    timeout: 10000
+- tapOn:
+    id: onboarding-skip-btn
+- waitForAnimationToEnd
+- runFlow: ../utils/setup_wizard.yaml
+# --- Settings push: daily target 5 → 3 (custom) ---
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+- scrollUntilVisible:
+    element:
+      id: settings-presets-grid
+    direction: DOWN
+- tapOn:
+    id: settings-pace-custom-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-pace-custom-input
+- tapOn:
+    id: settings-pace-custom-input
+- eraseText
+- inputText: "3"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- tapOn:
+    id: settings-target-save-btn
+- waitForAnimationToEnd
+# In-app effect of the target push: dashboard pill 0/3.
+- tapOn:
+    id: tab-dashboard
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible:
+      id: dashboard-screen
+    timeout: 10000
+- assertVisible: "0/3"
+# --- Settings push: reminder 9 → 11 (hour-up x2, minute 00, save) ---
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: hour-up
+    direction: DOWN
+- tapOn:
+    id: hour-up
+- waitForAnimationToEnd
+- tapOn:
+    id: hour-up
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: notification-save-btn
+    direction: DOWN
+- tapOn:
+    id: notification-save-btn
+- waitForAnimationToEnd
+# Restore the tab bar after scrolling through Settings.
+- swipe:
+    start: 50%, 20%
+    end: 50%, 90%
+- waitForAnimationToEnd
+# In-app effect of the notification push: re-mounted settings read 11.
+- tapOn:
+    id: tab-dashboard
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+- scrollUntilVisible:
+    element:
+      id: notification-hour-value
+    direction: DOWN
+- copyTextFrom:
+    id: notification-hour-value
+- assertTrue: "${maestro.copiedText.includes('11')}"

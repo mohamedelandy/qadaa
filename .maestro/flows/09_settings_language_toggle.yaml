@@ -1,0 +1,34 @@
+# Flow: 09 - Settings Language Toggle
+# Suite: regression
+# Covers: switch UI to English, then back to Arabic; verifies the app remounts and returns to
+#         settings after each toggle (rtlKey resets navigation to the dashboard).
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-lang-en-btn
+- tapOn:
+    id: settings-lang-en-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+- tapOn:
+    id: settings-lang-ar-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen

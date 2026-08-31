@@ -1,0 +1,15 @@
+# Flow: 39 - Dashboard Hadith Card Visible
+# Suite: regression
+# Covers: HadithCard visible on dashboard (Gap Q)
+# Prerequisites: flow 02 (cold launch) + setup_wizard
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- scrollUntilVisible:
+    element:
+      id: dashboard-hadith-card
+    direction: DOWN
+- assertVisible:
+    id: dashboard-hadith-card

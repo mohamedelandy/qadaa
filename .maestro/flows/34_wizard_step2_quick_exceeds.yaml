@@ -1,0 +1,45 @@
+# Flow: 34 - Wizard Step 2 Quick Exceeds Limit
+# Suite: regression
+# Covers: quick mode years > prayerActiveYears → Next disabled + error visible
+# Prerequisites: flow 02 (cold launch). Do NOT runFlow setup_wizard — we drive the wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- assertVisible:
+    id: wizard-step1-screen
+- tapOn:
+    id: wizard-age-input
+- eraseText
+- inputText: "28"
+- tapOn:
+    id: wizard-puberty-input
+- eraseText
+- inputText: "14"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-step1-next-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-step2-screen
+- tapOn:
+    id: wizard-years-quick-input
+- eraseText
+- inputText: "50"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+# Next is visible but disabled; error is displayed
+- assertVisible:
+    id: wizard-step2-next-btn
+    enabled: false
+- assertVisible:
+    id: wizard-step2-error
+# Tapping the disabled Next must not advance
+- tapOn:
+    id: wizard-step2-next-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-step2-screen

@@ -1,0 +1,69 @@
+# Flow: 37 - Wizard Step 2 Add Period Disabled at Limit
+# Suite: regression
+# Covers: add-period disabled when totalYears reaches prayerActiveYears
+# Prerequisites: flow 02 (cold launch). Do NOT runFlow setup_wizard — we drive the wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- assertVisible:
+    id: wizard-step1-screen
+- tapOn:
+    id: wizard-age-input
+- eraseText
+- inputText: "28"
+- tapOn:
+    id: wizard-puberty-input
+- eraseText
+- inputText: "14"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-step1-next-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-step2-screen
+- tapOn:
+    id: wizard-step2-advanced-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-add-period-btn
+# Add periods until totalYears = 14 (prayerActiveYears)
+- tapOn:
+    id: wizard-add-period-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-add-period-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-add-period-btn
+- waitForAnimationToEnd
+# Set years to fill the limit
+- tapOn:
+    id: wizard-period-0-years-input
+- eraseText
+- inputText: "5"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-period-1-years-input
+- eraseText
+- inputText: "5"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-period-2-years-input
+- eraseText
+- inputText: "4"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-step2-meter
+# Add button stays visible but is disabled at the limit
+- assertVisible:
+    id: wizard-add-period-btn
+- waitForAnimationToEnd

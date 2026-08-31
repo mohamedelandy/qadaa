@@ -1,0 +1,23 @@
+# Flow: 26 - Dashboard Hero Nudge
+# Suite: regression
+# Covers: hero nudge visible before logging; hidden after full-day log; Dua still appears at target.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- assertVisible:
+    id: dashboard-hero-card
+- assertVisible:
+    id: dashboard-hero-nudge
+- tapOn:
+    id: dashboard-fullday-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: dua-modal
+- tapOn:
+    id: dua-close-btn
+- waitForAnimationToEnd
+- assertNotVisible:
+    id: dashboard-hero-nudge

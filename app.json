@@ -1,0 +1,79 @@
+{
+  "expo": {
+    "name": "\u0642\u0636\u0627\u0621",
+    "slug": "qadaa",
+    "version": "1.1.0",
+    "scheme": "qadaa",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "experiments": {
+      "typedRoutes": true
+    },
+    "backgroundColor": "#070e1a",
+    "ios": {
+      "supportsTablet": true,
+      "icon": "./assets/AppIcon.icon",
+      "infoPlist": {
+        "UIBackgroundModes": ["remote-notification"]
+      },
+      "bundleIdentifier": "com.melnady.qadaa"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#070e1a",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.melnady.qadaa"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#047857"
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#070e1a",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain"
+        }
+      ],
+      "expo-sharing",
+      "@bacons/apple-targets",
+      "./plugins/withQadaaWidget"
+    ],
+    "extra": {
+      "eas": {
+        "build": {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "bundleIdentifier": "com.melnady.qadaa.qadaawidget",
+                  "targetName": "QadaaWidget",
+                  "entitlements": {
+                    "com.apple.security.application-groups": ["group.com.melnady.qadaa"]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

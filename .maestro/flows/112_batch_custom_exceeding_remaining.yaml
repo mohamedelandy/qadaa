@@ -1,0 +1,40 @@
+# Flow: 112 - Batch Custom Input Exceeding Remaining
+# Suite: regression
+# Covers: entering a custom batch count that exceeds the remaining prayers for
+#         a given prayer key — the batch should cap at the remaining count.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+# First log 1 prayer to reduce remaining.
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+# Now long-press to batch log more than remaining.
+- scrollUntilVisible:
+    element:
+      id: dashboard-fajr-increment-btn
+    direction: DOWN
+- longPressOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: batch-preset-5-btn
+- tapOn:
+    id: batch-custom-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: batch-custom-input
+# Enter a large number (999) that far exceeds remaining.
+- inputText: "999"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- tapOn:
+    id: batch-custom-confirm-btn
+- waitForAnimationToEnd
+# Should cap at remaining; undo button visible.
+- assertVisible:
+    id: dashboard-fajr-undo-btn

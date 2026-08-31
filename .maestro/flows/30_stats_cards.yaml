@@ -1,0 +1,34 @@
+# Flow: 30 - Stats Cards (Next Badge Hint)
+# Suite: regression
+# Covers: NextBadgeHint renders on stats after first_log badge is unlocked.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: tab-stats
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: stats-screen
+- assertVisible:
+    id: stats-streak-count
+- assertVisible:
+    id: stats-level-count
+- scrollUntilVisible:
+    element:
+      id: stats-rank-text
+    direction: DOWN
+- assertVisible:
+    id: stats-rank-text
+- scrollUntilVisible:
+    element:
+      id: stats-next-badge-hint
+    direction: DOWN
+- assertVisible:
+    id: stats-next-badge-hint

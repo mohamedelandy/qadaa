@@ -1,0 +1,96 @@
+# Flow: 124 - Progress Label Updates After Each Log
+# Suite: regression
+# Covers: logging prayers one by one and verifying the progress-label percentage
+#         updates correctly after each log (20% → 40% → 60% → 80% → 100%).
+# Uses new testIDs: dashboard-fajr-progress-label
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- runScript:
+    file: ../utils/batch_exact_state_payload.js
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: settings-sync-btn
+    direction: DOWN
+- tapOn:
+    id: settings-sync-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-tab-import
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-paste-input
+- inputText: ${output.payload}
+- swipe:
+    start: 50%, 80%
+    end: 50%, 20%
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-import-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: sync-close-btn
+    optional: true
+- waitForAnimationToEnd
+- swipe:
+    start: 50%, 90%
+    end: 50%, 10%
+- waitForAnimationToEnd
+# The import returns to settings; scroll to the top to reveal the tab bar.
+- swipe:
+    start: 50%, 20%
+    end: 50%, 90%
+- waitForAnimationToEnd
+- tapOn:
+    id: tab-dashboard
+    retryTapIfNoChange: true
+- extendedWaitUntil:
+    visible:
+      id: dashboard-screen
+    timeout: 10000
+# Log fajr 1 → 20%.
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: dashboard-fajr-progress-label
+    direction: DOWN
+- copyTextFrom:
+    id: dashboard-fajr-progress-label
+- assertTrue: "${maestro.copiedText.includes('20%')}"
+# Log fajr 2 → 40%.
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- copyTextFrom:
+    id: dashboard-fajr-progress-label
+- assertTrue: "${maestro.copiedText.includes('40%')}"
+# Log fajr 3 → 60%.
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- copyTextFrom:
+    id: dashboard-fajr-progress-label
+- assertTrue: "${maestro.copiedText.includes('60%')}"
+# Log fajr 4 → 80%.
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- copyTextFrom:
+    id: dashboard-fajr-progress-label
+- assertTrue: "${maestro.copiedText.includes('80%')}"
+# Log fajr 5 → 100%.
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- copyTextFrom:
+    id: dashboard-fajr-progress-label
+- assertTrue: "${maestro.copiedText.includes('100%')}"

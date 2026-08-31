@@ -1,0 +1,26 @@
+# Flow: 16 - Permission Handling
+# Suite: regression
+# Covers: app launches and completes setup with the notifications permission in an
+#         unset state (prompt pending) — the permission state must not break the
+#         cold-start, onboarding-skip, wizard, or dashboard flows.
+# Prerequisites: none (standalone — own launchApp with clearState + permission reset)
+# clearState: true (cold start must begin at onboarding; permission reset below)
+appId: com.melnady.qadaa
+---
+- launchApp:
+    clearState: true
+    arguments:
+      AppleLanguages: "(en)"
+      AppleLocale: "en_UK"
+    permissions:
+      notifications: unset
+- waitForAnimationToEnd
+- assertVisible:
+    id: onboarding-slide-1
+- tapOn:
+    id: onboarding-skip-btn
+- waitForAnimationToEnd
+- runFlow: ../utils/setup_wizard.yaml
+- assertVisible:
+    id: dashboard-screen
+- takeScreenshot: permission-unset-dashboard

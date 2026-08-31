@@ -1,0 +1,71 @@
+# Flow: 87 - Settings Full Scroll-Through
+# Suite: regression
+# Covers: scrolling from top to bottom of settings to verify all sections are
+#         rendered and accessible: language, appearance, target, notification,
+#         backup, grace day, feedback, reset.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+# Language section (top).
+- assertVisible:
+    id: settings-lang-ar-btn
+- assertVisible:
+    id: settings-lang-en-btn
+# Appearance section.
+- scrollUntilVisible:
+    element:
+      id: settings-theme-toggle
+    direction: DOWN
+- assertVisible:
+    id: settings-theme-toggle
+# Target section.
+- scrollUntilVisible:
+    element:
+      id: settings-presets-grid
+    direction: DOWN
+- assertVisible:
+    id: settings-presets-grid
+# Notification section.
+- scrollUntilVisible:
+    element:
+      id: notification-save-btn
+    direction: DOWN
+- assertVisible:
+    id: notification-save-btn
+# Backup/Sync section.
+- scrollUntilVisible:
+    element:
+      id: settings-sync-btn
+    direction: DOWN
+- assertVisible:
+    id: settings-sync-btn
+# Grace day section.
+- scrollUntilVisible:
+    element:
+      id: settings-grace-status
+    direction: DOWN
+- assertVisible:
+    id: settings-grace-status
+# Feedback section.
+- scrollUntilVisible:
+    element:
+      id: settings-feedback-btn
+    direction: DOWN
+- assertVisible:
+    id: settings-feedback-btn
+# Reset section.
+- scrollUntilVisible:
+    element:
+      id: reset-btn
+    direction: DOWN
+- assertVisible:
+    id: reset-btn

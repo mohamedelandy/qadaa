@@ -1,0 +1,19 @@
+# Flow: 05 - Dashboard Undo
+# Suite: regression
+# Covers: log one prayer, then undo it; undo button disappears when recovered returns to 0.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- tapOn:
+    id: dashboard-fajr-increment-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-fajr-undo-btn
+- tapOn:
+    id: dashboard-fajr-undo-btn
+- waitForAnimationToEnd
+- assertNotVisible:
+    id: dashboard-fajr-undo-btn

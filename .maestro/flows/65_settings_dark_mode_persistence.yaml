@@ -1,0 +1,46 @@
+# Flow: 65 - Dark Mode Persistence
+# Suite: regression
+# Covers: toggling dark mode then terminating/relaunching (no clearState) keeps
+#         the theme — the appearance toggle label flips to the light-mode
+#         prompt while dark is active (labels are assertable; colors are not).
+#         Assumes the simulator starts in light mode (default on iOS sims).
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it; relaunch below intentionally omits clearState)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+- assertVisible:
+    id: settings-theme-toggle
+# Toggle light → dark (the button now reads "light mode" = prompt to switch back).
+- tapOn:
+    id: settings-theme-toggle
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+# Terminate and relaunch WITHOUT clearState — the theme must survive.
+- stopApp
+- launchApp
+- waitForAnimationToEnd
+- assertVisible:
+    id: dashboard-screen
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- assertVisible:
+    id: settings-screen
+- scrollUntilVisible:
+    element:
+      id: settings-theme-toggle
+    direction: DOWN
+- copyTextFrom:
+    id: settings-theme-toggle
+# Dark still active → button offers the light-mode label (Arabic RTL default).
+- assertTrue: "${maestro.copiedText.includes('الوضع الفاتح')}"

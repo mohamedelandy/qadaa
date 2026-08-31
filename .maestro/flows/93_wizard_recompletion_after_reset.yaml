@@ -1,0 +1,81 @@
+# Flow: 93 - Wizard Re-Completion After Reset
+# Suite: regression
+# Covers: resetting settings (flow 31), then completing the wizard a second time
+#         and verifying the dashboard is correct with fresh data.
+# Prerequisites: flow 02 (cold launch) + setup_wizard.
+# clearState: false (flow 02 handles it)
+appId: com.melnady.qadaa
+---
+- runFlow: ../flows/02_onboarding_skip.yaml
+- runFlow: ../utils/setup_wizard.yaml
+- assertVisible:
+    id: dashboard-screen
+# Reset settings — lands on wizard step 1.
+- tapOn:
+    id: tab-settings
+    retryTapIfNoChange: true
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: reset-btn
+    direction: DOWN
+- swipe:
+    start: 50%, 70%
+    end: 50%, 50%
+    duration: 300
+- waitForAnimationToEnd
+- tapOn:
+    id: reset-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: reset-confirm
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-step1-screen
+# Complete wizard a second time.
+- tapOn:
+    id: wizard-age-input
+- eraseText
+- inputText: "30"
+- tapOn:
+    id: wizard-puberty-input
+- eraseText
+- inputText: "12"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-step1-next-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-years-quick-input
+- eraseText
+- inputText: "10"
+- tapOn:
+    point: 50%, 15%
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-step2-next-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-pace-5-btn
+- waitForAnimationToEnd
+- tapOn:
+    id: wizard-step3-next-btn
+- waitForAnimationToEnd
+- assertVisible:
+    id: wizard-step4-screen
+- tapOn:
+    id: wizard-confirm-btn
+- extendedWaitUntil:
+    visible:
+      id: dashboard-screen
+    timeout: 20000
+- extendedWaitUntil:
+    notVisible:
+      id: intention-sheet
+    timeout: 15000
+- assertVisible:
+    id: dashboard-screen
+# Fresh wizard → 0/5 target.
+- assertVisible: "0/5"

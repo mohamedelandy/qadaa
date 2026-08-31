@@ -1,0 +1,3 @@
+appId: com.melnady.qadaa
+flows:
+  - .maestro/flows/**
