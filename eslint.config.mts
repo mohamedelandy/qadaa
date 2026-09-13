@@ -217,8 +217,6 @@ export default defineConfig([
     },
   },
   {
-    // .maestro runScript files execute in Maestro's own JS runtime (with the
-    // injected `output` global) — not part of the app's codebase.
-    ignores: ["dist/*", ".expo/*", "node_modules/*", ".maestro/*"],
+    ignores: ["dist/*", ".expo/*", "node_modules/*"],
   },
 ]);

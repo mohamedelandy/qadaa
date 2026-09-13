@@ -25,8 +25,7 @@
     "test:translations": "bash ./scripts/verify-translations.sh --check",
     "verify:all": "npm run test:architecture && npm run test:translations && npm run format:check && npm run lint && npm run build && npm run test:ci",
     "postinstall": "rm -rf node_modules/@react-native/jest-preset/node_modules/jest-environment-node",
-    "prepare": "husky",
-    "record:showcase": "bash ./scripts/record-showcase.sh"
+    "prepare": "husky"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

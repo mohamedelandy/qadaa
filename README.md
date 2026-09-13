@@ -58,35 +58,6 @@ Qadaa is designed to work offline and does not require an account or server.
 - No credentials, API keys, signing artifacts, or environment files belong in this repository.
 - AsyncStorage is not a secure vault. Do not store authentication credentials or secrets in app state.
 
-## LinkedIn video demo
-
-The repository includes a dedicated visual flow at `.maestro/showcase.yaml`. It is separate from the exhaustive regression suite and is designed to tell the product story quickly.
-
-### Recommended 40-second story
-
-| Time   | Scene                                  | Caption                                                 |
-| ------ | -------------------------------------- | ------------------------------------------------------- |
-| 0–4s   | Open Qadaa in Arabic                   | “Years of missed prayers can feel impossible to track.” |
-| 4–10s  | Move through onboarding                | “A calmer way to begin.”                                |
-| 10–17s | Complete setup with fictional values   | “Build a plan that fits your life.”                     |
-| 17–27s | Log prayers and show feedback          | “One prayer. One visible step forward.”                 |
-| 27–34s | Show progress, streak, grid, and stats | “Consistency becomes motivation.”                       |
-| 34–40s | Briefly show settings/privacy          | “Private. Offline-first. Built for progress.”           |
-
-Record with fictional values only:
-
-```bash
-maestro record .maestro/showcase.yaml
-```
-
-Recording checklist:
-
-- Use a clean simulator/emulator or reset app data.
-- Record in portrait/9:16 format.
-- Avoid real age, prayer history, backup text, QR content, and notifications.
-- Pause briefly after meaningful animations and progress changes.
-- Avoid permission dialogs, keyboards, loading states, and accidental system UI.
-- Add captions during editing rather than embedding personal information in the app.
 
 ## Tech stack
 
@@ -101,7 +72,7 @@ Recording checklist:
 - Reanimated, Worklets, Gesture Handler, SVG, Lottie
 - Expo Notifications, File System, Document Picker, Sharing, Clipboard, and Haptics
 - Local Expo widget bridge plus iOS/Android widget implementations
-- Jest, React Native Testing Library, ESLint, Prettier, and Maestro
+- Jest, React Native Testing Library, ESLint, and Prettier
 
 ## Quick start
 
@@ -110,7 +81,6 @@ Recording checklist:
 - Node.js `>=20`
 - npm `>=10`
 - Xcode and an iOS simulator, or Android Studio and an Android emulator
-- Java 17 for Maestro on supported environments
 
 ### Install and run
 
@@ -123,21 +93,17 @@ Press `i` for iOS or `a` for Android. Native widgets and other native capabiliti
 
 ## Useful commands
 
-| Command                                 | Purpose                                                                         |
-| --------------------------------------- | ------------------------------------------------------------------------------- |
-| `npm start`                             | Start the Expo development server.                                              |
-| `npm run ios`                           | Build and run the iOS app.                                                      |
-| `npm run android`                       | Build and run the Android app.                                                  |
-| `npm run build`                         | Run the strict TypeScript check without emitting files.                         |
-| `npm run lint`                          | Run ESLint.                                                                     |
-| `npm run format:check`                  | Check Prettier formatting.                                                      |
-| `npm test`                              | Run the Jest suite serially.                                                    |
-| `npm run test:ci`                       | Run Jest with coverage thresholds.                                              |
-| `npm run verify:all`                    | Run architecture, translation, Maestro, formatting, lint, build, and CI checks. |
-| `npm run e2e:smoke`                     | Run the Maestro smoke suite on a connected device.                              |
-| `npm run e2e:regression`                | Run the Maestro regression suite.                                               |
-| `npm run e2e:flows`                     | Run individual Maestro flows.                                                   |
-| `maestro record .maestro/showcase.yaml` | Record the LinkedIn showcase flow.                                              |
+| Command                | Purpose                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------- |
+| `npm start`            | Start the Expo development server.                                              |
+| `npm run ios`          | Build and run the iOS app.                                                      |
+| `npm run android`      | Build and run the Android app.                                                  |
+| `npm run build`        | Run the strict TypeScript check without emitting files.                         |
+| `npm run lint`         | Run ESLint.                                                                     |
+| `npm run format:check` | Check Prettier formatting.                                                      |
+| `npm test`             | Run the Jest suite serially.                                                    |
+| `npm run test:ci`      | Run Jest with coverage thresholds.                                              |
+| `npm run verify:all`   | Run architecture, translation, formatting, lint, build, and CI checks.          |
 
 ## Architecture
 
@@ -151,7 +117,6 @@ src/services/                Dependency-injected platform orchestration
 modules/widget-bridge/       Local Expo native module
  targets/qadaa-widget/       iOS WidgetKit extension
 plugins/                     Expo config plugins
-.maestro/                    E2E flows, suites, utilities, and showcase recording
 ```
 
 The UI follows a practical MVVM boundary:
@@ -169,7 +134,7 @@ Architecture rules are enforced by ESLint and shell checks:
 - Route-level platform wiring goes through `src/appBootstrap.ts`.
 - Persisted stores use `partialize` so actions are not serialized.
 - Local product dates use local `YYYY-MM-DD` helpers rather than UTC conversion.
-- Stable testIDs are used for bilingual Maestro coverage.
+- Stable testIDs are used for automated test coverage.
 
 ## Quality and verification
 
@@ -184,7 +149,6 @@ Current local verification baseline:
 - ESLint passing
 - Architecture checks passing
 - Translation parity passing
-- Maestro integrity and inventory passing
 
 Run the complete gate before a release:
 
@@ -202,10 +166,8 @@ Do not use `npm audit fix --force` without a planned Expo/RN compatibility migra
 
 - [Contributing guide](CONTRIBUTING.md)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
-- [Maestro flows and showcase](.maestro/)
 - [Architecture verification](scripts/verify-architecture.sh)
 - [Translation verification](scripts/verify-translations.sh)
-- [Maestro verification](scripts/verify-maestro.sh)
 
 ## License
 
