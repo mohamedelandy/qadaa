@@ -10,6 +10,9 @@ import { useIntentionSheetStyles } from "../../hooks/useIntentionSheetStyles";
 import { Text } from "@components/Text/Text";
 import { PressableScale } from "@components/PressableScale/PressableScale";
 import { LottieView } from "@components/Lottie/LottieView";
+
+const AUTO_CONFIRM_TIMEOUT_MS = 4000;
+
 interface IntentionSheetProps {
   visible: boolean;
   onConfirm: () => void;
@@ -34,7 +37,7 @@ export function IntentionSheet({ visible, onConfirm }: IntentionSheetProps) {
     }
     confirmedRef.current = false;
     if (visible) {
-      timerRef.current = setTimeout(confirm, 4000);
+      timerRef.current = setTimeout(confirm, AUTO_CONFIRM_TIMEOUT_MS);
     }
     return () => {
       if (timerRef.current) {
