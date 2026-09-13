@@ -74,21 +74,35 @@ function getRank(points: number): RankInfo {
   return { label: "bronze", color: "rankBronze", bg: "rankBronzeBg", border: "rankBronzeBorder" };
 }
 
+const dateFormatterCache = new Map<string, Intl.DateTimeFormat>();
+
 function formatDate(d: Date, language: string): string {
-  try {
-    const locale = language === "ar" ? "ar-EG-u-ca-islamic" : "en-US";
-    return d.toLocaleDateString(locale, {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  } catch {
-    return d.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+  const locale = language === "ar" ? "ar-EG-u-ca-islamic" : "en-US";
+  let formatter = dateFormatterCache.get(locale);
+
+  if (!formatter) {
+    try {
+      formatter = new Intl.DateTimeFormat(locale, {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+      dateFormatterCache.set(locale, formatter);
+    } catch {
+      formatter = dateFormatterCache.get("en-US");
+      if (!formatter) {
+        formatter = new Intl.DateTimeFormat("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        dateFormatterCache.set("en-US", formatter);
+      }
+      dateFormatterCache.set(locale, formatter);
+    }
   }
+
+  return formatter.format(d);
 }
 export function useStatsViewModel(): StatsViewModel {
   const { t, colors, language } = useUI();
