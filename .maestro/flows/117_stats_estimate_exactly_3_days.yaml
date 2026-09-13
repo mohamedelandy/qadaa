@@ -26,7 +26,7 @@ appId: com.melnady.qadaa
 - tapOn:
     id: sync-paste-input
 - inputText:
-    text: '{"version":1,"wizardComplete":true,"age":28,"pubertyAge":14,"periods":[{"type":"missed","years":1}],"totalMissedDays":365,"prayers":{"fajr":{"recovered":3},"dhuhr":{"recovered":0},"asr":{"recovered":0},"maghrib":{"recovered":0},"isha":{"recovered":0}},"todayPrayers":{},"todayLogPoints":{},"todayUnits":{},"todayDate":null,"streak":3,"lastLogDate":null,"daysLogged":3,"loggedDates":[],"points":30,"badges":[],"language":"en","notificationTime":null,"notificationPermission":"default","graceUsedMonth":null,"lastDuaShownDate":null,"intentionSetDate":null,"dailyTarget":5}'
+    text: '{"version":1,"wizardComplete":true,"age":28,"pubertyAge":14,"periods":[{"type":"missed","years":1}],"totalMissedDays":365,"prayers":{"fajr":{"recovered":3},"dhuhr":{"recovered":0},"asr":{"recovered":0},"maghrib":{"recovered":0},"isha":{"recovered":0}},"streak":3,"lastLogDate":null,"daysLogged":3,"loggedDates":[],"points":30,"badges":[],"language":"en"}'
 # Swipe down to dismiss the keyboard, then tap the import button.
 - swipe:
     start: 50%, 80%

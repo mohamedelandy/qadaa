@@ -40,7 +40,7 @@ appId: com.melnady.qadaa
 - tapOn:
     id: sync-paste-input
 - inputText:
-    text: '{"version":1,"wizardComplete":true,"age":25,"pubertyAge":11,"periods":[{"type":"missed","years":2}],"totalMissedDays":365,"prayers":{"fajr":{"recovered":30},"dhuhr":{"recovered":0},"asr":{"recovered":0},"maghrib":{"recovered":0},"isha":{"recovered":0}},"todayPrayers":{},"todayLogPoints":{},"todayUnits":{},"todayDate":null,"streak":0,"lastLogDate":null,"daysLogged":0,"loggedDates":[],"points":0,"badges":[],"language":"en","notificationTime":null}'
+    text: '{"version":1,"wizardComplete":true,"age":25,"pubertyAge":11,"periods":[{"type":"missed","years":2}],"totalMissedDays":365,"prayers":{"fajr":{"recovered":30},"dhuhr":{"recovered":0},"asr":{"recovered":0},"maghrib":{"recovered":0},"isha":{"recovered":0}},"streak":0,"lastLogDate":null,"daysLogged":0,"loggedDates":[],"points":0,"badges":[],"language":"en","notificationTime":null}'
 # Swipe down to dismiss the keyboard, then tap the import button.
 - swipe:
     start: 50%, 80%
