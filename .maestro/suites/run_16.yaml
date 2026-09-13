@@ -1,6 +1,0 @@
-appId: com.melnady.qadaa
----
-- runFlow: ../flows/98_wizard_debug.yaml
-- runFlow: ../flows/99_rtl_wizard_check.yaml
-- runFlow: ../flows/140_wizard_step1_tooltips.yaml
-- runFlow: ../flows/141_wizard_step2_tooltips.yaml
