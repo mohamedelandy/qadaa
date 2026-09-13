@@ -88,7 +88,9 @@ export const useGamificationStore = create<GamificationState & GamificationActio
         // daysLogged is monotonic: bump it only when today is a genuinely new
         // logged day, never on repeated same-day logs (which the pre-prune
         // loggedDates check detects before computeStreakState appends today).
-        const alreadyLoggedToday = state.loggedDates.includes(today);
+        // Since computeStreakState returns the same exact reference if the date
+        // was already included, we can determine inclusion with an O(1) reference check.
+        const alreadyLoggedToday = state.loggedDates === next.loggedDates;
         set({
           ...next,
           loggedDates: pruneLoggedDates(next.loggedDates, today),
