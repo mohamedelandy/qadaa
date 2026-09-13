@@ -1,12 +1,6 @@
 {
   "version": 1,
   "skills": {
-    "maestro-mobile-testing": {
-      "source": "tovimx/maestro-mobile-testing-skill",
-      "sourceType": "github",
-      "skillPath": "SKILL.md",
-      "computedHash": "bdbd865389287a513591c184ca7958256b42d694216ae55c8e94372843eda46b"
-    },
     "react-native": {
       "source": "gentleman-programming/gentleman-skills",
       "sourceType": "github",
