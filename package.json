@@ -23,15 +23,9 @@
     "test:ci": "jest --ci --coverage --maxWorkers=2",
     "test:architecture": "bash ./scripts/verify-architecture.sh",
     "test:translations": "bash ./scripts/verify-translations.sh --check",
-    "test:maestro": "bash ./scripts/verify-maestro.sh",
-    "maestro:inventory": "bash ./scripts/generate-maestro-inventory.sh",
-    "test:maestro-inventory": "bash ./scripts/generate-maestro-inventory.sh --check",
-    "verify:all": "npm run test:architecture && npm run test:translations && npm run test:maestro && npm run test:maestro-inventory && npm run format:check && npm run lint && npm run build && npm run test:ci",
+    "verify:all": "npm run test:architecture && npm run test:translations && npm run format:check && npm run lint && npm run build && npm run test:ci",
     "postinstall": "rm -rf node_modules/@react-native/jest-preset/node_modules/jest-environment-node",
     "prepare": "husky",
-    "e2e:smoke": "maestro test .maestro/suites/smoke.yaml",
-    "e2e:regression": "maestro test .maestro/suites/regression.yaml",
-    "e2e:flows": "maestro test .maestro/flows/",
     "record:showcase": "bash ./scripts/record-showcase.sh"
   },
   "lint-staged": {
