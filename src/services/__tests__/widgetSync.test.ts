@@ -53,7 +53,7 @@ test("pushWidgetPayload builds and pushes a payload", async () => {
 test("pushWidgetPayload swallows port failures", async () => {
   const { ports } = makePorts();
   ports.push.mockRejectedValueOnce(new Error("native boom"));
-  const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
+  const warn = jest.spyOn(require("../logger").Logger, "warn").mockImplementation(() => {});
   await expect(createWidgetSync(ports).pushWidgetPayload()).resolves.toBeUndefined();
   expect(warn).toHaveBeenCalled();
   warn.mockRestore();
