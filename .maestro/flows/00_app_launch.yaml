@@ -11,5 +11,9 @@ appId: com.melnady.qadaa
       AppleLanguages: "(en)"
       AppleLocale: "en_UK"
 - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: onboarding-slide-1
+    timeout: 10000
 - assertVisible:
     id: onboarding-slide-1
