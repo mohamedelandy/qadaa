@@ -22,6 +22,7 @@ import {
   copyToClipboard as backupCopyToClipboard,
 } from "@data/backup";
 import { scheduleDailyNotification, requestNotificationPermissions } from "@data/notifications";
+import { Logger } from "@services/logger";
 import type { BackupData } from "@domain/backup";
 export interface SettingsState {
   language: Language;
@@ -164,7 +165,7 @@ export const useSettingsStore = create<SettingsState & SettingsActions>()(
           }
           return true;
         } catch {
-          if (__DEV__) console.warn("[backup] import failed");
+          if (__DEV__) Logger.warn("import failed", { module: "backup" });
           return false;
         }
       },
@@ -178,7 +179,7 @@ export const useSettingsStore = create<SettingsState & SettingsActions>()(
           if (!jsonRaw) return false;
           return get().importBackup(jsonRaw);
         } catch {
-          if (__DEV__) console.warn("[backup] file import failed");
+          if (__DEV__) Logger.warn("file import failed", { module: "backup" });
           return false;
         }
       },

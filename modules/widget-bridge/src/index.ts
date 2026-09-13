@@ -9,6 +9,7 @@
 import { Platform } from "react-native";
 import { requireNativeModule } from "expo-modules-core";
 import type { WidgetPayload } from "../../../src/domain/widget";
+import { Logger } from "../../../src/services/logger";
 
 interface WidgetBridgeNative {
   setData: (jsonString: string) => Promise<void>;
@@ -20,7 +21,7 @@ let nativeModule: WidgetBridgeNative | null = null;
 try {
   nativeModule = requireNativeModule<WidgetBridgeNative>("WidgetBridge");
 } catch {
-  console.warn("[widget-bridge] Native module unavailable; widget sync disabled.");
+  Logger.warn("Native module unavailable; widget sync disabled.", { module: "widget-bridge" });
 }
 
 export async function setWidgetData(data: WidgetPayload): Promise<void> {
