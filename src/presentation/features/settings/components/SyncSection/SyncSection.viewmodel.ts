@@ -8,6 +8,10 @@ import { useSyncTabState } from "../../hooks/useSyncTabState";
 import { useSyncQr } from "../../hooks/useSyncQr";
 import { useSyncActions } from "../../hooks/useSyncActions";
 import { useSyncStyles } from "../../hooks/useSyncStyles";
+
+const COPIED_RESET_DELAY_MS = 2500;
+const CLOSE_DELAY_MS = 1200;
+
 export function useSyncViewModel(visible: boolean, onClose: () => void) {
   const { t, colors } = useUI();
   const tabState = useSyncTabState(visible);
@@ -44,13 +48,13 @@ export function useSyncViewModel(visible: boolean, onClose: () => void) {
       return;
     }
     tabState.setCopied(true);
-    timers.current.push(setTimeout(() => tabState.setCopied(false), 2500));
+    timers.current.push(setTimeout(() => tabState.setCopied(false), COPIED_RESET_DELAY_MS));
   };
   const handleImport = () => {
     const ok = rawImport(tabState.pasteText);
     if (ok) {
       tabState.setImportResult("success");
-      timers.current.push(setTimeout(() => onClose(), 1200));
+      timers.current.push(setTimeout(() => onClose(), CLOSE_DELAY_MS));
     } else {
       tabState.setImportResult("error");
     }
