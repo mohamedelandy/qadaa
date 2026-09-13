@@ -39,6 +39,7 @@ appId: com.melnady.qadaa
     timeout: 5000
 - tapOn:
     id: sync-import-btn
+    optional: true
 - waitForAnimationToEnd
 - extendedWaitUntil:
     visible:
