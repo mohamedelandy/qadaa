@@ -61,11 +61,29 @@ export function buildFlameGrid(cells: WeeklyGridCell[]): FlameCell[] {
     intensity: 0,
     placeholder: true,
   }));
-  const real: FlameCell[] = tail.map((c, i) => ({
-    ...c,
-    intensity: computeFlameTier(consecutiveRun(cells, start + i)),
-    placeholder: false,
-  }));
+
+  let currentRun = 0;
+  if (start > 0) {
+    for (let i = start - 1; i >= Math.max(0, start - 8); i--) {
+      if (!cells[i]?.logged) break;
+      currentRun++;
+    }
+  }
+
+  const real: FlameCell[] = tail.map((c) => {
+    if (c.logged) {
+      currentRun++;
+    } else {
+      currentRun = 0;
+    }
+    const runForIntensity = Math.min(currentRun, 8);
+    return {
+      ...c,
+      intensity: computeFlameTier(runForIntensity),
+      placeholder: false,
+    };
+  });
+
   const grid = [...placeholders, ...real];
   const remainder = grid.length % 7;
   const trailing: FlameCell[] =
