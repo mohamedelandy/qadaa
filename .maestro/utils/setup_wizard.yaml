@@ -11,12 +11,14 @@ appId: com.melnady.qadaa
     id: wizard-age-input
 - eraseText
 - inputText: "28"
-- hideKeyboard
+- tapOn:
+    id: wizard-step1-screen
 - tapOn:
     id: wizard-puberty-input
 - eraseText
 - inputText: "14"
-- hideKeyboard
+- tapOn:
+    id: wizard-step1-screen
 - swipe:
     start: 50%, 40%
     end: 50%, 30%
@@ -31,7 +33,8 @@ appId: com.melnady.qadaa
     id: wizard-years-quick-input
 - eraseText
 - inputText: "5"
-- hideKeyboard
+- tapOn:
+    id: wizard-step2-screen
 - swipe:
     start: 50%, 40%
     end: 50%, 30%
