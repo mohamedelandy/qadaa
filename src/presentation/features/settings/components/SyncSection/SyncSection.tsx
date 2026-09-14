@@ -117,8 +117,6 @@ export function SyncSection({ visible, onClose }: SyncSectionProps) {
               autoCapitalize="none"
               autoCorrect={false}
               spellCheck={false}
-              smartQuotesType="no"
-              smartDashesType="no"
             />
             {importResult === "error" && (
               <Text testID="sync-import-error" style={styles.importError}>

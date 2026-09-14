@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const iterations = 100000;
 const d = new Date();
 
