@@ -189,7 +189,7 @@ export default defineConfig([
     },
   },
   {
-    files: ["eslint.config.mts", "setupTests.ts"],
+    files: ["eslint.config.mts", "setupTests.ts", "src/services/logger.ts", "src/services/__tests__/logger.test.ts", "tools/benchmark_formatDate.js"],
     languageOptions: {
       parserOptions: {
         projectService: false,
