@@ -63,7 +63,8 @@ describe("useDayCompletionCelebration", () => {
     await rerender({ done: true });
     expect(Haptics.notificationAsync).toHaveBeenCalledTimes(1);
     const raw = result.current.celebrationStyle as unknown as
-      { transform: [{ scale: number }] } | (() => { transform: [{ scale: number }] });
+      | { transform: [{ scale: number }] }
+      | (() => { transform: [{ scale: number }] });
     const style = typeof raw === "function" ? raw() : raw;
     expect(style.transform[0].scale).toBe(1);
   });

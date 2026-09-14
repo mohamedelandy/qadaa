@@ -58,7 +58,6 @@ Qadaa is designed to work offline and does not require an account or server.
 - No credentials, API keys, signing artifacts, or environment files belong in this repository.
 - AsyncStorage is not a secure vault. Do not store authentication credentials or secrets in app state.
 
-
 ## Tech stack
 
 - Expo SDK `~57.0.16`
@@ -93,17 +92,17 @@ Press `i` for iOS or `a` for Android. Native widgets and other native capabiliti
 
 ## Useful commands
 
-| Command                | Purpose                                                                         |
-| ---------------------- | ------------------------------------------------------------------------------- |
-| `npm start`            | Start the Expo development server.                                              |
-| `npm run ios`          | Build and run the iOS app.                                                      |
-| `npm run android`      | Build and run the Android app.                                                  |
-| `npm run build`        | Run the strict TypeScript check without emitting files.                         |
-| `npm run lint`         | Run ESLint.                                                                     |
-| `npm run format:check` | Check Prettier formatting.                                                      |
-| `npm test`             | Run the Jest suite serially.                                                    |
-| `npm run test:ci`      | Run Jest with coverage thresholds.                                              |
-| `npm run verify:all`   | Run architecture, translation, formatting, lint, build, and CI checks.          |
+| Command                | Purpose                                                                |
+| ---------------------- | ---------------------------------------------------------------------- |
+| `npm start`            | Start the Expo development server.                                     |
+| `npm run ios`          | Build and run the iOS app.                                             |
+| `npm run android`      | Build and run the Android app.                                         |
+| `npm run build`        | Run the strict TypeScript check without emitting files.                |
+| `npm run lint`         | Run ESLint.                                                            |
+| `npm run format:check` | Check Prettier formatting.                                             |
+| `npm test`             | Run the Jest suite serially.                                           |
+| `npm run test:ci`      | Run Jest with coverage thresholds.                                     |
+| `npm run verify:all`   | Run architecture, translation, formatting, lint, build, and CI checks. |
 
 ## Architecture
 
