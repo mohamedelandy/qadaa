@@ -15,14 +15,12 @@ describe("Logger", () => {
   it("should not log debug in production", () => {
     Object.defineProperty(global, "__DEV__", { value: false, configurable: true });
     Logger.debug("test");
-    // eslint-disable-next-line no-console
     expect(console.debug).not.toHaveBeenCalled();
     Object.defineProperty(global, "__DEV__", { value: true, configurable: true });
   });
 
   it("should log info", () => {
     Logger.info("test info");
-    // eslint-disable-next-line no-console
     expect(console.info).toHaveBeenCalledWith(
       JSON.stringify({ level: "info", message: "test info" })
     );
