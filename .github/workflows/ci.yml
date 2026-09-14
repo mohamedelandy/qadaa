@@ -5,6 +5,19 @@ on:
     branches: [main, develop]
   pull_request:
     branches: [main]
+  # Manual full-suite runs: Actions → Qadaa CI → Run workflow → suite: regression
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: "Maestro suite to run on the iOS simulator"
+        type: choice
+        default: smoke
+        options:
+          - smoke
+          - regression
+  # Nightly full regression on the default branch.
+  schedule:
+    - cron: "0 2 * * *"
 
 jobs:
   quality:

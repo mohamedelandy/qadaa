@@ -113,12 +113,6 @@ export function SyncSection({ visible, onClose }: SyncSectionProps) {
                 setPasteText(v);
               }}
               placeholder={t("share.pastePlaceholder")}
-              placeholderTextColor={undefined}
-              autoCapitalize="none"
-              autoCorrect={false}
-              spellCheck={false}
-              smartQuotesType="no"
-              smartDashesType="no"
             />
             {importResult === "error" && (
               <Text testID="sync-import-error" style={styles.importError}>

@@ -82,9 +82,6 @@ export function useOnboardingSlideAnimation() {
   useEffect(() => {
     setMounted(true);
     const RM = { reduceMotion: ReduceMotion.System };
-
-    // Check if motion is reduced to optionally snap to final values
-
     containerX.value = withTiming(0, {
       duration: 280,
       easing: Easing.out(Easing.ease),

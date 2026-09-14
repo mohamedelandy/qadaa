@@ -29,10 +29,9 @@ export default function OnboardingScreen() {
         )}
       </View>
 
-      <View style={styles.slideArea}>
+      <View testID={`onboarding-slide-${currentSlide + 1}`} style={styles.slideArea}>
         {slide && (
           <OnboardingSlide
-            testID={`onboarding-slide-${currentSlide + 1}`}
             key={currentSlide}
             emoji={slide.emoji}
             title={slide.title}
