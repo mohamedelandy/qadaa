@@ -9,7 +9,6 @@ import { useSettingsTarget } from "./useSettingsTarget";
 import { useSettingsNotification } from "./useSettingsNotification";
 import { useSettingsSync } from "./useSettingsSync";
 import { useSettingsGraceDay } from "./useSettingsGraceDay";
-import { useSettingsFeedback } from "./useSettingsFeedback";
 import { useSettingsReset } from "./useSettingsReset";
 import { useSettingsStyles } from "./useSettingsStyles";
 export function useSettingsViewModel() {
@@ -35,8 +34,7 @@ export function useSettingsViewModel() {
   } = useSettingsNotification();
   const { syncVisible, setSyncVisible, handleExport, handleImport } = useSettingsSync();
   const { graceUsed, graceStatus } = useSettingsGraceDay();
-  const { handleFeedback } = useSettingsFeedback();
-  const { resetAll } = useSettingsReset();
+    const { resetAll } = useSettingsReset();
   const styles = useSettingsStyles();
   const graceBadgeStyle = graceUsed ? styles.graceBadgeUsed : styles.graceBadgeAvailable;
   return {
@@ -68,7 +66,6 @@ export function useSettingsViewModel() {
     handleTargetSave,
     handleExport,
     handleImport,
-    handleFeedback,
     resetAll,
   };
 }

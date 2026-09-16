@@ -47,7 +47,6 @@ export default function Settings() {
     handleTargetSave,
     handleExport,
     handleImport,
-    handleFeedback,
     resetAll,
   } = useSettingsViewModel();
   const clearance = useTabBarClearance(spacing[2]);
@@ -116,7 +115,7 @@ export default function Settings() {
 
             <GraceDaySection graceUsed={graceUsed} graceStatus={graceStatus} />
 
-            <FeedbackSection onFeedback={handleFeedback} />
+            <FeedbackSection />
 
             <Card>
               <ResetButton onReset={resetAll} />
