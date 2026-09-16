@@ -5,6 +5,8 @@
  * lives at the composition root in src/appBootstrap.ts.
  */
 import { buildWidgetPayload, type WidgetPayload, type WidgetPayloadInput } from "@domain/widget";
+import { Logger } from "./logger";
+
 const PUSH_DELAY_MS = 300;
 
 export interface WidgetSyncPorts {
@@ -31,7 +33,7 @@ export function createWidgetSync(ports: WidgetSyncPorts): {
       await ports.push(payload);
     } catch {
       if (__DEV__) {
-        console.warn("[widgetSync] sync failed");
+        Logger.warn("sync failed", { module: "widgetSync" });
       }
     }
   }

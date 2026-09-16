@@ -34,7 +34,7 @@ export function useSettingsViewModel() {
   } = useSettingsNotification();
   const { syncVisible, setSyncVisible, handleExport, handleImport } = useSettingsSync();
   const { graceUsed, graceStatus } = useSettingsGraceDay();
-    const { resetAll } = useSettingsReset();
+  const { resetAll } = useSettingsReset();
   const styles = useSettingsStyles();
   const graceBadgeStyle = graceUsed ? styles.graceBadgeUsed : styles.graceBadgeAvailable;
   return {
