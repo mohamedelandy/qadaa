@@ -5,6 +5,7 @@
  */
 import { createWidgetSync } from "@services/widgetSync";
 import { buildWidgetPayload, type WidgetPayloadInput } from "@domain/widget";
+import { Logger } from "../logger";
 
 const SNAPSHOT: WidgetPayloadInput = {
   prayers: {
@@ -40,6 +41,7 @@ const makePorts = () => {
 
 afterEach(() => {
   jest.useRealTimers();
+  jest.restoreAllMocks();
 });
 
 test("pushWidgetPayload builds and pushes a payload", async () => {
@@ -53,10 +55,9 @@ test("pushWidgetPayload builds and pushes a payload", async () => {
 test("pushWidgetPayload swallows port failures", async () => {
   const { ports } = makePorts();
   ports.push.mockRejectedValueOnce(new Error("native boom"));
-  const warn = jest.spyOn(require("../logger").Logger, "warn").mockImplementation(() => {});
+  const warn = jest.spyOn(Logger, "warn").mockImplementation(() => {});
   await expect(createWidgetSync(ports).pushWidgetPayload()).resolves.toBeUndefined();
   expect(warn).toHaveBeenCalled();
-  warn.mockRestore();
 });
 
 test("subscribe fans changes out through debounced pushes", () => {
@@ -76,19 +77,20 @@ test("subscribe fans changes out through debounced pushes", () => {
 });
 
 test("pushWidgetPayload swallows port failures silently in production", async () => {
-  const originalDev = global.__DEV__;
-  global.__DEV__ = false;
+  const originalDev = (global as unknown as { __DEV__: boolean }).__DEV__;
+  (global as unknown as { __DEV__: boolean }).__DEV__ = false;
 
-  const { ports } = makePorts();
-  ports.push.mockRejectedValueOnce(new Error("native boom"));
-  const warn = jest.spyOn(require("../logger").Logger, "warn").mockImplementation(() => {});
+  try {
+    const { ports } = makePorts();
+    ports.push.mockRejectedValueOnce(new Error("native boom"));
+    const warn = jest.spyOn(Logger, "warn").mockImplementation(() => {});
 
-  await expect(createWidgetSync(ports).pushWidgetPayload()).resolves.toBeUndefined();
+    await expect(createWidgetSync(ports).pushWidgetPayload()).resolves.toBeUndefined();
 
-  expect(warn).not.toHaveBeenCalled();
-
-  warn.mockRestore();
-  global.__DEV__ = originalDev;
+    expect(warn).not.toHaveBeenCalled();
+  } finally {
+    (global as unknown as { __DEV__: boolean }).__DEV__ = originalDev;
+  }
 });
 
 test("scheduleWidgetPush resets existing timeout", () => {
