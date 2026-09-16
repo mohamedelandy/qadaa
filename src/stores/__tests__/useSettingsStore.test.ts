@@ -245,6 +245,10 @@ describe("useSettingsStore backup/restore", () => {
     await expect(useSettingsStore.getState().importFromFile()).resolves.toBe(true);
     expect(useAppStore.getState().wizardComplete).toBe(true);
   });
+  test("importFromFile returns false and handles error when read fails", async () => {
+    importFromFile.mockRejectedValue(new Error("File read error"));
+    await expect(useSettingsStore.getState().importFromFile()).resolves.toBe(false);
+  });
   test("scheduleNotification grants, schedules, and returns true", async () => {
     requestNotificationPermissions.mockResolvedValue({ granted: true });
     const ok = await useSettingsStore.getState().scheduleNotification(8, 30);
