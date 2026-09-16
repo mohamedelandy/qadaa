@@ -50,8 +50,6 @@ test("pushWidgetPayload builds and pushes a payload", async () => {
   expect(ports.push).toHaveBeenCalledWith(buildWidgetPayload(SNAPSHOT));
 });
 
-
-
 test("subscribe fans changes out through debounced pushes", () => {
   jest.useFakeTimers();
   const { ports, emit } = makePorts();
@@ -68,18 +66,15 @@ test("subscribe fans changes out through debounced pushes", () => {
   expect(ports.push).toHaveBeenCalledTimes(1); // unsubscribed
 });
 
-
-
-
 describe("pushWidgetPayload failure handling", () => {
-  const originalDev = global.__DEV__;
+  const originalDev = __DEV__;
 
   afterEach(() => {
-    global.__DEV__ = originalDev;
+    Object.defineProperty(global, "__DEV__", { value: originalDev });
   });
 
   test("swallows port failures and logs warning in DEV mode", async () => {
-    global.__DEV__ = true;
+    Object.defineProperty(global, "__DEV__", { value: true });
     const { ports } = makePorts();
     ports.push.mockRejectedValueOnce(new Error("native boom"));
 
@@ -92,7 +87,7 @@ describe("pushWidgetPayload failure handling", () => {
   });
 
   test("swallows port failures silently when not in DEV mode", async () => {
-    global.__DEV__ = false;
+    Object.defineProperty(global, "__DEV__", { value: false });
     const { ports } = makePorts();
     ports.push.mockRejectedValueOnce(new Error("native boom"));
 
