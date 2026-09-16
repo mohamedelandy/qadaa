@@ -2,7 +2,8 @@
 /**
  * Feedback card: feedback button and hint.
  */
-import { View as RnView } from "react-native";
+import { memo, useCallback } from "react";
+import { View as RnView, Linking } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { PressableScale } from "@components/PressableScale/PressableScale";
 import { Text } from "@components/Text/Text";
@@ -12,19 +13,19 @@ import { spacing } from "@theme/spacing";
 import { useUI } from "@hooks/useUI";
 import { useSettingsStyles } from "../hooks/useSettingsStyles";
 
-interface FeedbackSectionProps {
-  onFeedback: () => void;
-}
-
-export function FeedbackSection({ onFeedback }: FeedbackSectionProps) {
+export const FeedbackSection = memo(function FeedbackSection() {
   const { t, colors } = useUI();
   const styles = useSettingsStyles();
+  const handleFeedback = useCallback(() => {
+    Linking.openURL("mailto:support@qadaa.app");
+  }, []);
+
   return (
     <Card>
       <SectionHeader label={t("settings.feedback")} />
       <PressableScale
         testID="settings-feedback-btn"
-        onPress={onFeedback}
+        onPress={handleFeedback}
         style={[{ marginTop: spacing[2] }, styles.feedbackButton]}
       >
         <RnView
@@ -46,4 +47,4 @@ export function FeedbackSection({ onFeedback }: FeedbackSectionProps) {
       </Text>
     </Card>
   );
-}
+});
