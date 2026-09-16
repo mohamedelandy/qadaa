@@ -74,3 +74,52 @@ test("subscribe fans changes out through debounced pushes", () => {
   jest.advanceTimersByTime(300);
   expect(ports.push).toHaveBeenCalledTimes(1); // unsubscribed
 });
+
+test("pushWidgetPayload swallows port failures silently in production", async () => {
+  const originalDev = global.__DEV__;
+  global.__DEV__ = false;
+
+  const { ports } = makePorts();
+  ports.push.mockRejectedValueOnce(new Error("native boom"));
+  const warn = jest.spyOn(require("../logger").Logger, "warn").mockImplementation(() => {});
+
+  await expect(createWidgetSync(ports).pushWidgetPayload()).resolves.toBeUndefined();
+
+  expect(warn).not.toHaveBeenCalled();
+
+  warn.mockRestore();
+  global.__DEV__ = originalDev;
+});
+
+test("scheduleWidgetPush resets existing timeout", () => {
+  jest.useFakeTimers();
+  const { ports } = makePorts();
+  const sync = createWidgetSync(ports);
+
+  sync.scheduleWidgetPush();
+  jest.advanceTimersByTime(150); // Advance half the time
+  sync.scheduleWidgetPush(); // Resets the timer
+  jest.advanceTimersByTime(150);
+
+  // The original timer would have fired now, but it was reset
+  expect(ports.push).not.toHaveBeenCalled();
+
+  jest.advanceTimersByTime(150);
+  // Now the reset timer should fire
+  expect(ports.push).toHaveBeenCalledTimes(1);
+});
+
+test("subscribeWidgetSync unsubscribe clears pending push", () => {
+  jest.useFakeTimers();
+  const { ports, emit } = makePorts();
+  const sync = createWidgetSync(ports);
+  const unsubscribe = sync.subscribeWidgetSync();
+
+  emit(); // Triggers scheduleWidgetPush
+  jest.advanceTimersByTime(150);
+
+  unsubscribe(); // Should clear the timer
+  jest.advanceTimersByTime(150);
+
+  expect(ports.push).not.toHaveBeenCalled();
+});
