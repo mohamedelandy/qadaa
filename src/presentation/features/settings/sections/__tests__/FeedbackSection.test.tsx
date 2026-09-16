@@ -5,10 +5,11 @@
 import { render, screen, userEvent } from "@testing-library/react-native";
 import { ThemeProvider } from "@theme/ThemeProvider";
 import { Linking } from "react-native";
+import { FeedbackSection } from "../FeedbackSection";
+
 jest.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (k: string) => k, i18n: { language: "ar" } }),
 }));
-import { FeedbackSection } from "../FeedbackSection";
 
 jest.useFakeTimers();
 
@@ -26,7 +27,7 @@ describe("FeedbackSection", () => {
 
   it("calls Linking.openURL when the feedback button is pressed", async () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-    const openURLSpy = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined as never);
+    const openURLSpy = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
 
     await render(
       <ThemeProvider>
