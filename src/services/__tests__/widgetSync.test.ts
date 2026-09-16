@@ -50,15 +50,6 @@ test("pushWidgetPayload builds and pushes a payload", async () => {
   expect(ports.push).toHaveBeenCalledWith(buildWidgetPayload(SNAPSHOT));
 });
 
-test("pushWidgetPayload swallows port failures", async () => {
-  const { ports } = makePorts();
-  ports.push.mockRejectedValueOnce(new Error("native boom"));
-  const warn = jest.spyOn(require("../logger").Logger, "warn").mockImplementation(() => {});
-  await expect(createWidgetSync(ports).pushWidgetPayload()).resolves.toBeUndefined();
-  expect(warn).toHaveBeenCalled();
-  warn.mockRestore();
-});
-
 test("subscribe fans changes out through debounced pushes", () => {
   jest.useFakeTimers();
   const { ports, emit } = makePorts();
@@ -73,4 +64,38 @@ test("subscribe fans changes out through debounced pushes", () => {
   emit();
   jest.advanceTimersByTime(300);
   expect(ports.push).toHaveBeenCalledTimes(1); // unsubscribed
+});
+
+describe("pushWidgetPayload failure handling", () => {
+  const originalDev = __DEV__;
+
+  afterEach(() => {
+    Object.defineProperty(global, "__DEV__", { value: originalDev });
+  });
+
+  test("swallows port failures and logs warning in DEV mode", async () => {
+    Object.defineProperty(global, "__DEV__", { value: true });
+    const { ports } = makePorts();
+    ports.push.mockRejectedValueOnce(new Error("native boom"));
+
+    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+
+    await expect(createWidgetSync(ports).pushWidgetPayload()).resolves.toBeUndefined();
+
+    expect(warnSpy).toHaveBeenCalledWith("[widgetSync] sync failed");
+    warnSpy.mockRestore();
+  });
+
+  test("swallows port failures silently when not in DEV mode", async () => {
+    Object.defineProperty(global, "__DEV__", { value: false });
+    const { ports } = makePorts();
+    ports.push.mockRejectedValueOnce(new Error("native boom"));
+
+    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+
+    await expect(createWidgetSync(ports).pushWidgetPayload()).resolves.toBeUndefined();
+
+    expect(warnSpy).not.toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
 });
