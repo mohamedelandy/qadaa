@@ -17,7 +17,7 @@ export const FeedbackSection = memo(function FeedbackSection() {
   const { t, colors } = useUI();
   const styles = useSettingsStyles();
   const handleFeedback = useCallback(() => {
-    Linking.openURL("mailto:support@qadaa.app");
+    void Linking.openURL("mailto:support@qadaa.app");
   }, []);
 
   return (

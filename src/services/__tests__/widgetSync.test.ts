@@ -5,6 +5,7 @@
  */
 import { createWidgetSync } from "@services/widgetSync";
 import { buildWidgetPayload, type WidgetPayloadInput } from "@domain/widget";
+import { Logger } from "../logger";
 
 const SNAPSHOT: WidgetPayloadInput = {
   prayers: {
@@ -40,6 +41,7 @@ const makePorts = () => {
 
 afterEach(() => {
   jest.useRealTimers();
+  jest.restoreAllMocks();
 });
 
 test("pushWidgetPayload builds and pushes a payload", async () => {
@@ -48,6 +50,14 @@ test("pushWidgetPayload builds and pushes a payload", async () => {
   await sync.pushWidgetPayload();
   expect(ports.push).toHaveBeenCalledTimes(1); // arg === buildWidgetPayload(SNAPSHOT)
   expect(ports.push).toHaveBeenCalledWith(buildWidgetPayload(SNAPSHOT));
+});
+
+test("pushWidgetPayload swallows port failures", async () => {
+  const { ports } = makePorts();
+  ports.push.mockRejectedValueOnce(new Error("native boom"));
+  const warn = jest.spyOn(Logger, "warn").mockImplementation(() => {});
+  await expect(createWidgetSync(ports).pushWidgetPayload()).resolves.toBeUndefined();
+  expect(warn).toHaveBeenCalled();
 });
 
 test("subscribe fans changes out through debounced pushes", () => {
@@ -66,36 +76,52 @@ test("subscribe fans changes out through debounced pushes", () => {
   expect(ports.push).toHaveBeenCalledTimes(1); // unsubscribed
 });
 
-describe("pushWidgetPayload failure handling", () => {
-  const originalDev = __DEV__;
+test("pushWidgetPayload swallows port failures silently in production", async () => {
+  const originalDev = (global as unknown as { __DEV__: boolean }).__DEV__;
+  (global as unknown as { __DEV__: boolean }).__DEV__ = false;
 
-  afterEach(() => {
-    Object.defineProperty(global, "__DEV__", { value: originalDev });
-  });
-
-  test("swallows port failures and logs warning in DEV mode", async () => {
-    Object.defineProperty(global, "__DEV__", { value: true });
+  try {
     const { ports } = makePorts();
     ports.push.mockRejectedValueOnce(new Error("native boom"));
-
-    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+    const warn = jest.spyOn(Logger, "warn").mockImplementation(() => {});
 
     await expect(createWidgetSync(ports).pushWidgetPayload()).resolves.toBeUndefined();
 
-    expect(warnSpy).toHaveBeenCalledWith("[widgetSync] sync failed");
-    warnSpy.mockRestore();
-  });
+    expect(warn).not.toHaveBeenCalled();
+  } finally {
+    (global as unknown as { __DEV__: boolean }).__DEV__ = originalDev;
+  }
+});
 
-  test("swallows port failures silently when not in DEV mode", async () => {
-    Object.defineProperty(global, "__DEV__", { value: false });
-    const { ports } = makePorts();
-    ports.push.mockRejectedValueOnce(new Error("native boom"));
+test("scheduleWidgetPush resets existing timeout", () => {
+  jest.useFakeTimers();
+  const { ports } = makePorts();
+  const sync = createWidgetSync(ports);
 
-    const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+  sync.scheduleWidgetPush();
+  jest.advanceTimersByTime(150); // Advance half the time
+  sync.scheduleWidgetPush(); // Resets the timer
+  jest.advanceTimersByTime(150);
 
-    await expect(createWidgetSync(ports).pushWidgetPayload()).resolves.toBeUndefined();
+  // The original timer would have fired now, but it was reset
+  expect(ports.push).not.toHaveBeenCalled();
 
-    expect(warnSpy).not.toHaveBeenCalled();
-    warnSpy.mockRestore();
-  });
+  jest.advanceTimersByTime(150);
+  // Now the reset timer should fire
+  expect(ports.push).toHaveBeenCalledTimes(1);
+});
+
+test("subscribeWidgetSync unsubscribe clears pending push", () => {
+  jest.useFakeTimers();
+  const { ports, emit } = makePorts();
+  const sync = createWidgetSync(ports);
+  const unsubscribe = sync.subscribeWidgetSync();
+
+  emit(); // Triggers scheduleWidgetPush
+  jest.advanceTimersByTime(150);
+
+  unsubscribe(); // Should clear the timer
+  jest.advanceTimersByTime(150);
+
+  expect(ports.push).not.toHaveBeenCalled();
 });
