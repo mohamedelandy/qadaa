@@ -4,9 +4,9 @@
  */
 import { View } from "react-native";
 import { useStep3PaceViewModel } from "./Step3Pace.viewmodel";
-import { Text } from "@components/Text/Text";
-import { TargetSelection } from "@presentation/components/TargetSelection/TargetSelection";
 
+import { Text } from "@components/Text/Text";
+import { TargetSelection } from "@components/TargetSelection/TargetSelection";
 export function Step3Pace() {
   const {
     t,

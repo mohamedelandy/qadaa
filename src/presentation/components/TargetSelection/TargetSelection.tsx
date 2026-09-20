@@ -34,9 +34,7 @@ export function TargetSelection({
   return (
     <View>
       <View
-        testID={
-          testIDPrefix === "settings" ? "settings-presets-grid" : "step3-presets-grid"
-        }
+        testID={testIDPrefix === "settings" ? "settings-presets-grid" : "step3-presets-grid"}
         style={styles.grid}
       >
         {presets.map((n) => {

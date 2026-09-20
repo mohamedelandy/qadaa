@@ -20,35 +20,30 @@ import { BackupSection } from "./sections/BackupSection";
 import { FeedbackSection } from "./sections/FeedbackSection";
 import { GraceDaySection } from "./sections/GraceDaySection";
 import { TargetSection } from "./sections/TargetSection";
+import { useSettingsTarget } from "./hooks/useSettingsTarget";
+import { useSettingsSync } from "./hooks/useSettingsSync";
+import { useSettingsLanguage } from "./hooks/useSettingsLanguage";
+import { useSettingsNotification } from "./hooks/useSettingsNotification";
+import { useSettingsReset } from "./hooks/useSettingsReset";
 import { spacing } from "@presentation/theme/spacing";
 import { useTabBarClearance } from "@hooks/useTabBarClearance";
 export default function Settings() {
+  const { t, isDark, toggleTheme, styles, graceUsed, graceStatus } = useSettingsViewModel();
+  const { language, setLanguage } = useSettingsLanguage();
   const {
-    t,
-    isDark,
-    toggleTheme,
-    styles,
-    language,
-    notificationHour,
-    notificationMinute,
-    notificationAmPm,
-    graceUsed,
-    graceStatus,
-    targetSaved,
     preset,
-    selectPreset,
-    setCustomTarget,
     customTarget,
     isCustom,
     isValid,
-    setSyncVisible,
-    setLanguage,
-    setNotificationTime,
+    targetSaved,
+    selectPreset,
+    setCustomTarget,
     handleTargetSave,
-    handleExport,
-    handleImport,
-    resetAll,
-  } = useSettingsViewModel();
+  } = useSettingsTarget();
+  const { notificationHour, notificationMinute, notificationAmPm, setNotificationTime } =
+    useSettingsNotification();
+  const { setSyncVisible, handleExport, handleImport } = useSettingsSync();
+  const { resetAll } = useSettingsReset();
   const clearance = useTabBarClearance(spacing[2]);
   const onScroll = useMinimizeOnScroll();
   return (

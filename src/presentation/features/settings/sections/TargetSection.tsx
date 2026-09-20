@@ -3,6 +3,7 @@
  * Daily target card: preset chips, custom input, and save button.
  */
 import { View as RnView } from "react-native";
+
 import { PressableScale } from "@components/PressableScale/PressableScale";
 import { Text } from "@components/Text/Text";
 import { Card } from "@components/Card/Card";
@@ -10,7 +11,7 @@ import { SectionHeader } from "@components/SectionHeader/SectionHeader";
 import { useUI } from "@hooks/useUI";
 import { useSettingsStyles } from "../hooks/useSettingsStyles";
 import { LottieView } from "@components/Lottie/LottieView";
-import { TargetSelection } from "@presentation/components/TargetSelection/TargetSelection";
+import { TargetSelection } from "@components/TargetSelection/TargetSelection";
 
 interface TargetSectionProps {
   preset: number;
