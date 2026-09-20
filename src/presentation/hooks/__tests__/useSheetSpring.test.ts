@@ -60,9 +60,12 @@ describe("useSheetSpring", () => {
   });
 
   it("animates when visibility changes from false to true", async () => {
-    const { result, rerender } = await renderHook(({ visible }) => useSheetSpring(visible), {
-      initialProps: { visible: false },
-    });
+    const { result, rerender } = await renderHook(
+      ({ visible }: { visible: boolean }) => useSheetSpring(visible),
+      {
+        initialProps: { visible: false },
+      }
+    );
 
     expect(result.current.translateY.value).toBe(SCREEN_HEIGHT);
     expect(result.current.opacity.value).toBe(0);
