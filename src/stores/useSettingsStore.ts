@@ -184,14 +184,19 @@ export const useSettingsStore = create<SettingsState & SettingsActions>()(
         }
       },
       scheduleNotification: async (hour, minute) => {
-        const { granted } = await requestNotificationPermissions();
-        if (granted) {
-          set({ notificationPermission: "granted" });
-          await scheduleDailyNotification(hour, minute);
-          return true;
+        try {
+          const { granted } = await requestNotificationPermissions();
+          if (granted) {
+            set({ notificationPermission: "granted" });
+            await scheduleDailyNotification(hour, minute);
+            return true;
+          }
+          set({ notificationPermission: "denied" });
+          return false;
+        } catch {
+          if (__DEV__) Logger.warn("failed to schedule notification", { module: "notifications" });
+          return false;
         }
-        set({ notificationPermission: "denied" });
-        return false;
       },
       copyBackupToClipboard: async () => {
         const json = generateBackupJson(get().getBackupData());

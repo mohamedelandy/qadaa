@@ -263,6 +263,12 @@ describe("useSettingsStore backup/restore", () => {
     expect(useSettingsStore.getState().notificationPermission).toBe("denied");
     expect(scheduleDailyNotification).not.toHaveBeenCalled();
   });
+  test("scheduleNotification returns false and handles error gracefully", async () => {
+    requestNotificationPermissions.mockResolvedValue({ granted: true });
+    jest.mocked(scheduleDailyNotification).mockRejectedValueOnce(new Error("Scheduling failed"));
+    const ok = await useSettingsStore.getState().scheduleNotification(8, 30);
+    expect(ok).toBe(false);
+  });
   test("copyBackupToClipboard serializes and copies", async () => {
     useGamificationStore.getState().incrementPoints(7);
     await useSettingsStore.getState().copyBackupToClipboard();
