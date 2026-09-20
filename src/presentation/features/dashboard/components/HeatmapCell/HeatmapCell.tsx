@@ -20,8 +20,123 @@ import { useSharedStyles } from "@theme/sharedStyles";
 import { spacing } from "@theme/spacing";
 import { LottieView } from "@components/Lottie/LottieView";
 import { getHeatmapPalette, heatmapFill, heatmapGlow } from "./heatmapPalette";
+
 const PULSE_DURATION = 1800;
 const PULSE_OFFSET = 900;
+
+function useMountAnimation(mountDelay: number) {
+  const mount = useSharedValue(0);
+
+  useEffect(() => {
+    mount.value = withDelay(
+      mountDelay,
+      withTiming(1, { duration: 240, easing: Easing.out(Easing.cubic) })
+    );
+  }, [mount, mountDelay]);
+
+  return mount;
+}
+
+function useBurstAnimation(intensity: number) {
+  const burst = useSharedValue(0);
+  const prevLogged = useRef(intensity > 0);
+  const [showBurst, setShowBurst] = useState(false);
+
+  useEffect(() => {
+    const nowLogged = intensity > 0;
+    if (nowLogged && !prevLogged.current) {
+      setShowBurst(true);
+      burst.value = withSequence(
+        withTiming(1, { duration: 120, easing: Easing.out(Easing.quad) }),
+        withTiming(0, { duration: 300, easing: Easing.inOut(Easing.quad) })
+      );
+    }
+    prevLogged.current = nowLogged;
+  }, [intensity, burst]);
+
+  return { burst, showBurst, setShowBurst };
+}
+
+interface TodayRingProps {
+  isToday: boolean;
+  ringColor: string;
+  ringOuterColor: string;
+  borderRadius: number;
+}
+
+function TodayRing({ isToday, ringColor, ringOuterColor, borderRadius }: TodayRingProps) {
+  const ring = useSharedValue(0);
+  const ringOuter = useSharedValue(0);
+
+  useEffect(() => {
+    if (!isToday) return;
+    ring.value = withRepeat(
+      withTiming(1, { duration: PULSE_DURATION, easing: Easing.inOut(Easing.ease) }),
+      -1,
+      true
+    );
+    ringOuter.value = withDelay(
+      PULSE_OFFSET,
+      withRepeat(
+        withTiming(1, { duration: PULSE_DURATION, easing: Easing.inOut(Easing.ease) }),
+        -1,
+        true
+      )
+    );
+  }, [isToday, ring, ringOuter]);
+
+  const ringStyle = useAnimatedStyle(
+    () => ({
+      borderColor: ringColor,
+      opacity: interpolate(ring.value, [0, 1], [0.45, 1.0]),
+      transform: [{ scale: interpolate(ring.value, [0, 1], [1.0, 1.12]) }],
+    }),
+    [ringColor]
+  );
+
+  const ringOuterStyle = useAnimatedStyle(
+    () => ({
+      borderColor: ringOuterColor,
+      opacity: interpolate(ringOuter.value, [0, 1], [0.0, 0.7]),
+      transform: [{ scale: interpolate(ringOuter.value, [0, 1], [1.0, 1.28]) }],
+    }),
+    [ringOuterColor]
+  );
+
+  if (!isToday) return null;
+
+  return (
+    <>
+      <Animated.View
+        testID="heatmap-ring"
+        pointerEvents="none"
+        style={[
+          {
+            position: "absolute",
+            inset: -spacing[0.5],
+            borderRadius: borderRadius + 2,
+            borderWidth: 2,
+          },
+          ringStyle,
+        ]}
+      />
+      <Animated.View
+        testID="heatmap-ring-outer"
+        pointerEvents="none"
+        style={[
+          {
+            position: "absolute",
+            inset: -spacing[1],
+            borderRadius: borderRadius + 4,
+            borderWidth: 3,
+          },
+          ringOuterStyle,
+        ]}
+      />
+    </>
+  );
+}
+
 interface HeatmapCellProps {
   intensity: number;
   isToday: boolean;
@@ -52,45 +167,9 @@ function PlaceholderCell({ style }: { style?: StyleProp<ViewStyle> }) {
 }
 function ActiveCell({ intensity, isToday, mountDelay = 0, style }: HeatmapCellProps) {
   const { colors, borderRadius: br } = useSharedStyles();
-  const mount = useSharedValue(0);
-  const burst = useSharedValue(0);
-  const ring = useSharedValue(0);
-  const ringOuter = useSharedValue(0);
-  const prevLogged = useRef(intensity > 0);
-  const [showBurst, setShowBurst] = useState(false);
-  useEffect(() => {
-    mount.value = withDelay(
-      mountDelay,
-      withTiming(1, { duration: 240, easing: Easing.out(Easing.cubic) })
-    );
-  }, [mount, mountDelay]);
-  useEffect(() => {
-    const nowLogged = intensity > 0;
-    if (nowLogged && !prevLogged.current) {
-      setShowBurst(true);
-      burst.value = withSequence(
-        withTiming(1, { duration: 120, easing: Easing.out(Easing.quad) }),
-        withTiming(0, { duration: 300, easing: Easing.inOut(Easing.quad) })
-      );
-    }
-    prevLogged.current = nowLogged;
-  }, [intensity, burst]);
-  useEffect(() => {
-    if (!isToday) return;
-    ring.value = withRepeat(
-      withTiming(1, { duration: PULSE_DURATION, easing: Easing.inOut(Easing.ease) }),
-      -1,
-      true
-    );
-    ringOuter.value = withDelay(
-      PULSE_OFFSET,
-      withRepeat(
-        withTiming(1, { duration: PULSE_DURATION, easing: Easing.inOut(Easing.ease) }),
-        -1,
-        true
-      )
-    );
-  }, [isToday, ring, ringOuter]);
+  const mount = useMountAnimation(mountDelay);
+  const { burst, showBurst, setShowBurst } = useBurstAnimation(intensity);
+
   const logged = intensity > 0;
   const palette = getHeatmapPalette(colors);
   const fillColor = logged ? (heatmapFill(palette, intensity) ?? colors.cardDim) : colors.cardDim;
@@ -111,22 +190,7 @@ function ActiveCell({ intensity, isToday, mountDelay = 0, style }: HeatmapCellPr
     []
   );
   const burstStyle = useAnimatedStyle(() => ({ opacity: burst.value * 0.65 }), []);
-  const ringStyle = useAnimatedStyle(
-    () => ({
-      borderColor: ringColor,
-      opacity: interpolate(ring.value, [0, 1], [0.45, 1.0]),
-      transform: [{ scale: interpolate(ring.value, [0, 1], [1.0, 1.12]) }],
-    }),
-    [ringColor]
-  );
-  const ringOuterStyle = useAnimatedStyle(
-    () => ({
-      borderColor: ringOuterColor,
-      opacity: interpolate(ringOuter.value, [0, 1], [0.0, 0.7]),
-      transform: [{ scale: interpolate(ringOuter.value, [0, 1], [1.0, 1.28]) }],
-    }),
-    [ringOuterColor]
-  );
+
   return (
     <Animated.View
       testID={isToday ? "heatmap-cell-today" : "heatmap-cell"}
@@ -219,37 +283,12 @@ function ActiveCell({ intensity, isToday, mountDelay = 0, style }: HeatmapCellPr
         />
       )}
 
-      {isToday && (
-        <Animated.View
-          testID="heatmap-ring"
-          pointerEvents="none"
-          style={[
-            {
-              position: "absolute",
-              inset: -spacing[0.5],
-              borderRadius: br.md + 2,
-              borderWidth: 2,
-            },
-            ringStyle,
-          ]}
-        />
-      )}
-
-      {isToday && (
-        <Animated.View
-          testID="heatmap-ring-outer"
-          pointerEvents="none"
-          style={[
-            {
-              position: "absolute",
-              inset: -spacing[1],
-              borderRadius: br.md + 4,
-              borderWidth: 3,
-            },
-            ringOuterStyle,
-          ]}
-        />
-      )}
+      <TodayRing
+        isToday={isToday}
+        ringColor={ringColor}
+        ringOuterColor={ringOuterColor}
+        borderRadius={br.md}
+      />
     </Animated.View>
   );
 }
