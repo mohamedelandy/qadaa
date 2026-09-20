@@ -2,9 +2,10 @@
 /**
  * Daily recovery target selection: preset chips or validated custom value with haptic save feedback.
  */
-import { useState, useCallback, useEffect, useMemo, useRef } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import * as Haptics from "expo-haptics";
 import { useSettingsStore } from "@stores/useSettingsStore";
+import { useTimeout } from "@hooks/useTimeout";
 const PRESETS = [1, 5, 10] as const;
 type PresetValue = (typeof PRESETS)[number];
 function isPreset(n: number): n is PresetValue {
@@ -19,15 +20,7 @@ export function useSettingsTarget() {
     initialPreset === -1 ? String(dailyTarget) : ""
   );
   const [targetSaved, setTargetSaved] = useState(false);
-  const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => {
-    return () => {
-      if (savedTimer.current) {
-        clearTimeout(savedTimer.current);
-        savedTimer.current = null;
-      }
-    };
-  }, []);
+  const timeout = useTimeout();
   useEffect(() => {
     if (isPreset(dailyTarget)) {
       setPreset(dailyTarget);
@@ -51,12 +44,8 @@ export function useSettingsTarget() {
     setDailyTarget(target);
     void Haptics.selectionAsync();
     setTargetSaved(true);
-    if (savedTimer.current) clearTimeout(savedTimer.current);
-    savedTimer.current = setTimeout(() => {
-      setTargetSaved(false);
-      savedTimer.current = null;
-    }, 2000);
-  }, [isCustom, customTargetNum, preset, isValid, setDailyTarget]);
+    timeout.set(() => setTargetSaved(false), 2000);
+  }, [isCustom, customTargetNum, preset, isValid, setDailyTarget, timeout]);
   return {
     preset,
     selectPreset,
