@@ -10,7 +10,6 @@ import { useHeroCardViewModel } from "./HeroCard.viewmodel";
 import { useHeroCardStyles } from "./HeroCard.styles";
 import { Text } from "@components/Text/Text";
 import { LottieView } from "@components/Lottie/LottieView";
-import { spacing } from "@theme/spacing";
 interface HeroCardProps {
   testID?: string;
   showCelebration?: boolean;
