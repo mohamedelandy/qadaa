@@ -31,7 +31,16 @@ export function computeStreakState(input: ComputeStreakInput): ComputeStreakStat
   const { today, yesterday, twoDaysAgo, currentMonth } = input;
   let streak = currentStreak;
   let nextGraceUsedMonth = graceUsedMonth;
-  const nextLoggedDates = loggedDates.includes(today) ? loggedDates : [...loggedDates, today];
+  const len = loggedDates.length;
+  let hasToday = false;
+  if (len > 0) {
+    if (loggedDates[len - 1] === today) {
+      hasToday = true;
+    } else {
+      hasToday = loggedDates.includes(today);
+    }
+  }
+  const nextLoggedDates = hasToday ? loggedDates : [...loggedDates, today];
   if (lastLogDate !== null && lastLogDate > today) {
     return {
       streak,
