@@ -3,7 +3,8 @@
  * Modal popover anchored to a prayer cell offering +5/+10 or custom batch logging of missed prayers.
  */
 import { useEffect } from "react";
-import { View, Pressable, TextInput, Modal, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Pressable, TextInput, Modal } from "react-native";
+import { KeyboardAvoidingView } from "@components/KeyboardAvoidingView";
 import { useBatchLogPopoverViewModel } from "./BatchLogPopover.viewmodel";
 import { PressableScale } from "@components/PressableScale/PressableScale";
 import { useUI } from "@hooks/useUI";
@@ -58,10 +59,7 @@ export function BatchLogPopover(props: BatchLogPopoverProps) {
       onRequestClose={props.onClose}
       statusBarTranslucent
     >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={styles.scrim}
-      >
+      <KeyboardAvoidingView style={styles.scrim}>
         <Pressable
           style={styles.backdrop}
           onPress={dismissKeyboard}

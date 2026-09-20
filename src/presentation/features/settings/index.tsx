@@ -2,8 +2,7 @@
 /**
  * Settings route — thin screen composing appearance, target, backup/sync, grace-day, and feedback sections.
  */
-import { Platform } from "react-native";
-import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+import { KeyboardAvoidingView } from "@components/KeyboardAvoidingView";
 import Animated from "react-native-reanimated";
 import { Text } from "@components/Text/Text";
 import { View } from "@components/View/View";
@@ -53,10 +52,7 @@ export default function Settings() {
   const onScroll = useMinimizeOnScroll();
   return (
     <PageLayout testID="settings-screen">
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
+      <KeyboardAvoidingView style={{ flex: 1 }}>
         <Animated.ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
