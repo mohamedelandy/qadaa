@@ -5,26 +5,28 @@
 import { useMemo } from "react";
 import { useUI } from "@hooks/useUI";
 import { useGamificationStore } from "@stores/useGamificationStore";
-import { toLocalISODate, addDays, dayOfYear } from "@domain/date";
+import { toLocalISODate, dayOfYear } from "@domain/date";
 export function useDashboardCalendar() {
   const { t } = useUI();
   const loggedDates = useGamificationStore((s) => s.loggedDates);
   const today = toLocalISODate(new Date());
   const weeklyGridData = useMemo(() => {
-    const cells: {
+    const cells = new Array<{
       date: string;
       logged: boolean;
       isToday: boolean;
-    }[] = [];
-    const now = new Date();
+    }>(35);
+    const cursor = new Date();
+    cursor.setDate(cursor.getDate() - 34);
     const loggedSet = new Set(loggedDates);
-    for (let i = 34; i >= 0; i--) {
-      const dateStr = toLocalISODate(addDays(now, -i));
-      cells.push({
+    for (let i = 0; i < 35; i++) {
+      const dateStr = toLocalISODate(cursor);
+      cells[i] = {
         date: dateStr,
         logged: loggedSet.has(dateStr),
         isToday: dateStr === today,
-      });
+      };
+      cursor.setDate(cursor.getDate() + 1);
     }
     return cells;
   }, [loggedDates, today]);
