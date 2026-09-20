@@ -67,16 +67,19 @@ describe("useNotificationDeepLink", () => {
 
   it("replaces to the reminder route when response changes dynamically", async () => {
     mockUseLastNotificationResponse.mockReturnValue(null);
-    const { rerender } = await renderHook((props: { enabled: boolean }) => useNotificationDeepLink(props.enabled), {
-      initialProps: { enabled: true },
-    });
+    const { rerender } = await renderHook(
+      (props: { enabled: boolean }) => useNotificationDeepLink(props.enabled),
+      {
+        initialProps: { enabled: true },
+      }
+    );
 
     expect(mockRouter.replace).not.toHaveBeenCalled();
 
     // Simulate response arriving
     mockUseLastNotificationResponse.mockReturnValue({ actionIdentifier: "open" });
     await act(async () => {
-        await rerender({ enabled: true });
+      await rerender({ enabled: true });
     });
 
     expect(mockRouter.replace).toHaveBeenCalledWith(REMINDER_ROUTE);
@@ -85,15 +88,18 @@ describe("useNotificationDeepLink", () => {
 
   it("replaces to the reminder route when enabled state changes dynamically", async () => {
     mockUseLastNotificationResponse.mockReturnValue({ actionIdentifier: "open" });
-    const { rerender } = await renderHook((props: { enabled: boolean }) => useNotificationDeepLink(props.enabled), {
-      initialProps: { enabled: false },
-    });
+    const { rerender } = await renderHook(
+      (props: { enabled: boolean }) => useNotificationDeepLink(props.enabled),
+      {
+        initialProps: { enabled: false },
+      }
+    );
 
     expect(mockRouter.replace).not.toHaveBeenCalled();
 
     // Enable the hook
     await act(async () => {
-        await rerender({ enabled: true });
+      await rerender({ enabled: true });
     });
 
     expect(mockRouter.replace).toHaveBeenCalledWith(REMINDER_ROUTE);
