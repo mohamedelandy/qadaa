@@ -53,6 +53,10 @@ describe("parseBackupJson", () => {
     expect(parseBackupJson("not json")).toBeNull();
   });
 
+  it("returns null for malformed JSON causing parse error", () => {
+    expect(parseBackupJson("{invalid}")).toBeNull();
+  });
+
   it("rejects oversized input before parsing", () => {
     expect(parseBackupJson("x".repeat(250_001))).toBeNull();
   });
@@ -66,6 +70,7 @@ describe("parseBackupJson", () => {
     const missingPrayers = { ...SAMPLE, prayers: { fajr: { recovered: 0 } } };
     expect(parseBackupJson(JSON.stringify(missingPrayers))).toBeNull();
   });
+
   it("rejects unknown versions (schema is locked to version 1)", () => {
     expect(parseBackupJson(JSON.stringify({ ...SAMPLE, version: 2 }))).toBeNull();
   });
