@@ -2,8 +2,7 @@
 /**
  * Settings route — thin screen composing appearance, target, backup/sync, grace-day, and feedback sections.
  */
-import { Platform } from "react-native";
-import { KeyboardAvoidingView } from "react-native-keyboard-controller";
+import { KeyboardAvoidingView } from "@components/KeyboardAvoidingView";
 import { Text } from "@components/Text/Text";
 import { View } from "@components/View/View";
 import { PageLayout } from "@presentation/components/PageLayout/PageLayout";
@@ -51,10 +50,7 @@ export default function Settings() {
   const clearance = useTabBarClearance(spacing[2]);
   return (
     <PageLayout testID="settings-screen">
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
+      <KeyboardAvoidingView style={{ flex: 1 }}>
         <PageScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
