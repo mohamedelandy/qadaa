@@ -2,12 +2,11 @@
 /**
  * Stats route screen rendering stat/rank/estimate cards and badge grid, with empty state fallback.
  */
-import Animated from "react-native-reanimated";
 import { useRouter } from "expo-router";
-import { useMinimizeOnScroll } from "@features/layout/glass-tabs/minimize";
 import { Text } from "@components/Text/Text";
 import { View } from "@components/View/View";
 import { PageLayout } from "@presentation/components/PageLayout/PageLayout";
+import { PageScrollView } from "@presentation/components/PageScrollView";
 import { useStatsViewModel } from "@presentation/features/stats/hooks/useStatsViewModel";
 import { StatCard } from "./components/StatCard/StatCard";
 import { RankCard } from "./components/RankCard/RankCard";
@@ -19,17 +18,10 @@ export default function Stats() {
   const { t, colors, styles, streak, level, points, rank, badges, nextBadge, estimate } =
     useStatsViewModel();
   const router = useRouter();
-  const onScroll = useMinimizeOnScroll();
   const hasData = points > 0 || streak > 0;
   return (
     <PageLayout testID="stats-screen">
-      <Animated.ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        onScroll={onScroll}
-        scrollEventThrottle={16}
-      >
+      <PageScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <Text variant="2xl" weight="bold" style={styles.title}>
             {t("stats.title")}
@@ -98,7 +90,7 @@ export default function Stats() {
             </View>
           </>
         )}
-      </Animated.ScrollView>
+      </PageScrollView>
     </PageLayout>
   );
 }
