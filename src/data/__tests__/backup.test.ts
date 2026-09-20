@@ -98,4 +98,13 @@ describe("data/backup", () => {
     await copyToClipboard("data");
     expect(mockedSetString).toHaveBeenCalledWith("data");
   });
+
+  it("copyToClipboard handles errors safely", async () => {
+    const error = new Error("Clipboard error");
+    mockedSetString.mockRejectedValueOnce(error);
+
+    // Test that copyToClipboard resolves and doesn't throw the error
+    await expect(copyToClipboard("data")).resolves.toBeUndefined();
+    expect(mockedSetString).toHaveBeenCalledWith("data");
+  });
 });
