@@ -13,6 +13,13 @@ import { Text } from "@components/Text/Text";
 import { useUI } from "@hooks/useUI";
 import { formatNumber } from "@domain/format";
 import type { WizardPeriod } from "../../hooks/useWizardViewModel";
+
+type Styles = ReturnType<typeof useStep2PeriodsViewModel>["styles"];
+type Colors = ReturnType<typeof useStep2PeriodsViewModel>["colors"];
+type TFunction = ReturnType<typeof useStep2PeriodsViewModel>["t"];
+type BR = ReturnType<typeof useStep2PeriodsViewModel>["br"];
+type Step2Control = ReturnType<typeof useStep2PeriodsViewModel>["step2Control"];
+
 interface PeriodRowProps {
   period: WizardPeriod;
   idx: number;
@@ -20,6 +27,7 @@ interface PeriodRowProps {
   onUpdatePeriod: (i: number, field: keyof WizardPeriod, v: string | WizardPeriod["type"]) => void;
   onRemovePeriod: (i: number) => void;
 }
+
 function PeriodRow({ period, idx, totalPeriods, onUpdatePeriod, onRemovePeriod }: PeriodRowProps) {
   const { t, colors, styles } = usePeriodRowViewModel();
   return (
@@ -104,101 +112,146 @@ function PeriodRow({ period, idx, totalPeriods, onUpdatePeriod, onRemovePeriod }
     </View>
   );
 }
-export function Step2Periods() {
-  const { isRTL } = useUI();
-  const {
-    t,
-    colors,
-    styles,
-    br,
-    step2Control,
-    advanced,
-    periods,
-    onToggleAdvanced,
-    onQuickYearsChange,
-    onAddPeriod,
-    onRemovePeriod,
-    onUpdatePeriod,
-    totalMissedDays,
-    step2Error,
-    totalYears,
-    prayerActiveYears,
-    canAddPeriod,
-  } = useStep2PeriodsViewModel();
+
+interface Step2PeriodsQuickModeProps {
+  styles: Styles;
+  colors: Colors;
+  t: TFunction;
+  step2Control: Step2Control;
+  onQuickYearsChange: (val: string) => void;
+  step2Error: string | null;
+}
+
+function Step2PeriodsQuickMode({
+  styles,
+  colors,
+  t,
+  step2Control,
+  onQuickYearsChange,
+  step2Error,
+}: Step2PeriodsQuickModeProps) {
   return (
-    <View>
-      <Text style={[styles.title, { color: colors.text }]}>{t("wizard.step2Title")}</Text>
-
-      {!advanced ? (
-        <View style={styles.field}>
-          <View style={styles.labelRow}>
-            <Text style={[styles.label, { color: colors.textMuted }]}>
-              {t("wizard.yearsLabel")}
-            </Text>
-            <Tooltip testID="wizard-years-tooltip" text={t("wizard.yearsTip")} />
-          </View>
-          <Controller
-            name="quickYears"
-            control={step2Control}
-            render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <Input
-                testID="wizard-years-quick-input"
-                value={value}
-                onChangeText={(text) => {
-                  onChange(text);
-                  onQuickYearsChange(text);
-                }}
-                placeholder="5"
-                keyboardType="decimal-pad"
-                error={error?.message ?? step2Error}
-                errorTestID="wizard-step2-error"
-              />
-            )}
-          />
-        </View>
-      ) : (
-        <View style={styles.field}>
-          {periods.map((period, idx) => (
-            <PeriodRow
-              key={idx}
-              period={period}
-              idx={idx}
-              totalPeriods={periods.length}
-              onUpdatePeriod={onUpdatePeriod}
-              onRemovePeriod={onRemovePeriod}
-            />
-          ))}
-
-          <PressableScale
-            testID="wizard-add-period-btn"
-            onPress={() => {
-              void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              onAddPeriod();
+    <View style={styles.field}>
+      <View style={styles.labelRow}>
+        <Text style={[styles.label, { color: colors.textMuted }]}>{t("wizard.yearsLabel")}</Text>
+        <Tooltip testID="wizard-years-tooltip" text={t("wizard.yearsTip")} />
+      </View>
+      <Controller
+        name="quickYears"
+        control={step2Control}
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
+          <Input
+            testID="wizard-years-quick-input"
+            value={value}
+            onChangeText={(text) => {
+              onChange(text);
+              onQuickYearsChange(text);
             }}
-            disabled={!canAddPeriod}
-            accessibilityRole="button"
-            accessibilityState={{ disabled: !canAddPeriod }}
-            style={[styles.addBtn, !canAddPeriod && styles.addBtnDisabled]}
-          >
-            <Text style={[styles.addText, { color: colors.primary }]}>
-              + {t("wizard.addPeriod")}
-            </Text>
-          </PressableScale>
-        </View>
-      )}
-      {advanced && (
-        <View style={styles.meterRow}>
-          <Text testID="wizard-step2-meter" style={[styles.meterText, { color: colors.textMuted }]}>
-            {t("wizard.yearsUsedMeter", { used: totalYears, total: prayerActiveYears })}
-          </Text>
-        </View>
-      )}
+            placeholder="5"
+            keyboardType="decimal-pad"
+            error={error?.message ?? step2Error ?? undefined}
+            errorTestID="wizard-step2-error"
+          />
+        )}
+      />
+    </View>
+  );
+}
 
-      {advanced && !!step2Error && (
+interface Step2PeriodsAdvancedModeProps {
+  styles: Styles;
+  colors: Colors;
+  t: TFunction;
+  periods: WizardPeriod[];
+  onUpdatePeriod: (i: number, field: keyof WizardPeriod, v: string | WizardPeriod["type"]) => void;
+  onRemovePeriod: (i: number) => void;
+  onAddPeriod: () => void;
+  canAddPeriod: boolean;
+  totalYears: number;
+  prayerActiveYears: number;
+  step2Error: string | null;
+}
+
+function Step2PeriodsAdvancedMode({
+  styles,
+  colors,
+  t,
+  periods,
+  onUpdatePeriod,
+  onRemovePeriod,
+  onAddPeriod,
+  canAddPeriod,
+  totalYears,
+  prayerActiveYears,
+  step2Error,
+}: Step2PeriodsAdvancedModeProps) {
+  return (
+    <>
+      <View style={styles.field}>
+        {periods.map((period, idx) => (
+          <PeriodRow
+            key={idx}
+            period={period}
+            idx={idx}
+            totalPeriods={periods.length}
+            onUpdatePeriod={onUpdatePeriod}
+            onRemovePeriod={onRemovePeriod}
+          />
+        ))}
+
+        <PressableScale
+          testID="wizard-add-period-btn"
+          onPress={() => {
+            void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            onAddPeriod();
+          }}
+          disabled={!canAddPeriod}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: !canAddPeriod }}
+          style={[styles.addBtn, !canAddPeriod && styles.addBtnDisabled]}
+        >
+          <Text style={[styles.addText, { color: colors.primary }]}>+ {t("wizard.addPeriod")}</Text>
+        </PressableScale>
+      </View>
+
+      <View style={styles.meterRow}>
+        <Text testID="wizard-step2-meter" style={[styles.meterText, { color: colors.textMuted }]}>
+          {t("wizard.yearsUsedMeter", { used: totalYears, total: prayerActiveYears })}
+        </Text>
+      </View>
+
+      {!!step2Error && (
         <Text testID="wizard-step2-error" style={[styles.error, { color: colors.red }]}>
           {step2Error}
         </Text>
       )}
+    </>
+  );
+}
+
+interface Step2PeriodsFooterProps {
+  styles: Styles;
+  colors: Colors;
+  t: TFunction;
+  br: BR;
+  advanced: boolean;
+  onToggleAdvanced: () => void;
+  totalMissedDays: number;
+  isRTL: boolean;
+}
+
+function Step2PeriodsFooter({
+  styles,
+  colors,
+  t,
+  br,
+  advanced,
+  onToggleAdvanced,
+  totalMissedDays,
+  isRTL,
+}: Step2PeriodsFooterProps) {
+  return (
+    <>
       <PressableScale
         testID="wizard-step2-advanced-btn"
         onPress={onToggleAdvanced}
@@ -233,6 +286,71 @@ export function Step2Periods() {
           {formatNumber(totalMissedDays, isRTL)}
         </Text>
       </View>
+    </>
+  );
+}
+
+export function Step2Periods() {
+  const { isRTL } = useUI();
+  const {
+    t,
+    colors,
+    styles,
+    br,
+    step2Control,
+    advanced,
+    periods,
+    onToggleAdvanced,
+    onQuickYearsChange,
+    onAddPeriod,
+    onRemovePeriod,
+    onUpdatePeriod,
+    totalMissedDays,
+    step2Error,
+    totalYears,
+    prayerActiveYears,
+    canAddPeriod,
+  } = useStep2PeriodsViewModel();
+
+  return (
+    <View>
+      <Text style={[styles.title, { color: colors.text }]}>{t("wizard.step2Title")}</Text>
+
+      {!advanced ? (
+        <Step2PeriodsQuickMode
+          styles={styles}
+          colors={colors}
+          t={t}
+          step2Control={step2Control}
+          onQuickYearsChange={onQuickYearsChange}
+          step2Error={step2Error}
+        />
+      ) : (
+        <Step2PeriodsAdvancedMode
+          styles={styles}
+          colors={colors}
+          t={t}
+          periods={periods}
+          onUpdatePeriod={onUpdatePeriod}
+          onRemovePeriod={onRemovePeriod}
+          onAddPeriod={onAddPeriod}
+          canAddPeriod={canAddPeriod}
+          totalYears={totalYears}
+          prayerActiveYears={prayerActiveYears}
+          step2Error={step2Error}
+        />
+      )}
+
+      <Step2PeriodsFooter
+        styles={styles}
+        colors={colors}
+        t={t}
+        br={br}
+        advanced={advanced}
+        onToggleAdvanced={onToggleAdvanced}
+        totalMissedDays={totalMissedDays}
+        isRTL={isRTL}
+      />
     </View>
   );
 }
