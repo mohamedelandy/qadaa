@@ -375,7 +375,7 @@ appId: com.melnady.qadaa
     id: sync-paste-input
 # Maestro's pasteText cannot read the app-set clipboard, so type the payload
 # directly (same pattern as the regression flows).
-- inputText: '{"version":1,"wizardComplete":true,"age":25,"pubertyAge":11,"periods":[{"type":"missed","years":2}],"totalMissedDays":365,"prayers":{"fajr":{"recovered":30},"dhuhr":{"recovered":0},"asr":{"recovered":0},"maghrib":{"recovered":0},"isha":{"recovered":0}},"todayPrayers":{},"todayLogPoints":{},"todayUnits":{},"todayDate":null,"streak":0,"lastLogDate":null,"daysLogged":0,"loggedDates":[],"points":0,"badges":[],"language":"en","notificationTime":null}'
+- inputText: '{"version":1,"wizardComplete":true,"age":25,"pubertyAge":11,"periods":[{"type":"missed","years":2}],"totalMissedDays":365,"prayers":{"fajr":{"recovered":30},"dhuhr":{"recovered":0},"asr":{"recovered":0},"maghrib":{"recovered":0},"isha":{"recovered":0}},"streak":0,"lastLogDate":null,"loggedDates":[],"points":0,"badges":[],"language":"en"}'
 # Dismiss the keyboard with a swipe — tapping the top of the screen would hit
 # the sheet backdrop and close the sync sheet.
 - swipe:
@@ -529,7 +529,7 @@ appId: com.melnady.qadaa
 - waitForAnimationToEnd
 - tapOn:
     id: sync-paste-input
-- inputText: '{"version":1,"wizardComplete":true,"age":28,"pubertyAge":14,"periods":[],"totalMissedDays":0,"prayers":{"fajr":{"recovered":0},"dhuhr":{"recovered":0},"asr":{"recovered":0},"maghrib":{"recovered":0},"isha":{"recovered":0}},"todayPrayers":{},"todayLogPoints":{},"todayUnits":{},"todayDate":null,"streak":0,"lastLogDate":null,"daysLogged":0,"loggedDates":[],"points":0,"badges":[],"language":"en","notificationTime":null,"notificationPermission":"default","graceUsedMonth":null,"lastDuaShownDate":null,"intentionSetDate":null,"dailyTarget":5}'
+- inputText: '{"version":1,"wizardComplete":true,"age":28,"pubertyAge":14,"periods":[],"totalMissedDays":0,"prayers":{"fajr":{"recovered":0},"dhuhr":{"recovered":0},"asr":{"recovered":0},"maghrib":{"recovered":0},"isha":{"recovered":0}},"streak":0,"lastLogDate":null,"loggedDates":[],"points":0,"badges":[],"language":"en"}'
 - swipe:
     start: 50%, 80%
     end: 50%, 20%

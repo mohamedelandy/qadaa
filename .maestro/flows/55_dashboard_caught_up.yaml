@@ -27,8 +27,10 @@ appId: com.melnady.qadaa
 - tapOn:
     id: sync-paste-input
 # Backup with zero missed days — the dashboard must flip to the caught-up state.
+# We omit default optional properties to keep the string size ~300 chars,
+# since Maestro's inputText truncates strings around ~500 chars which breaks JSON parsing.
 - inputText:
-    text: '{"version":1,"wizardComplete":true,"age":28,"pubertyAge":14,"periods":[],"totalMissedDays":0,"prayers":{"fajr":{"recovered":0},"dhuhr":{"recovered":0},"asr":{"recovered":0},"maghrib":{"recovered":0},"isha":{"recovered":0}},"todayPrayers":{},"todayLogPoints":{},"todayUnits":{},"todayDate":null,"streak":0,"lastLogDate":null,"daysLogged":0,"loggedDates":[],"points":0,"badges":[],"language":"en","notificationTime":null,"notificationPermission":"default","graceUsedMonth":null,"lastDuaShownDate":null,"intentionSetDate":null,"dailyTarget":5}'
+    text: '{"version":1,"wizardComplete":true,"age":28,"pubertyAge":14,"periods":[],"totalMissedDays":0,"prayers":{"fajr":{"recovered":0},"dhuhr":{"recovered":0},"asr":{"recovered":0},"maghrib":{"recovered":0},"isha":{"recovered":0}},"streak":0,"lastLogDate":null,"loggedDates":[],"points":0,"badges":[],"language":"en"}'
 - swipe:
     start: 50%, 80%
     end: 50%, 20%
