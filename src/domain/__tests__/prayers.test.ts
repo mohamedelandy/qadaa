@@ -19,6 +19,15 @@ describe("calcTotalMissedDays", () => {
   it("rounds fractional years", () => {
     expect(calcTotalMissedDays([{ type: "missed", years: 1.5 }])).toBe(Math.round(1.5 * 365));
   });
+  it("handles edge cases and boundaries", () => {
+    expect(calcTotalMissedDays([{ type: "missed", years: Number.MAX_SAFE_INTEGER / 365 }])).toBe(
+      Number.MAX_SAFE_INTEGER
+    );
+    expect(calcTotalMissedDays([{ type: "missed", years: 0 }])).toBe(0);
+    expect(calcTotalMissedDays([{ type: "missed", years: -1 }])).toBe(-365);
+    expect(calcTotalMissedDays([{ type: "missed", years: 0.499 }])).toBe(Math.round(0.499 * 365));
+    expect(calcTotalMissedDays([{ type: "missed", years: 0.501 }])).toBe(Math.round(0.501 * 365));
+  });
 });
 describe("incrementPrayer", () => {
   it("adds delta when below cap", () => {
