@@ -7,6 +7,7 @@ import { shareAsync } from "expo-sharing";
 import { getDocumentAsync } from "expo-document-picker";
 import * as Clipboard from "expo-clipboard";
 import { toLocalISODate } from "@domain/date";
+import { Logger } from "@services/logger";
 export async function exportToFile(json: string): Promise<void> {
   if (json.length > 250_000) {
     throw new Error("Backup is too large to export");
@@ -25,5 +26,9 @@ export async function importFromFile(): Promise<string | null> {
   return file.text();
 }
 export async function copyToClipboard(text: string): Promise<void> {
-  await Clipboard.setStringAsync(text);
+  try {
+    await Clipboard.setStringAsync(text);
+  } catch (error) {
+    Logger.error("Failed to copy to clipboard", error);
+  }
 }
