@@ -1,8 +1,3 @@
-/** @format */
-/**
- * Wizard view-model hook binding react-hook-form + zod schemas to wizard store state and actions.
- * Subscribes via narrow shallow slices so unrelated store changes don't re-render the wizard.
- */
 import { useEffect, useMemo, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,40 +7,24 @@ import { useUI } from "@hooks/useUI";
 import { CreateStep1Schema, CreateStep2Schema } from "../validation";
 import { getStep1Error, getStep2Error, getStep3Error } from "../errors";
 export type { WizardPeriod } from "@stores/useWizardStore";
-export function useWizardViewModel() {
-  const { t } = useUI();
-  const { currentStep, age, pubertyAge, advanced, quickYears, periods, dailyTarget, customTarget } =
-    useWizardStore(
-      useShallow((s) => ({
-        currentStep: s.currentStep,
-        age: s.age,
-        pubertyAge: s.pubertyAge,
-        advanced: s.advanced,
-        quickYears: s.quickYears,
-        periods: s.periods,
-        dailyTarget: s.dailyTarget,
-        customTarget: s.customTarget,
-      }))
-    );
-  const {
-    totalMissedDays,
-    totalMissedYears,
-    totalPrayers,
-    totalYears,
-    prayerActiveYears,
-    canAddPeriod,
-    remainingYears,
-    step1Valid,
-    step2Valid,
-    step3Valid,
-    finalTarget,
-    showNext,
-    showBack,
-    isNextDisabled,
-    ageNum,
-    pubertyAgeNum,
-    customTargetValid,
-  } = useWizardStore(
+
+function useWizardState() {
+  return useWizardStore(
+    useShallow((s) => ({
+      currentStep: s.currentStep,
+      age: s.age,
+      pubertyAge: s.pubertyAge,
+      advanced: s.advanced,
+      quickYears: s.quickYears,
+      periods: s.periods,
+      dailyTarget: s.dailyTarget,
+      customTarget: s.customTarget,
+    }))
+  );
+}
+
+function useWizardDerived() {
+  return useWizardStore(
     useShallow((s) => ({
       totalMissedDays: s.totalMissedDays,
       totalMissedYears: s.totalMissedYears,
@@ -66,21 +45,10 @@ export function useWizardViewModel() {
       customTargetValid: s.customTargetValid,
     }))
   );
-  const {
-    setAge,
-    setPubertyAge,
-    toggleAdvanced,
-    setQuickYears,
-    addPeriod,
-    removePeriod,
-    updatePeriod,
-    setPreset,
-    setCustom,
-    setCustomTarget,
-    nextStep,
-    prevStep,
-    confirm,
-  } = useWizardStore(
+}
+
+function useWizardActions() {
+  return useWizardStore(
     useShallow((s) => ({
       setAge: s.setAge,
       setPubertyAge: s.setPubertyAge,
@@ -97,21 +65,40 @@ export function useWizardViewModel() {
       confirm: s.confirm,
     }))
   );
+}
+
+function useWizardForms(quickYears: string, t: (key: string) => string) {
   const step1Schema = useMemo(() => CreateStep1Schema(t), [t]);
   const step2Schema = useMemo(() => CreateStep2Schema(t), [t]);
+
   const form = useForm({
     resolver: zodResolver(step1Schema),
     defaultValues: { age: "", pubertyAge: "" },
     mode: "onChange",
   });
+
   const step2Form = useForm({
     resolver: zodResolver(step2Schema),
     defaultValues: { quickYears: "" },
     mode: "onChange",
   });
+
   useEffect(() => {
     step2Form.setValue("quickYears", quickYears, { shouldValidate: true });
   }, [quickYears, step2Form]);
+
+  return { form, step2Form };
+}
+
+export function useWizardViewModel() {
+  const { t } = useUI();
+
+  const state = useWizardState();
+  const derived = useWizardDerived();
+  const actions = useWizardActions();
+
+  const { form, step2Form } = useWizardForms(state.quickYears, t);
+
   const {
     control,
     formState: { errors },
@@ -119,69 +106,70 @@ export function useWizardViewModel() {
     clearErrors,
     reset,
   } = form;
+
   const {
     control: step2Control,
     formState: { errors: step2Errors },
     trigger: step2Trigger,
     clearErrors: step2ClearErrors,
   } = step2Form;
+
   const step1Error = useMemo(
-    () => getStep1Error({ age, pubertyAge }, { ageNum, pubertyAgeNum }, t),
-    [age, pubertyAge, ageNum, pubertyAgeNum, t]
+    () =>
+      getStep1Error(
+        { age: state.age, pubertyAge: state.pubertyAge },
+        { ageNum: derived.ageNum, pubertyAgeNum: derived.pubertyAgeNum },
+        t
+      ),
+    [state.age, state.pubertyAge, derived.ageNum, derived.pubertyAgeNum, t]
   );
+
   const step2Error = useMemo(
-    () => getStep2Error({ totalMissedDays, totalMissedYears, totalYears, prayerActiveYears }, t),
-    [totalMissedDays, totalMissedYears, totalYears, prayerActiveYears, t]
+    () =>
+      getStep2Error(
+        {
+          totalMissedDays: derived.totalMissedDays,
+          totalMissedYears: derived.totalMissedYears,
+          totalYears: derived.totalYears,
+          prayerActiveYears: derived.prayerActiveYears,
+        },
+        t
+      ),
+    [
+      derived.totalMissedDays,
+      derived.totalMissedYears,
+      derived.totalYears,
+      derived.prayerActiveYears,
+      t,
+    ]
   );
+
   const step3Error = useMemo(
-    () => getStep3Error({ dailyTarget, customTarget }, { customTargetValid }, t),
-    [dailyTarget, customTarget, customTargetValid, t]
+    () =>
+      getStep3Error(
+        { dailyTarget: state.dailyTarget, customTarget: state.customTarget },
+        { customTargetValid: derived.customTargetValid },
+        t
+      ),
+    [state.dailyTarget, state.customTarget, derived.customTargetValid, t]
   );
+
   const handleCustomTargetChange = useCallback(
     (v: string) => {
-      setCustomTarget(v.replace(/[^\d]/g, ""));
+      actions.setCustomTarget(v.replace(/[^\d]/g, ""));
     },
-    [setCustomTarget]
+    [actions.setCustomTarget]
   );
+
   return {
     t,
-    currentStep,
-    age,
-    setAge,
-    pubertyAge,
-    setPubertyAge,
-    advanced,
-    toggleAdvanced,
-    quickYears,
-    setQuickYears,
-    periods,
-    addPeriod,
-    removePeriod,
-    updatePeriod,
-    totalMissedDays,
-    totalPrayers,
-    totalYears,
-    prayerActiveYears,
-    canAddPeriod,
-    remainingYears,
-    dailyTarget,
-    customTarget,
-    step1Valid,
-    step1Error,
-    step2Valid,
-    step2Error,
-    step3Valid,
-    step3Error,
-    finalTarget,
-    nextStep,
-    prevStep,
-    setPreset,
-    setCustom,
+    ...state,
+    ...derived,
+    ...actions,
     setCustomTarget: handleCustomTargetChange,
-    confirm,
-    showNext,
-    showBack,
-    isNextDisabled,
+    step1Error,
+    step2Error,
+    step3Error,
     control,
     errors,
     trigger,
