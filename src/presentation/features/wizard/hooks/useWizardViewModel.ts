@@ -115,17 +115,42 @@ export function useWizardViewModel() {
   } = step2Form;
 
   const step1Error = useMemo(
-    () => getStep1Error({ age: state.age, pubertyAge: state.pubertyAge }, { ageNum: derived.ageNum, pubertyAgeNum: derived.pubertyAgeNum }, t),
+    () =>
+      getStep1Error(
+        { age: state.age, pubertyAge: state.pubertyAge },
+        { ageNum: derived.ageNum, pubertyAgeNum: derived.pubertyAgeNum },
+        t
+      ),
     [state.age, state.pubertyAge, derived.ageNum, derived.pubertyAgeNum, t]
   );
 
   const step2Error = useMemo(
-    () => getStep2Error({ totalMissedDays: derived.totalMissedDays, totalMissedYears: derived.totalMissedYears, totalYears: derived.totalYears, prayerActiveYears: derived.prayerActiveYears }, t),
-    [derived.totalMissedDays, derived.totalMissedYears, derived.totalYears, derived.prayerActiveYears, t]
+    () =>
+      getStep2Error(
+        {
+          totalMissedDays: derived.totalMissedDays,
+          totalMissedYears: derived.totalMissedYears,
+          totalYears: derived.totalYears,
+          prayerActiveYears: derived.prayerActiveYears,
+        },
+        t
+      ),
+    [
+      derived.totalMissedDays,
+      derived.totalMissedYears,
+      derived.totalYears,
+      derived.prayerActiveYears,
+      t,
+    ]
   );
 
   const step3Error = useMemo(
-    () => getStep3Error({ dailyTarget: state.dailyTarget, customTarget: state.customTarget }, { customTargetValid: derived.customTargetValid }, t),
+    () =>
+      getStep3Error(
+        { dailyTarget: state.dailyTarget, customTarget: state.customTarget },
+        { customTargetValid: derived.customTargetValid },
+        t
+      ),
     [state.dailyTarget, state.customTarget, derived.customTargetValid, t]
   );
 
