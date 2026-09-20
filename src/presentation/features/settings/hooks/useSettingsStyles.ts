@@ -40,7 +40,7 @@ const createTargetStyles = (colors: UIColors, typography: UITypography, br: UIBo
     minHeight: 44,
   },
   targetSaveButton: {
-    width: "100%",
+    width: "100%" as const,
     paddingVertical: spacing[3],
     borderRadius: br.lg,
     backgroundColor: colors.primary,
@@ -137,7 +137,7 @@ const createTargetStyles = (colors: UIColors, typography: UITypography, br: UIBo
 
 const createBackupStyles = (colors: UIColors, br: UIBorderRadius) => ({
   syncButton: {
-    width: "100%",
+    width: "100%" as const,
     paddingVertical: spacing[3],
     borderRadius: br.lg,
     alignItems: "center" as const,
@@ -192,7 +192,7 @@ const createGraceDayStyles = (colors: UIColors, typography: UITypography, br: UI
 
 const createAppearanceStyles = (colors: UIColors, br: UIBorderRadius) => ({
   themeButton: {
-    width: "100%",
+    width: "100%" as const,
     paddingVertical: spacing[3],
     borderRadius: br.lg,
     alignItems: "center" as const,
@@ -207,7 +207,7 @@ const createAppearanceStyles = (colors: UIColors, br: UIBorderRadius) => ({
 
 const createFeedbackStyles = (colors: UIColors, br: UIBorderRadius) => ({
   feedbackButton: {
-    width: "100%",
+    width: "100%" as const,
     paddingVertical: spacing[3],
     borderRadius: br.lg,
     alignItems: "center" as const,
