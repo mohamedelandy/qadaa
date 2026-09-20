@@ -22,7 +22,7 @@ describe("useStep3PaceViewModel", () => {
   it("onPreset selects a target and clears any typed custom entry", async () => {
     const { result } = await renderHook(() => useStep3PaceViewModel());
     await act(async () => {
-      result.current.onCustom();
+      useWizardStore.getState().setCustom();
       result.current.onCustomTargetChange("7");
     });
     await act(async () => {
@@ -34,7 +34,7 @@ describe("useStep3PaceViewModel", () => {
   it("switching to custom requires a value before one is typed", async () => {
     const { result } = await renderHook(() => useStep3PaceViewModel());
     await act(async () => {
-      result.current.onCustom();
+      useWizardStore.getState().setCustom();
     });
     expect(result.current.isCustom).toBe(true);
     expect(result.current.customError).toBe("validation.custom.required");
@@ -42,7 +42,7 @@ describe("useStep3PaceViewModel", () => {
   it("rejects custom targets above the allowed maximum", async () => {
     const { result } = await renderHook(() => useStep3PaceViewModel());
     await act(async () => {
-      result.current.onCustom();
+      useWizardStore.getState().setCustom();
       result.current.onCustomTargetChange("60");
     });
     expect(useWizardStore.getState().customTarget).toBe("60");
@@ -51,7 +51,7 @@ describe("useStep3PaceViewModel", () => {
   it("clears the error once an in-range custom target is entered", async () => {
     const { result } = await renderHook(() => useStep3PaceViewModel());
     await act(async () => {
-      result.current.onCustom();
+      useWizardStore.getState().setCustom();
       result.current.onCustomTargetChange("7");
     });
     expect(result.current.customTarget).toBe("7");

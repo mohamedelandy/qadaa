@@ -17,11 +17,10 @@ export function useStep3PaceViewModel() {
       customTarget: s.customTarget,
       customTargetValid: s.customTargetValid,
       setPreset: s.setPreset,
-      setCustom: s.setCustom,
       setCustomTarget: s.setCustomTarget,
     }))
   );
-  const { t, colors, gradients: g, typography, borderRadius: br, isRTL } = useUI();
+  const { t, colors, typography, isRTL } = useUI();
   const isCustom = state.dailyTarget === -1;
   const step3Error = useMemo(() => getStep3Error(state, state, t), [state, t]);
   const styles = useMemo(
@@ -33,42 +32,6 @@ export function useStep3PaceViewModel() {
           fontFamily: typography.fonts.bold,
           marginTop: spacing[3],
         },
-        grid: {
-          flexDirection: "row",
-          gap: spacing[2],
-          marginTop: spacing[5],
-        },
-        presetBtn: { flex: 1, minHeight: 52 },
-        gradientFill: {
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          paddingVertical: spacing[4],
-          paddingHorizontal: spacing[2],
-          shadowColor: colors.shadow,
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.1,
-          shadowRadius: 6,
-          elevation: 4,
-        },
-        presetInactive: {
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          paddingVertical: spacing[4],
-          paddingHorizontal: spacing[2],
-          borderWidth: 1,
-        },
-        presetLabel: { fontSize: typography.fontSize.base, fontFamily: typography.fonts.bold },
-        customBtn: {
-          marginTop: spacing[5],
-          borderWidth: 1,
-          paddingVertical: spacing[3],
-          alignItems: "center",
-          minHeight: 44,
-          justifyContent: "center",
-        },
-        customText: { fontSize: typography.fontSize.base, fontFamily: typography.fonts.bold },
         hint: {
           fontSize: typography.fontSize.xs,
           textAlign: "center",
@@ -81,17 +44,14 @@ export function useStep3PaceViewModel() {
   return {
     t,
     colors,
-    gradients: g,
     styles,
     isCustom,
     presets,
-    br,
     isRTL,
     dailyTarget: state.dailyTarget,
     customTarget: state.customTarget,
     customError: step3Error,
     onPreset: state.setPreset,
-    onCustom: state.setCustom,
     onCustomTargetChange: state.setCustomTarget,
   };
 }
