@@ -2,8 +2,9 @@
 /**
  * View model for the sync sheet: tabs, QR generation, copy and import actions.
  */
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { useUI } from "@hooks/useUI";
+import { useTimeouts } from "../../../../hooks/useTimeouts";
 import { useSyncTabState } from "../../hooks/useSyncTabState";
 import { useSyncQr } from "../../hooks/useSyncQr";
 import { useSyncActions } from "../../hooks/useSyncActions";
@@ -23,13 +24,7 @@ export function useSyncViewModel(visible: boolean, onClose: () => void) {
     colors
   );
   const { styles } = useSyncStyles();
-  const timers = useRef<Array<ReturnType<typeof setTimeout>>>([]);
-  useEffect(() => {
-    const pending = timers.current;
-    return () => {
-      pending.forEach(clearTimeout);
-    };
-  }, []);
+  const { addTimeout } = useTimeouts();
   const tabs = useMemo(
     () => [
       { key: "qr" as const, label: t("share.tabQr") },
@@ -48,13 +43,13 @@ export function useSyncViewModel(visible: boolean, onClose: () => void) {
       return;
     }
     tabState.setCopied(true);
-    timers.current.push(setTimeout(() => tabState.setCopied(false), COPIED_RESET_DELAY_MS));
+    addTimeout(() => tabState.setCopied(false), COPIED_RESET_DELAY_MS);
   };
   const handleImport = () => {
     const ok = rawImport(tabState.pasteText);
     if (ok) {
       tabState.setImportResult("success");
-      timers.current.push(setTimeout(() => onClose(), CLOSE_DELAY_MS));
+      addTimeout(() => onClose(), CLOSE_DELAY_MS);
     } else {
       tabState.setImportResult("error");
     }

@@ -2,9 +2,10 @@
 /**
  * View model for the notification time picker with hour cycling, save, and denial error.
  */
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import * as Haptics from "expo-haptics";
 import { useUI } from "@hooks/useUI";
+import { useTimeouts } from "../../../../hooks/useTimeouts";
 import { createNotificationPickerStyles } from "./NotificationPicker.styles";
 interface NotificationPickerProps {
   currentHour: number;
@@ -21,14 +22,7 @@ export function useNotificationPickerViewModel(props: NotificationPickerProps) {
   const [amPm, setAmPm] = useState(currentAmPm);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const timers = useRef<Array<ReturnType<typeof setTimeout>>>([]);
-  useEffect(() => {
-    const pending = timers.current;
-    return () => {
-      pending.forEach(clearTimeout);
-      timers.current = [];
-    };
-  }, []);
+  const { addTimeout } = useTimeouts();
   useEffect(() => {
     setHour(currentHour);
     setMinute(currentMinute);
@@ -55,11 +49,9 @@ export function useNotificationPickerViewModel(props: NotificationPickerProps) {
     if (granted) {
       void Haptics.selectionAsync();
       setSaved(true);
-      const timer = setTimeout(() => {
+      addTimeout(() => {
         setSaved(false);
-        timers.current = timers.current.filter((pendingTimer) => pendingTimer !== timer);
       }, 2000);
-      timers.current.push(timer);
     } else {
       setError(t("settings.notificationDenied"));
     }
