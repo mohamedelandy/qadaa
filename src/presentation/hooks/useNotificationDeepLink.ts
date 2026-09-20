@@ -18,17 +18,13 @@ export function reminderRouteFor(notificationResponse: unknown): typeof REMINDER
 
 export function useNotificationDeepLink(enabled: boolean): void {
   const router = useRouter();
+  const response = Notifications.useLastNotificationResponse();
+
   useEffect(() => {
     if (!enabled) return;
-    const subscription = Notifications.addNotificationResponseReceivedListener(() => {
-      router.navigate(REMINDER_ROUTE);
-    });
-    const route = reminderRouteFor(Notifications.getLastNotificationResponse());
+    const route = reminderRouteFor(response);
     if (route) {
       router.replace(route);
     }
-    return () => {
-      subscription.remove();
-    };
-  }, [enabled, router]);
+  }, [enabled, router, response]);
 }

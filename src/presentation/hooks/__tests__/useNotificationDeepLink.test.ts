@@ -1,10 +1,6 @@
 /** @format */
 /**
  * Tests for notification-tap deep linking.
- *
- * `reminderRouteFor` is pure and covered exhaustively; the warm-tap wiring
- * is verified through one integration render (listener registration +
- * navigate), which is the path React schedules synchronously.
  */
 import { renderHook, act } from "@testing-library/react-native";
 import {
@@ -12,6 +8,7 @@ import {
   reminderRouteFor,
   useNotificationDeepLink,
 } from "../useNotificationDeepLink";
+import * as Notifications from "expo-notifications";
 
 const mockRouter = {
   navigate: jest.fn(),
@@ -20,21 +17,18 @@ const mockRouter = {
 jest.mock("expo-router", () => ({
   useRouter: () => mockRouter,
 }));
+
 jest.mock("expo-notifications", () => ({
-  addNotificationResponseReceivedListener: jest.fn(),
-  getLastNotificationResponse: jest.fn().mockReturnValue(null),
+  useLastNotificationResponse: jest.fn(),
 }));
-const Notifications = jest.requireMock("expo-notifications") as {
-  addNotificationResponseReceivedListener: jest.Mock;
-  getLastNotificationResponse: jest.Mock;
-};
-const remove = jest.fn();
+
+const mockUseLastNotificationResponse = Notifications.useLastNotificationResponse as jest.Mock;
 
 describe("reminderRouteFor", () => {
-  it("maps a cold-start response to the reminder route", () => {
+  it("maps a response to the reminder route", () => {
     expect(reminderRouteFor({ actionIdentifier: "open" })).toBe(REMINDER_ROUTE);
   });
-  it("returns null when there is no launch response", () => {
+  it("returns null when there is no response", () => {
     expect(reminderRouteFor(null)).toBeNull();
     expect(reminderRouteFor(undefined)).toBeNull();
   });
@@ -44,59 +38,71 @@ describe("useNotificationDeepLink", () => {
   beforeEach(() => {
     mockRouter.navigate.mockClear();
     mockRouter.replace.mockClear();
-    Notifications.addNotificationResponseReceivedListener.mockReset();
-    Notifications.addNotificationResponseReceivedListener.mockReturnValue({ remove });
+    mockUseLastNotificationResponse.mockReset();
   });
 
-  it("registers exactly one warm-tap listener while enabled", async () => {
-    const { unmount } = await renderHook(() => useNotificationDeepLink(true));
-    await act(async () => {
-      await Promise.resolve();
-    });
-    expect(Notifications.addNotificationResponseReceivedListener).toHaveBeenCalledTimes(1);
-    const tapHandler = Notifications.addNotificationResponseReceivedListener.mock.calls[0][0] as (
-      response: unknown
-    ) => void;
-    await act(async () => {
-      tapHandler({ actionIdentifier: "tap" });
-    });
-    expect(mockRouter.navigate).toHaveBeenCalledWith(REMINDER_ROUTE);
-    expect(mockRouter.replace).not.toHaveBeenCalled();
-    await unmount();
-  });
-
-  it("does not register anything when disabled", async () => {
+  it("does not navigate if not enabled", async () => {
+    mockUseLastNotificationResponse.mockReturnValue({ actionIdentifier: "open" });
     await renderHook(() => useNotificationDeepLink(false));
-    await act(async () => {
-      await Promise.resolve();
-    });
-    expect(Notifications.addNotificationResponseReceivedListener).not.toHaveBeenCalled();
-    expect(mockRouter.navigate).not.toHaveBeenCalled();
+
     expect(mockRouter.replace).not.toHaveBeenCalled();
+    expect(mockRouter.navigate).not.toHaveBeenCalled();
   });
 
-  it("navigates for every received response payload (route decision)", () => {
-    [true, false].forEach((truthy) => {
-      expect(reminderRouteFor(truthy ? {} : null)).toBe(truthy ? REMINDER_ROUTE : null);
-    });
-  });
-
-  it("replaces to the reminder route on a cold-start notification response", async () => {
-    Notifications.getLastNotificationResponse.mockReturnValueOnce({ actionIdentifier: "open" });
+  it("does not navigate if there is no notification response", async () => {
+    mockUseLastNotificationResponse.mockReturnValue(null);
     await renderHook(() => useNotificationDeepLink(true));
-    await act(async () => {
-      await Promise.resolve();
-    });
+
+    expect(mockRouter.replace).not.toHaveBeenCalled();
+    expect(mockRouter.navigate).not.toHaveBeenCalled();
+  });
+
+  it("replaces to the reminder route when there is a notification response and it is enabled", async () => {
+    mockUseLastNotificationResponse.mockReturnValue({ actionIdentifier: "open" });
+    await renderHook(() => useNotificationDeepLink(true));
+
     expect(mockRouter.replace).toHaveBeenCalledWith(REMINDER_ROUTE);
     expect(mockRouter.navigate).not.toHaveBeenCalled();
   });
 
-  it("does not replace when there is no cold-start response", async () => {
-    Notifications.getLastNotificationResponse.mockReturnValueOnce(null);
-    await renderHook(() => useNotificationDeepLink(true));
-    await act(async () => {
-      await Promise.resolve();
-    });
+  it("replaces to the reminder route when response changes dynamically", async () => {
+    mockUseLastNotificationResponse.mockReturnValue(null);
+    const { rerender } = await renderHook(
+      (props: { enabled: boolean }) => useNotificationDeepLink(props.enabled),
+      {
+        initialProps: { enabled: true },
+      }
+    );
+
     expect(mockRouter.replace).not.toHaveBeenCalled();
+
+    // Simulate response arriving
+    mockUseLastNotificationResponse.mockReturnValue({ actionIdentifier: "open" });
+    await act(async () => {
+      await rerender({ enabled: true });
+    });
+
+    expect(mockRouter.replace).toHaveBeenCalledWith(REMINDER_ROUTE);
+    expect(mockRouter.replace).toHaveBeenCalledTimes(1);
+  });
+
+  it("replaces to the reminder route when enabled state changes dynamically", async () => {
+    mockUseLastNotificationResponse.mockReturnValue({ actionIdentifier: "open" });
+    const { rerender } = await renderHook(
+      (props: { enabled: boolean }) => useNotificationDeepLink(props.enabled),
+      {
+        initialProps: { enabled: false },
+      }
+    );
+
+    expect(mockRouter.replace).not.toHaveBeenCalled();
+
+    // Enable the hook
+    await act(async () => {
+      await rerender({ enabled: true });
+    });
+
+    expect(mockRouter.replace).toHaveBeenCalledWith(REMINDER_ROUTE);
+    expect(mockRouter.replace).toHaveBeenCalledTimes(1);
   });
 });
