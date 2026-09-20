@@ -49,6 +49,16 @@ describe("syncLanguage", () => {
     expect(result).toEqual({ isRtl: true, alreadyMatched: true });
     expect(changeLanguage).not.toHaveBeenCalled();
   });
+  it("swallows changeLanguage rejection — best-effort boot", async () => {
+    const forceRTL = jest.fn();
+    const changeLanguage = jest.fn().mockRejectedValue(new Error("i18n boom"));
+    const result = syncLanguage("ar", { language: "en", changeLanguage }, forceRTL);
+    expect(result).toEqual({ isRtl: true, alreadyMatched: false });
+    expect(forceRTL).toHaveBeenCalledWith(true);
+    expect(changeLanguage).toHaveBeenCalledWith("ar");
+    // Ensure that the rejected promise is fully flushed so it's reported as caught.
+    await new Promise(process.nextTick);
+  });
 });
 describe("syncLanguageAsync", () => {
   it("forces RTL and awaits the i18n switch when the stored language differs", async () => {
