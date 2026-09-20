@@ -74,35 +74,38 @@ function getRank(points: number): RankInfo {
   return { label: "bronze", color: "rankBronze", bg: "rankBronzeBg", border: "rankBronzeBorder" };
 }
 
-const dateFormatterCache = new Map<string, Intl.DateTimeFormat>();
+let enFormatter: Intl.DateTimeFormat | null = null;
+let arFormatter: Intl.DateTimeFormat | null = null;
 
 function formatDate(d: Date, language: string): string {
-  const locale = language === "ar" ? "ar-EG-u-ca-islamic" : "en-US";
-  let formatter = dateFormatterCache.get(locale);
+  if (language === "ar") {
+    if (arFormatter !== null) return arFormatter.format(d);
 
-  if (!formatter) {
     try {
-      formatter = new Intl.DateTimeFormat(locale, {
+      arFormatter = new Intl.DateTimeFormat("ar-EG-u-ca-islamic", {
         year: "numeric",
         month: "long",
         day: "numeric",
       });
-      dateFormatterCache.set(locale, formatter);
     } catch {
-      formatter = dateFormatterCache.get("en-US");
-      if (!formatter) {
-        formatter = new Intl.DateTimeFormat("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        });
-        dateFormatterCache.set("en-US", formatter);
-      }
-      dateFormatterCache.set(locale, formatter);
+      enFormatter ??= new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+      arFormatter = enFormatter;
     }
+    return arFormatter.format(d);
   }
 
-  return formatter.format(d);
+  if (enFormatter !== null) return enFormatter.format(d);
+
+  enFormatter = new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  return enFormatter.format(d);
 }
 export function useStatsViewModel(): StatsViewModel {
   const { t, colors, language } = useUI();
