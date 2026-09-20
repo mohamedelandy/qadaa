@@ -108,3 +108,24 @@ describe("clampPopoverPosition", () => {
     expect(r.top).toBe(8);
   });
 });
+
+describe("clampPopoverPosition uncovered branches", () => {
+  it("handles preferBelow: false when above space is enough", () => {
+    const r = clampPopoverPosition({
+      x: 10,
+      y: 300,
+      w: 30,
+      h: 30,
+      width: 200,
+      height: 100,
+      gap: 8,
+      margin: 8,
+      preferBelow: false,
+      isRTL: false,
+      windowWidth: 400,
+      windowHeight: 800,
+      insets: { top: 0, bottom: 0, left: 0, right: 0 },
+    });
+    expect(r.top).toBe(192); // 300 - 8 - 100 = 192
+  });
+});

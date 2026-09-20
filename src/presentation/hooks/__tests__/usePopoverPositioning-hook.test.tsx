@@ -119,3 +119,54 @@ describe("usePopoverPositioning hook", () => {
     expect(measureInWindow).not.toHaveBeenCalled();
   });
 });
+
+describe("usePopoverPositioning hook edge cases", () => {
+  it("uses internalRef when anchorRef is not provided", async () => {
+    const { result } = await renderHook(() =>
+      usePopoverPositioning({
+        width: 200,
+        isRTL: false,
+      })
+    );
+    expect(result.current.ref.current).toBeNull();
+  });
+
+  it("uses heightOverride when provided", async () => {
+    const measureInWindow = jest.fn((cb: (x: number, y: number, w: number, h: number) => void) =>
+      cb(50, 100, 30, 20)
+    );
+    const anchorRef = { current: { measureInWindow } as never };
+    const { result } = await renderHook(() =>
+      usePopoverPositioning({
+        width: 200,
+        isRTL: false,
+        anchorRef,
+      })
+    );
+    await act(async () => {
+      result.current.position(150);
+    });
+    expect(measureInWindow).toHaveBeenCalled();
+  });
+
+  it("uses heightRef.current when heightOverride is not provided", async () => {
+    const measureInWindow = jest.fn((cb: (x: number, y: number, w: number, h: number) => void) =>
+      cb(50, 100, 30, 20)
+    );
+    const anchorRef = { current: { measureInWindow } as never };
+    const { result } = await renderHook(() =>
+      usePopoverPositioning({
+        width: 200,
+        isRTL: false,
+        anchorRef,
+      })
+    );
+    await act(async () => {
+      result.current.onPopoverLayout({ nativeEvent: { layout: { height: 120 } } } as never);
+    });
+    await act(async () => {
+      result.current.position();
+    });
+    expect(measureInWindow).toHaveBeenCalled();
+  });
+});
