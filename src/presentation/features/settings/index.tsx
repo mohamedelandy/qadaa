@@ -4,13 +4,12 @@
  */
 import { Platform } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
-import Animated from "react-native-reanimated";
 import { Text } from "@components/Text/Text";
 import { View } from "@components/View/View";
 import { PageLayout } from "@presentation/components/PageLayout/PageLayout";
+import { PageScrollView } from "@presentation/components/PageScrollView";
 import { Card } from "@components/Card/Card";
 import { SectionHeader } from "@components/SectionHeader/SectionHeader";
-import { useMinimizeOnScroll } from "@features/layout/glass-tabs/minimize";
 import { useSettingsViewModel } from "@features/settings/hooks/useSettingsViewModel";
 import { LanguageToggle } from "./components/LanguageToggle/LanguageToggle";
 import { NotificationPicker } from "./components/NotificationPicker/NotificationPicker";
@@ -50,21 +49,17 @@ export default function Settings() {
     resetAll,
   } = useSettingsViewModel();
   const clearance = useTabBarClearance(spacing[2]);
-  const onScroll = useMinimizeOnScroll();
   return (
     <PageLayout testID="settings-screen">
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <Animated.ScrollView
+        <PageScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="interactive"
-          onScroll={onScroll}
-          scrollEventThrottle={16}
         >
           <View
             style={{
@@ -121,7 +116,7 @@ export default function Settings() {
               <ResetButton onReset={resetAll} />
             </Card>
           </View>
-        </Animated.ScrollView>
+        </PageScrollView>
       </KeyboardAvoidingView>
     </PageLayout>
   );

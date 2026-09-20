@@ -6,9 +6,9 @@ import { useState, useEffect, useCallback } from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
 import { useFocusEffect } from "expo-router";
-import { useMinimizeOnScroll } from "@features/layout/glass-tabs/minimize";
 import { Text } from "@components/Text/Text";
 import { PageLayout } from "@presentation/components/PageLayout/PageLayout";
+import { PageScrollView } from "@presentation/components/PageScrollView";
 import { useDashboardViewModel } from "@presentation/features/dashboard/hooks/useDashboardViewModel";
 import { useDayCompletionCelebration } from "./hooks/useDayCompletionCelebration";
 import { usePrayerStore } from "@stores/usePrayerStore";
@@ -61,19 +61,12 @@ function DashboardContent() {
   } = useDashboardViewModel();
   const { celebrationStyle, showCelebration, setShowCelebration } =
     useDayCompletionCelebration(allPrayersDone);
-  const onScroll = useMinimizeOnScroll();
   const allLoggedToday = prayerRows.every((row) => row.loggedToday);
   const canLogFullDay = prayerRows.some((row) => row.remaining > 0) && !allLoggedToday;
   const totalMissedDays = prayerRows[0]?.totalMissedDays ?? 0;
   return (
     <PageLayout testID="dashboard-screen">
-      <Animated.ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        onScroll={onScroll}
-        scrollEventThrottle={16}
-      >
+      <PageScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <View style={styles.header}>
           <Text variant="2xl" weight="bold" style={styles.appName}>
             {t("app.name")}
@@ -136,7 +129,7 @@ function DashboardContent() {
             <HadithCard testID="dashboard-hadith-card" text={hadithData.text} />
           </>
         )}
-      </Animated.ScrollView>
+      </PageScrollView>
 
       <LogFullDayBar
         testID="dashboard-fullday-btn"
