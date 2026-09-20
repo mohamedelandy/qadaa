@@ -88,13 +88,11 @@ function formatDate(d: Date, language: string): string {
         day: "numeric",
       });
     } catch {
-      if (enFormatter === null) {
-        enFormatter = new Intl.DateTimeFormat("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        });
-      }
+      enFormatter ??= new Intl.DateTimeFormat("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
       arFormatter = enFormatter;
     }
     return arFormatter.format(d);
