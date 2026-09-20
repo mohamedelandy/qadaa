@@ -107,4 +107,15 @@ describe("clampPopoverPosition", () => {
     });
     expect(r.top).toBe(8);
   });
+  it("handles preferBelow: false where vertical space permits above", () => {
+    const r = clampPopoverPosition({
+      ...base,
+      preferBelow: false,
+      y: 500,
+      windowHeight: 800,
+      insets: { top: 0, bottom: 0, left: 0, right: 0 },
+    });
+    // aboveTop = y - gap - height = 500 - 8 - 100 = 392
+    expect(r.top).toBe(392);
+  });
 });
