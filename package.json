@@ -83,7 +83,6 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@react-native/jest-preset": "^0.86.1",
-    "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/react-native": "^14.0.1",
     "@types/jest": "29.5.14",
     "@types/node": "^26.2.0",

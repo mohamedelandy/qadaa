@@ -9,13 +9,15 @@ export function useTimeouts() {
   }, []);
 
   const unregister = useCallback((id: ReturnType<typeof setTimeout>) => {
-    timers.current = timers.current.filter((timer) => timer !== id);
+    const index = timers.current.indexOf(id);
+    if (index > -1) {
+      timers.current.splice(index, 1);
+    }
   }, []);
 
   useEffect(() => {
-    const pending = timers.current;
     return () => {
-      pending.forEach(clearTimeout);
+      timers.current.forEach(clearTimeout);
       timers.current = [];
     };
   }, []);
