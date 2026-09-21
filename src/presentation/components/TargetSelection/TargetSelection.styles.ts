@@ -40,7 +40,7 @@ export function useTargetSelectionStyles() {
         presetLabel: {
           fontSize: typography.fontSize.base,
           fontFamily: typography.fonts.bold,
-          color: colors.white
+          color: colors.white,
         },
         customBtn: {
           marginTop: spacing[2],
@@ -52,7 +52,7 @@ export function useTargetSelectionStyles() {
         },
         customText: {
           fontSize: typography.fontSize.base,
-          fontFamily: typography.fonts.bold
+          fontFamily: typography.fonts.bold,
         },
         customInputWrap: { marginTop: spacing[2] },
       }),
