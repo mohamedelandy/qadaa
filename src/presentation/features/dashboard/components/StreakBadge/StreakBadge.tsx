@@ -2,6 +2,7 @@
 /**
  * Streak pill showing current streak with at-risk and grace indicators.
  */
+import { memo } from "react";
 import { View } from "react-native";
 import { useStreakBadgeViewModel } from "./StreakBadge.viewmodel";
 import { Text } from "@components/Text/Text";
@@ -12,7 +13,8 @@ interface StreakBadgeProps {
   graceUsed: boolean;
   testID?: string;
 }
-export function StreakBadge(props: StreakBadgeProps) {
+// Optimized with React.memo to avoid re-rendering unless streak props explicitly change.
+export const StreakBadge = memo(function StreakBadge(props: StreakBadgeProps) {
   const { testID } = props;
   const { styles, streak, isAtRisk, graceUsed } = useStreakBadgeViewModel(props);
   return (
@@ -34,4 +36,4 @@ export function StreakBadge(props: StreakBadgeProps) {
       </View>
     </View>
   );
-}
+});

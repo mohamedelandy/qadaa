@@ -3,7 +3,7 @@
 /**
  * Dashboard prayer card showing progress with log, undo, and batch actions.
  */
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import { View, Pressable } from "react-native";
 import Animated from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
@@ -30,7 +30,8 @@ interface PrayerRowProps {
   onBatch: (prayer: PrayerKey, count: number) => void;
 }
 
-export function PrayerRow(props: PrayerRowProps) {
+// Optimized with React.memo to prevent unnecessary row re-renders when dashboard state changes.
+export const PrayerRow = memo(function PrayerRow(props: PrayerRowProps) {
   const viewModel = usePrayerRowViewModel(props);
   const { isRTL } = useUI();
   const plusRef = useRef<View>(null);
@@ -56,7 +57,7 @@ export function PrayerRow(props: PrayerRowProps) {
       </View>
     </Animated.View>
   );
-}
+});
 
 type ViewModel = ReturnType<typeof usePrayerRowViewModel>;
 

@@ -2,6 +2,7 @@
 /**
  * Weekly heatmap grid of recovery days with weekday header row, intensity legend and today marker.
  */
+import { memo } from "react";
 import { View } from "react-native";
 import { Text } from "@components/Text/Text";
 import { useWeeklyGridViewModel, type WeeklyGridCell } from "./WeeklyGrid.viewmodel";
@@ -9,7 +10,8 @@ import { HeatmapCell } from "../HeatmapCell/HeatmapCell";
 interface WeeklyGridProps {
   cells: WeeklyGridCell[];
 }
-export function WeeklyGrid({ cells }: WeeklyGridProps) {
+// Optimized with React.memo to prevent grid layout thrashing on unrelated dashboard updates.
+export const WeeklyGrid = memo(function WeeklyGrid({ cells }: WeeklyGridProps) {
   const { t, colors, styles, dayInitials, weeks, legendItems } = useWeeklyGridViewModel(cells);
   return (
     <View testID="dashboard-weekly-grid" style={styles.container}>
@@ -68,4 +70,4 @@ export function WeeklyGrid({ cells }: WeeklyGridProps) {
       </View>
     </View>
   );
-}
+});

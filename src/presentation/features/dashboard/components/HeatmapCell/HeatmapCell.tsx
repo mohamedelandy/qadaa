@@ -3,7 +3,7 @@
  * Animated heatmap cell with tier fills, today pulse ring, and log burst effect.
  * Placeholders render as static views so they mount zero animated nodes.
  */
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import type { StyleProp, ViewStyle } from "react-native";
 import Animated, {
@@ -144,12 +144,13 @@ interface HeatmapCellProps {
   mountDelay?: number;
   style?: StyleProp<ViewStyle>;
 }
-export function HeatmapCell(props: HeatmapCellProps) {
+// Optimized with React.memo to prevent 28+ cells from re-rendering when the grid updates.
+export const HeatmapCell = memo(function HeatmapCell(props: HeatmapCellProps) {
   if (props.placeholder) {
     return <PlaceholderCell style={props.style} />;
   }
   return <ActiveCell {...props} />;
-}
+});
 function PlaceholderCell({ style }: { style?: StyleProp<ViewStyle> }) {
   const { borderRadius: br } = useSharedStyles();
   return (
