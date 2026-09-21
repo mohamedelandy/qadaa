@@ -49,6 +49,19 @@ describe("syncLanguage", () => {
     expect(result).toEqual({ isRtl: true, alreadyMatched: true });
     expect(changeLanguage).not.toHaveBeenCalled();
   });
+
+  it("does not throw when changeLanguage rejects (sync best-effort boot)", async () => {
+    const forceRTL = jest.fn();
+    const changeLanguage = jest.fn().mockRejectedValue(new Error("i18n boom"));
+    const result = syncLanguage("ar", { language: "en", changeLanguage }, forceRTL);
+    expect(result).toEqual({ isRtl: true, alreadyMatched: false });
+    expect(forceRTL).toHaveBeenCalledWith(true);
+    expect(changeLanguage).toHaveBeenCalledWith("ar");
+
+    // We await the microtask queue to allow the Promise.resolve().catch(...) to execute.
+    // This ensures the anonymous function inside catch is hit for coverage.
+    await Promise.resolve();
+  });
 });
 describe("syncLanguageAsync", () => {
   it("forces RTL and awaits the i18n switch when the stored language differs", async () => {
