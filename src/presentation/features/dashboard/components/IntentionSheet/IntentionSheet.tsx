@@ -7,6 +7,7 @@ import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { Sheet } from "@components/PageSheet/PageSheet";
 import { useIntentionSheetStyles } from "../../hooks/useIntentionSheetStyles";
+import { useSafeTimeouts } from "@hooks/useSafeTimeouts";
 import { Text } from "@components/Text/Text";
 import { PressableScale } from "@components/PressableScale/PressableScale";
 import { LottieView } from "@components/Lottie/LottieView";
@@ -20,6 +21,7 @@ interface IntentionSheetProps {
 export function IntentionSheet({ visible, onConfirm }: IntentionSheetProps) {
   const { t, styles, accent, gradients: g } = useIntentionSheetStyles();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { setSafeTimeout, clearSafeTimeout } = useSafeTimeouts();
   const confirmedRef = useRef(false);
   const onConfirmRef = useRef(onConfirm);
   useEffect(() => {
@@ -32,20 +34,20 @@ export function IntentionSheet({ visible, onConfirm }: IntentionSheetProps) {
   };
   useEffect(() => {
     if (timerRef.current) {
-      clearTimeout(timerRef.current);
+      clearSafeTimeout(timerRef.current);
       timerRef.current = null;
     }
     confirmedRef.current = false;
     if (visible) {
-      timerRef.current = setTimeout(confirm, AUTO_CONFIRM_TIMEOUT_MS);
+      timerRef.current = setSafeTimeout(confirm, AUTO_CONFIRM_TIMEOUT_MS);
     }
     return () => {
       if (timerRef.current) {
-        clearTimeout(timerRef.current);
+        clearSafeTimeout(timerRef.current);
         timerRef.current = null;
       }
     };
-  }, [visible]);
+  }, [visible, setSafeTimeout, clearSafeTimeout]);
   return (
     <Sheet visible={visible} onClose={confirm} topBorderColor={accent} testID="intention-sheet">
       <LottieView name="lantern" loop style={{ width: 64, height: 64 }} resizeMode="contain" />

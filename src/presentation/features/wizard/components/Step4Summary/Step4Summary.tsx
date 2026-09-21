@@ -5,6 +5,7 @@
 import { useEffect, useState } from "react";
 import { Modal, View } from "react-native";
 import { useReducedMotion } from "react-native-reanimated";
+import { useSafeTimeouts } from "@hooks/useSafeTimeouts";
 import { useStep4SummaryViewModel } from "./Step4Summary.viewmodel";
 import { Button } from "@components/Button/Button";
 import { Text } from "@components/Text/Text";
@@ -16,6 +17,7 @@ export function Step4Summary() {
   const { t, colors, styles, rows, onBack, onConfirm } = useStep4SummaryViewModel();
   const reduced = useReducedMotion();
   const [showCelebration, setShowCelebration] = useState(false);
+  const { setSafeTimeout, clearSafeTimeout } = useSafeTimeouts();
 
   const finish = () => {
     setShowCelebration(false);
@@ -32,12 +34,12 @@ export function Step4Summary() {
 
   useEffect(() => {
     if (!showCelebration) return;
-    const timer = setTimeout(() => {
+    const timer = setSafeTimeout(() => {
       setShowCelebration(false);
       onConfirm();
     }, CELEBRATION_FALLBACK_MS);
-    return () => clearTimeout(timer);
-  }, [showCelebration, onConfirm]);
+    return () => clearSafeTimeout(timer);
+  }, [showCelebration, onConfirm, setSafeTimeout, clearSafeTimeout]);
 
   return (
     <View style={styles.container}>

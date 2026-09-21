@@ -4,6 +4,7 @@
  */
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import * as Haptics from "expo-haptics";
+import { useSafeTimeouts } from "@hooks/useSafeTimeouts";
 import { useSettingsStore } from "@stores/useSettingsStore";
 const PRESETS = [1, 5, 10] as const;
 type PresetValue = (typeof PRESETS)[number];
@@ -20,14 +21,8 @@ export function useSettingsTarget() {
   );
   const [targetSaved, setTargetSaved] = useState(false);
   const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => {
-    return () => {
-      if (savedTimer.current) {
-        clearTimeout(savedTimer.current);
-        savedTimer.current = null;
-      }
-    };
-  }, []);
+  const { setSafeTimeout, clearSafeTimeout } = useSafeTimeouts();
+
   useEffect(() => {
     if (isPreset(dailyTarget)) {
       setPreset(dailyTarget);
@@ -51,12 +46,20 @@ export function useSettingsTarget() {
     setDailyTarget(target);
     void Haptics.selectionAsync();
     setTargetSaved(true);
-    if (savedTimer.current) clearTimeout(savedTimer.current);
-    savedTimer.current = setTimeout(() => {
+    if (savedTimer.current) clearSafeTimeout(savedTimer.current);
+    savedTimer.current = setSafeTimeout(() => {
       setTargetSaved(false);
       savedTimer.current = null;
     }, 2000);
-  }, [isCustom, customTargetNum, preset, isValid, setDailyTarget]);
+  }, [
+    isCustom,
+    customTargetNum,
+    preset,
+    isValid,
+    setDailyTarget,
+    setSafeTimeout,
+    clearSafeTimeout,
+  ]);
   return {
     preset,
     selectPreset,

@@ -2,10 +2,11 @@
 /**
  * Question-mark info tooltip with auto-dismissing popover, RTL-aware placement, and optional custom trigger.
  */
-import { useState, useEffect, useMemo, useCallback, useRef, ReactNode } from "react";
+import { useState, useMemo, useCallback, useRef, ReactNode } from "react";
 import { View, Pressable, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useUI } from "@hooks/useUI";
+import { useSafeTimeouts } from "@hooks/useSafeTimeouts";
 import { spacing, borderRadius } from "@theme/spacing";
 import { Text } from "@components/Text/Text";
 import { useTooltipPositioning, POPOVER_WIDTH } from "./Tooltip.viewmodel";
@@ -21,28 +22,27 @@ export function Tooltip({ text, testID, children }: TooltipProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { ref, pos, position, onPopoverLayout } = useTooltipPositioning(safeInsets, isRTL);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { setSafeTimeout, clearSafeTimeout } = useSafeTimeouts();
+
   const open = useCallback(() => {
     position();
     setIsOpen(true);
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => setIsOpen(false), AUTO_DISMISS_MS);
-  }, [position]);
+    if (timerRef.current) clearSafeTimeout(timerRef.current);
+    timerRef.current = setSafeTimeout(() => setIsOpen(false), AUTO_DISMISS_MS);
+  }, [position, setSafeTimeout, clearSafeTimeout]);
+
   const close = useCallback(() => {
     setIsOpen(false);
     if (timerRef.current) {
-      clearTimeout(timerRef.current);
+      clearSafeTimeout(timerRef.current);
       timerRef.current = null;
     }
-  }, []);
+  }, [clearSafeTimeout]);
+
   const toggle = () => {
     if (isOpen) close();
     else open();
   };
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, []);
   const styles = useMemo(
     () =>
       StyleSheet.create({

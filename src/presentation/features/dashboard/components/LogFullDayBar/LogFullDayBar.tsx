@@ -25,6 +25,7 @@ import { useUI } from "@hooks/useUI";
 import { PressableScale } from "@components/PressableScale/PressableScale";
 import { useTabBarMinimized } from "@features/layout/glass-tabs/minimize";
 import { useTabBarClearance } from "@hooks/useTabBarClearance";
+import { useSafeTimeouts } from "@hooks/useSafeTimeouts";
 import { Text } from "@components/Text/Text";
 import { spacing, borderRadius } from "@theme/spacing";
 
@@ -58,6 +59,8 @@ export function LogFullDayBar({ visible, onPress, testID }: LogFullDayBarProps) 
   const enterScale = useSharedValue<number>(0.8);
   const sweep = useSharedValue<number>(0);
   const flash = useSharedValue<number>(0);
+  const { setSafeTimeout, clearSafeTimeout } = useSafeTimeouts();
+
   useAnimatedReaction(
     () => progress.value > 0.5,
     (minimized) => {
@@ -86,15 +89,15 @@ export function LogFullDayBar({ visible, onPress, testID }: LogFullDayBarProps) 
     );
     // double specular pass once the entrance settles:
     // bold sweep -> short rest (parked offscreen) -> snappier echo pass
-    const timer = setTimeout(() => {
+    const timer = setSafeTimeout(() => {
       sweep.value = withSequence(
         withTiming(1, { duration: 1050, easing: SWEEP_EASE }),
         withDelay(480, withTiming(0, { duration: 0 })),
         withTiming(1, { duration: 780, easing: SWEEP_EASE })
       );
     }, 620);
-    return () => clearTimeout(timer);
-  }, [visible, opacity, translateY, enterScale, sweep, flash]);
+    return () => clearSafeTimeout(timer);
+  }, [visible, opacity, translateY, enterScale, sweep, flash, setSafeTimeout, clearSafeTimeout]);
   const fadeStyle = useAnimatedStyle(() => ({
     opacity: opacity.value * interpolate(progress.value, [0, 1], [1, 0]),
     transform: [
