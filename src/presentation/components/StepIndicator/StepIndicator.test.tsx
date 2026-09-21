@@ -6,6 +6,10 @@ import { screen } from "@testing-library/react-native";
 import { StepIndicator } from "@components/StepIndicator/StepIndicator";
 import { renderWithProviders } from "@/src/__tests__/testUtils";
 
+jest.mock("react-i18next", () => ({
+  useTranslation: () => ({ t: (k: string) => k, i18n: { language: "ar" } }),
+}));
+
 describe("StepIndicator", () => {
   async function renderStep(currentStep: number, totalSteps: number) {
     return renderWithProviders(<StepIndicator currentStep={currentStep} totalSteps={totalSteps} />);

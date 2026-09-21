@@ -7,6 +7,10 @@ import { Text } from "react-native";
 import { PageLayout } from "../PageLayout";
 import { renderWithProviders } from "@/src/__tests__/testUtils";
 
+jest.mock("react-i18next", () => ({
+  useTranslation: () => ({ t: (k: string) => k, i18n: { language: "ar" } }),
+}));
+
 describe("PageLayout", () => {
   it("renders children", async () => {
     await renderWithProviders(

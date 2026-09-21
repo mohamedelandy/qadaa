@@ -7,6 +7,10 @@ import { Text } from "@components/Text/Text";
 import { Card } from "../Card";
 import { renderWithProviders } from "@/src/__tests__/testUtils";
 
+jest.mock("react-i18next", () => ({
+  useTranslation: () => ({ t: (k: string) => k, i18n: { language: "ar" } }),
+}));
+
 describe("Card", () => {
   it("renders children", async () => {
     await renderWithProviders(

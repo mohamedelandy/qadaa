@@ -7,6 +7,10 @@ import { fontSize } from "@theme/typography";
 import { Text } from "../Text";
 import { renderWithProviders } from "@/src/__tests__/testUtils";
 
+jest.mock("react-i18next", () => ({
+  useTranslation: () => ({ t: (k: string) => k, i18n: { language: "ar" } }),
+}));
+
 describe("Text", () => {
   it("renders children", async () => {
     await renderWithProviders(<Text>Hello</Text>);
