@@ -6,6 +6,7 @@
 import { PRAYER_KEYS, type PrayerKey } from "@domain/types";
 import { usePrayerStore } from "@stores/usePrayerStore";
 import { useSettingsStore } from "@stores/useSettingsStore";
+import { useShallow } from "zustand/react/shallow";
 export interface HeroCardState {
   loggedCount: number;
   dailyTarget: number;
@@ -61,9 +62,14 @@ export function computeHeroCardState({
   };
 }
 export function useHeroCardViewModel(): HeroCardState {
-  const prayers = usePrayerStore((s) => s.prayers);
-  const totalMissedDays = usePrayerStore((s) => s.totalMissedDays);
-  const todayPrayers = usePrayerStore((s) => s.todayPrayers);
+  // Optimization: Batch multiple store property reads using useShallow to prevent unnecessary re-renders
+  const { prayers, totalMissedDays, todayPrayers } = usePrayerStore(
+    useShallow((s) => ({
+      prayers: s.prayers,
+      totalMissedDays: s.totalMissedDays,
+      todayPrayers: s.todayPrayers,
+    }))
+  );
   const dailyTarget = useSettingsStore((s) => s.dailyTarget);
   const loggedCount = Object.keys(todayPrayers).length;
   return computeHeroCardState({ loggedCount, dailyTarget, prayers, totalMissedDays });
