@@ -111,14 +111,14 @@ function formatDate(d: Date, language: string): string {
 export function useStatsViewModel(): StatsViewModel {
   const { t, colors, language } = useUI();
   const styles = useStatsStyles();
-
+  // Optimization: Batch multiple store property reads using useShallow to prevent unnecessary re-renders
   const { prayers, totalMissedDays } = usePrayerStore(
     useShallow((s) => ({
       prayers: s.prayers,
       totalMissedDays: s.totalMissedDays,
     }))
   );
-
+  // Optimization: Batch multiple store property reads using useShallow to prevent unnecessary re-renders
   const { streak, daysLogged, points, badges } = useGamificationStore(
     useShallow((s) => ({
       streak: s.streak,

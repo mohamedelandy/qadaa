@@ -5,9 +5,10 @@
 import { useCallback } from "react";
 import * as Haptics from "expo-haptics";
 import { useSettingsStore } from "@stores/useSettingsStore";
-import { generateBackupJson } from "@domain/backup";
 import { useShallow } from "zustand/react/shallow";
+import { generateBackupJson } from "@domain/backup";
 export function useSettingsSync() {
+  // Optimization: Batch multiple store property reads using useShallow to prevent unnecessary re-renders
   const {
     syncVisible,
     setSyncVisible,

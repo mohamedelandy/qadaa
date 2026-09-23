@@ -17,6 +17,7 @@ const EMOJI_MAP: Record<PrayerKey, string> = {
 };
 export function useDashboardPrayerData() {
   const { t } = useUI();
+  // Optimization: Batch multiple store property reads using useShallow to prevent unnecessary re-renders
   const { prayers, totalMissedDays, todayPrayers } = usePrayerStore(
     useShallow((s) => ({
       prayers: s.prayers,

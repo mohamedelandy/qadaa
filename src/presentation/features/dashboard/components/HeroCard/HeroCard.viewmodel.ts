@@ -62,6 +62,7 @@ export function computeHeroCardState({
   };
 }
 export function useHeroCardViewModel(): HeroCardState {
+  // Optimization: Batch multiple store property reads using useShallow to prevent unnecessary re-renders
   const { prayers, totalMissedDays, todayPrayers } = usePrayerStore(
     useShallow((s) => ({
       prayers: s.prayers,
