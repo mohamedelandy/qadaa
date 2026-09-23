@@ -51,7 +51,10 @@ eas.json.local
 /android/
 android/app/build/
 android/build/
-android/.gradle/
+build/
+**/build/
+.gradle/
+**/.gradle/
 android/local.properties
 android/app/release/
 android/app/debug/
