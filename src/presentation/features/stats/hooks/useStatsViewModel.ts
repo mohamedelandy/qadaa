@@ -11,6 +11,7 @@ import { addDays } from "@domain/date";
 import { BADGE_IDS, badgeProgressValue } from "@domain/badges";
 import type { ColorKey } from "@theme/types";
 import { useStatsStyles } from "./useStatsStyles";
+import { useShallow } from "zustand/react/shallow";
 const BADGE_ICONS: Record<string, string> = {
   first_log: "\u{1F331}",
   first_week: "\u{1F525}",
@@ -110,12 +111,22 @@ function formatDate(d: Date, language: string): string {
 export function useStatsViewModel(): StatsViewModel {
   const { t, colors, language } = useUI();
   const styles = useStatsStyles();
-  const prayers = usePrayerStore((s) => s.prayers);
-  const totalMissedDays = usePrayerStore((s) => s.totalMissedDays);
-  const streak = useGamificationStore((s) => s.streak);
-  const daysLogged = useGamificationStore((s) => s.daysLogged);
-  const points = useGamificationStore((s) => s.points);
-  const badges = useGamificationStore((s) => s.badges);
+
+  const { prayers, totalMissedDays } = usePrayerStore(
+    useShallow((s) => ({
+      prayers: s.prayers,
+      totalMissedDays: s.totalMissedDays,
+    }))
+  );
+
+  const { streak, daysLogged, points, badges } = useGamificationStore(
+    useShallow((s) => ({
+      streak: s.streak,
+      daysLogged: s.daysLogged,
+      points: s.points,
+      badges: s.badges,
+    }))
+  );
 
   const data = useMemo(() => {
     const level = Math.floor(daysLogged / 30) + 1;

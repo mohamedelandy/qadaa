@@ -6,13 +6,25 @@ import { useCallback } from "react";
 import * as Haptics from "expo-haptics";
 import { useSettingsStore } from "@stores/useSettingsStore";
 import { generateBackupJson } from "@domain/backup";
+import { useShallow } from "zustand/react/shallow";
 export function useSettingsSync() {
-  const syncVisible = useSettingsStore((s) => s.syncVisible);
-  const setSyncVisible = useSettingsStore((s) => s.setSyncVisible);
-  const exportToFileAction = useSettingsStore((s) => s.exportToFile);
-  const importFromFileAction = useSettingsStore((s) => s.importFromFile);
-  const importBackupAction = useSettingsStore((s) => s.importBackup);
-  const getBackupData = useSettingsStore((s) => s.getBackupData);
+  const {
+    syncVisible,
+    setSyncVisible,
+    exportToFileAction,
+    importFromFileAction,
+    importBackupAction,
+    getBackupData,
+  } = useSettingsStore(
+    useShallow((s) => ({
+      syncVisible: s.syncVisible,
+      setSyncVisible: s.setSyncVisible,
+      exportToFileAction: s.exportToFile,
+      importFromFileAction: s.importFromFile,
+      importBackupAction: s.importBackup,
+      getBackupData: s.getBackupData,
+    }))
+  );
   const handleExport = useCallback(async () => {
     try {
       await exportToFileAction();

@@ -7,6 +7,7 @@ import { useUI } from "@hooks/useUI";
 import { usePrayerStore } from "@stores/usePrayerStore";
 import { PRAYER_KEYS, type PrayerKey } from "@domain/types";
 import { useSettingsStore } from "@stores/useSettingsStore";
+import { useShallow } from "zustand/react/shallow";
 const EMOJI_MAP: Record<PrayerKey, string> = {
   fajr: "🌙",
   dhuhr: "☀️",
@@ -16,9 +17,13 @@ const EMOJI_MAP: Record<PrayerKey, string> = {
 };
 export function useDashboardPrayerData() {
   const { t } = useUI();
-  const prayers = usePrayerStore((s) => s.prayers);
-  const totalMissedDays = usePrayerStore((s) => s.totalMissedDays);
-  const todayPrayers = usePrayerStore((s) => s.todayPrayers);
+  const { prayers, totalMissedDays, todayPrayers } = usePrayerStore(
+    useShallow((s) => ({
+      prayers: s.prayers,
+      totalMissedDays: s.totalMissedDays,
+      todayPrayers: s.todayPrayers,
+    }))
+  );
   const dailyTarget = useSettingsStore((s) => s.dailyTarget);
   const loggedCount = Object.keys(todayPrayers).length;
   const prayerRows = useMemo(
