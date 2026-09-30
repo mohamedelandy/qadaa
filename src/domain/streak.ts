@@ -5,9 +5,11 @@
 export const LOGGED_DATES_RETENTION_DAYS = 60;
 export function pruneLoggedDates(dates: string[], today: string): string[] {
   if (dates.length === 0) return [];
-  const cutoff = new Date(`${today}T00:00:00Z`);
-  cutoff.setUTCDate(cutoff.getUTCDate() - (LOGGED_DATES_RETENTION_DAYS - 1));
-  const cutoffISO = cutoff.toISOString().slice(0, 10);
+  // Parse date explicitly as UTC to ensure pure timezone-agnostic math
+  const [year, month, day] = today.split("-").map(Number);
+  const cutoffTime =
+    Date.UTC(year, month - 1, day) - (LOGGED_DATES_RETENTION_DAYS - 1) * 86400000;
+  const cutoffISO = new Date(cutoffTime).toISOString().slice(0, 10);
   return dates.filter((d) => d >= cutoffISO).sort();
 }
 export interface ComputeStreakInput {

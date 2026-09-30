@@ -24,7 +24,7 @@ import { ThemeProvider } from "@presentation/theme/ThemeProvider";
 import { installDefaultTextFonts } from "@presentation/theme/textDefaults";
 import { useTheme } from "@hooks/useTheme";
 import { useSettingsStore } from "@stores/useSettingsStore";
-import { NotificationTapBridge } from "@hooks/NotificationTapBridge";
+import { useNotificationDeepLink } from "@hooks/useNotificationDeepLink";
 import { reconcileNotificationPermission } from "@hooks/rootOrchestration";
 import {
   applyStoredLanguage,
@@ -132,13 +132,28 @@ export default function RootLayout() {
   const [isRtl, setIsRtl] = useState(false);
   const keyRef = useRef(0);
 
+  useNotificationDeepLink(loaded && langReady);
+
   useEffect(() => {
     const handler = (lang: string) => {
       const isArabic = lang === "ar";
-      I18nManager.forceRTL(isArabic);
-      setIsRtl(isArabic);
-      keyRef.current += 1;
-      setRtlKey(keyRef.current);
+      if (I18nManager.isRTL !== isArabic) {
+        I18nManager.forceRTL(isArabic);
+        I18nManager.allowRTL(isArabic);
+        import("expo-updates")
+          .then((Updates) => {
+            void Updates.reloadAsync();
+          })
+          .catch(() => {
+            setIsRtl(isArabic);
+            keyRef.current += 1;
+            setRtlKey(keyRef.current);
+          });
+      } else {
+        setIsRtl(isArabic);
+        keyRef.current += 1;
+        setRtlKey(keyRef.current);
+      }
     };
     return onAppLanguageChanged(handler);
   }, []);
@@ -200,7 +215,6 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider key={rtlKey} direction={isRtl ? "rtl" : "ltr"}>
-      <NotificationTapBridge active />
       <RootContent />
     </ThemeProvider>
   );
