@@ -13,7 +13,7 @@ import {
 import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
-import { I18nManager, View } from "react-native";
+import { DevSettings, I18nManager, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -140,20 +140,14 @@ export default function RootLayout() {
       if (I18nManager.isRTL !== isArabic) {
         I18nManager.forceRTL(isArabic);
         I18nManager.allowRTL(isArabic);
-        import("expo-updates")
-          .then((Updates) => {
-            void Updates.reloadAsync();
-          })
-          .catch(() => {
-            setIsRtl(isArabic);
-            keyRef.current += 1;
-            setRtlKey(keyRef.current);
-          });
-      } else {
-        setIsRtl(isArabic);
-        keyRef.current += 1;
-        setRtlKey(keyRef.current);
+        if (DevSettings?.reload) {
+          DevSettings.reload();
+          return;
+        }
       }
+      setIsRtl(isArabic);
+      keyRef.current += 1;
+      setRtlKey(keyRef.current);
     };
     return onAppLanguageChanged(handler);
   }, []);

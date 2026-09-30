@@ -6,7 +6,10 @@ export const LOGGED_DATES_RETENTION_DAYS = 60;
 export function pruneLoggedDates(dates: string[], today: string): string[] {
   if (dates.length === 0) return [];
   // Parse date explicitly as UTC to ensure pure timezone-agnostic math
-  const [year, month, day] = today.split("-").map(Number);
+  const parts = today.split("-");
+  const year = Number(parts[0]);
+  const month = Number(parts[1]);
+  const day = Number(parts[2]);
   const cutoffTime =
     Date.UTC(year, month - 1, day) - (LOGGED_DATES_RETENTION_DAYS - 1) * 86400000;
   const cutoffISO = new Date(cutoffTime).toISOString().slice(0, 10);
