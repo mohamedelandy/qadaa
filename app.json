@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "\u0642\u0636\u0627\u0621",
+    "name": "قضاء",
     "slug": "qadaa",
     "version": "1.1.0",
     "scheme": "qadaa",
@@ -54,7 +54,8 @@
       ],
       "expo-sharing",
       "@bacons/apple-targets",
-      "./plugins/withQadaaWidget"
+      "./plugins/withQadaaWidget",
+      "expo-localization"
     ],
     "extra": {
       "eas": {

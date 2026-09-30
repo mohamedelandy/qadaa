@@ -10,8 +10,7 @@ export function pruneLoggedDates(dates: string[], today: string): string[] {
   const year = Number(parts[0]);
   const month = Number(parts[1]);
   const day = Number(parts[2]);
-  const cutoffTime =
-    Date.UTC(year, month - 1, day) - (LOGGED_DATES_RETENTION_DAYS - 1) * 86400000;
+  const cutoffTime = Date.UTC(year, month - 1, day) - (LOGGED_DATES_RETENTION_DAYS - 1) * 86400000;
   const cutoffISO = new Date(cutoffTime).toISOString().slice(0, 10);
   return dates.filter((d) => d >= cutoffISO).sort();
 }

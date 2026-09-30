@@ -140,7 +140,7 @@ export default function RootLayout() {
       if (I18nManager.isRTL !== isArabic) {
         I18nManager.forceRTL(isArabic);
         I18nManager.allowRTL(isArabic);
-        if (DevSettings?.reload) {
+        if (__DEV__) {
           DevSettings.reload();
           return;
         }
