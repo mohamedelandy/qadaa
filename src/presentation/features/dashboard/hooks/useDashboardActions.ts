@@ -2,7 +2,7 @@
 /**
  * Action handlers wiring prayer log/undo/batch to points, streak updates, badge checks, and haptics.
  */
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import * as Haptics from "expo-haptics";
 import { usePrayerStore } from "@stores/usePrayerStore";
 import { PRAYER_KEYS } from "@domain/types";
@@ -69,14 +69,17 @@ export function useDashboardActions() {
   const dismissDua = useCallback(() => {
     useGamificationStore.getState().setLastDuaShownDate(toLocalISODate(new Date()));
   }, []);
-  return {
-    actions: {
+  const actions = useMemo(
+    () => ({
       handleLogPrayer,
       handleLogFullDay,
       handleUndo,
       handleBatch,
       dismissIntention,
       dismissDua,
-    },
-  };
+    }),
+    [handleLogPrayer, handleLogFullDay, handleUndo, handleBatch, dismissIntention, dismissDua]
+  );
+
+  return { actions };
 }

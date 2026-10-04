@@ -6,6 +6,7 @@ import { useAppStore } from "@stores/useAppStore";
 import { useGamificationStore } from "@stores/useGamificationStore";
 import { usePrayerStore, PRAYER_KEYS } from "@stores/usePrayerStore";
 import { toLocalISODate } from "@domain/date";
+import { useMemo } from "react";
 export function useDashboardOverlays() {
   const wizardComplete = useAppStore((s) => s.wizardComplete);
   const intentionSetDate = useGamificationStore((s) => s.intentionSetDate);
@@ -15,5 +16,6 @@ export function useDashboardOverlays() {
   const loggedCount = Object.keys(todayPrayers).length;
   const showIntention = wizardComplete && intentionSetDate !== today && loggedCount === 0;
   const showDua = loggedCount >= PRAYER_KEYS.length && lastDuaShownDate !== today;
-  return { showIntention, showDua };
+  const overlays = useMemo(() => ({ showIntention, showDua }), [showIntention, showDua]);
+  return overlays;
 }

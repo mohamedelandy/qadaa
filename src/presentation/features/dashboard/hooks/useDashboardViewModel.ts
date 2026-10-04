@@ -9,26 +9,46 @@ import { useDashboardCalendar } from "./useDashboardCalendar";
 import { useDashboardOverlays } from "./useDashboardOverlays";
 import { useDashboardActions } from "./useDashboardActions";
 import { useDashboardStyles } from "./useDashboardStyles";
+import { useMemo } from "react";
 export function useDashboardViewModel() {
   const { t, colors } = useUI();
   const { prayerRows, allPrayersDone, todayData } = useDashboardPrayerData();
   const { streakData } = useDashboardStreak();
   const { weeklyGridData, hadithData } = useDashboardCalendar();
-  const { showIntention, showDua } = useDashboardOverlays();
+  const overlays = useDashboardOverlays();
   const { actions } = useDashboardActions();
   const { styles, gradients } = useDashboardStyles();
-  return {
-    t,
-    colors,
-    prayerRows,
-    todayData,
-    streakData,
-    weeklyGridData,
-    hadithData,
-    allPrayersDone,
-    overlays: { showIntention, showDua },
-    actions,
-    styles,
-    gradients,
-  };
+
+  const viewModel = useMemo(
+    () => ({
+      t,
+      colors,
+      prayerRows,
+      todayData,
+      streakData,
+      weeklyGridData,
+      hadithData,
+      allPrayersDone,
+      overlays,
+      actions,
+      styles,
+      gradients,
+    }),
+    [
+      t,
+      colors,
+      prayerRows,
+      todayData,
+      streakData,
+      weeklyGridData,
+      hadithData,
+      allPrayersDone,
+      overlays,
+      actions,
+      styles,
+      gradients,
+    ]
+  );
+
+  return viewModel;
 }
