@@ -165,5 +165,5 @@ export function useStatsViewModel(): StatsViewModel {
     };
     return { streak, level, points, rank, badges: allBadges, nextBadge: nextBadgeData, estimate };
   }, [prayers, totalMissedDays, streak, daysLogged, points, badges, language]);
-  return { t, colors, styles, ...data };
+  return useMemo(() => ({ t, colors, styles, ...data }), [t, colors, styles, data]);
 }
