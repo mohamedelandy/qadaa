@@ -69,14 +69,17 @@ export function useDashboardActions() {
   const dismissDua = useCallback(() => {
     useGamificationStore.getState().setLastDuaShownDate(toLocalISODate(new Date()));
   }, []);
-  const actions = useMemo(() => ({
-    handleLogPrayer,
-    handleLogFullDay,
-    handleUndo,
-    handleBatch,
-    dismissIntention,
-    dismissDua,
-  }), [handleLogPrayer, handleLogFullDay, handleUndo, handleBatch, dismissIntention, dismissDua]);
+  const actions = useMemo(
+    () => ({
+      handleLogPrayer,
+      handleLogFullDay,
+      handleUndo,
+      handleBatch,
+      dismissIntention,
+      dismissDua,
+    }),
+    [handleLogPrayer, handleLogFullDay, handleUndo, handleBatch, dismissIntention, dismissDua]
+  );
 
   return { actions };
 }
