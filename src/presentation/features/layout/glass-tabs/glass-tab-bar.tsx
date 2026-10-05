@@ -20,6 +20,7 @@ import { setMinimized, useMinimizeState } from "./minimize";
 import { ProgressiveBlur, type ProgressiveBlurMode } from "./progressive-blur";
 import { DEFAULT_TAB_THEME, type GlassTabBarTheme } from "@theme/glassTabs";
 import { useTabBarStore } from "./tab-bar-store";
+import { useShallow } from "zustand/react/shallow";
 import {
   BAR_MARGIN,
   BLUR_BLEED,
@@ -72,10 +73,15 @@ export function GlassTabBar({
   const { width: windowWidth } = useWindowDimensions();
   const minimized = useMinimizeState();
   const progress = minimized.progress;
-  const slideIndex = useTabBarStore((s) => s.slideIndex);
-  const targetIndex = useTabBarStore((s) => s.targetIndex);
-  const isDragging = useTabBarStore((s) => s.isDragging);
-  const setTheme = useTabBarStore((s) => s.setTheme);
+  // Optimization: Batch multiple store property reads using useShallow to prevent unnecessary re-renders
+  const { slideIndex, targetIndex, isDragging, setTheme } = useTabBarStore(
+    useShallow((s) => ({
+      slideIndex: s.slideIndex,
+      targetIndex: s.targetIndex,
+      isDragging: s.isDragging,
+      setTheme: s.setTheme,
+    }))
+  );
   const lastTicked = useSharedValue(-1);
   const tabCount = Math.max(Children.count(children), 1);
   const theme = useMemo(() => ({ ...DEFAULT_TAB_THEME, ...themeOverrides }), [themeOverrides]);
@@ -224,10 +230,15 @@ export function GlassTabButton({
 }) {
   const minimized = useMinimizeState();
   const progress = minimized.progress;
-  const slideIndex = useTabBarStore((s) => s.slideIndex);
-  const targetIndex = useTabBarStore((s) => s.targetIndex);
-  const isDragging = useTabBarStore((s) => s.isDragging);
-  const theme = useTabBarStore((s) => s.theme);
+  // Optimization: Batch multiple store property reads using useShallow to prevent unnecessary re-renders
+  const { slideIndex, targetIndex, isDragging, theme } = useTabBarStore(
+    useShallow((s) => ({
+      slideIndex: s.slideIndex,
+      targetIndex: s.targetIndex,
+      isDragging: s.isDragging,
+      theme: s.theme,
+    }))
+  );
   useEffect(() => {
     if (isFocused && !isDragging.value) {
       setSlideIndex(slideIndex, targetIndex, index);
