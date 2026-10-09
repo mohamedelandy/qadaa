@@ -4,11 +4,13 @@
  */
 import { useAppStore } from "@stores/useAppStore";
 import { useSettingsStore } from "@stores/useSettingsStore";
+import { useShallow } from "zustand/react/shallow";
 import { useUI } from "@hooks/useUI";
 export function useTabLayoutViewModel() {
   const wizardComplete = useAppStore((s) => s.wizardComplete);
-  const syncVisible = useSettingsStore((s) => s.syncVisible);
-  const setSyncVisible = useSettingsStore((s) => s.setSyncVisible);
+  const { syncVisible, setSyncVisible } = useSettingsStore(
+    useShallow((s) => ({ syncVisible: s.syncVisible, setSyncVisible: s.setSyncVisible }))
+  );
   const { t, colors, isDark, direction } = useUI();
   return { wizardComplete, syncVisible, setSyncVisible, t, colors, isDark, direction };
 }

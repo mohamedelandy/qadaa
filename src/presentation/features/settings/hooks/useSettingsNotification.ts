@@ -4,11 +4,21 @@
  */
 import { useCallback } from "react";
 import { useSettingsStore } from "@stores/useSettingsStore";
+import { useShallow } from "zustand/react/shallow";
 export function useSettingsNotification() {
-  const notificationTime = useSettingsStore((s) => s.notificationTime);
-  const notificationPermission = useSettingsStore((s) => s.notificationPermission);
-  const setNotificationTimeStore = useSettingsStore((s) => s.setNotificationTime);
-  const scheduleNotification = useSettingsStore((s) => s.scheduleNotification);
+  const {
+    notificationTime,
+    notificationPermission,
+    setNotificationTime: setNotificationTimeStore,
+    scheduleNotification,
+  } = useSettingsStore(
+    useShallow((s) => ({
+      notificationTime: s.notificationTime,
+      notificationPermission: s.notificationPermission,
+      setNotificationTime: s.setNotificationTime,
+      scheduleNotification: s.scheduleNotification,
+    }))
+  );
   let notificationHour = 9;
   let notificationMinute = 0;
   let notificationAmPm: "AM" | "PM" = "AM";
