@@ -4,12 +4,17 @@
  */
 import { useAppStore } from "@stores/useAppStore";
 import { useGamificationStore } from "@stores/useGamificationStore";
+import { useShallow } from "zustand/react/shallow";
 import { usePrayerStore, PRAYER_KEYS } from "@stores/usePrayerStore";
 import { toLocalISODate } from "@domain/date";
 export function useDashboardOverlays() {
   const wizardComplete = useAppStore((s) => s.wizardComplete);
-  const intentionSetDate = useGamificationStore((s) => s.intentionSetDate);
-  const lastDuaShownDate = useGamificationStore((s) => s.lastDuaShownDate);
+  const { intentionSetDate, lastDuaShownDate } = useGamificationStore(
+    useShallow((s) => ({
+      intentionSetDate: s.intentionSetDate,
+      lastDuaShownDate: s.lastDuaShownDate,
+    }))
+  );
   const todayPrayers = usePrayerStore((s) => s.todayPrayers);
   const today = toLocalISODate(new Date());
   const loggedCount = Object.keys(todayPrayers).length;

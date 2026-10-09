@@ -4,11 +4,16 @@
  */
 import { useMemo } from "react";
 import { useGamificationStore } from "@stores/useGamificationStore";
+import { useShallow } from "zustand/react/shallow";
 import { toLocalISODate, addDays } from "@domain/date";
 export function useDashboardStreak() {
-  const streak = useGamificationStore((s) => s.streak);
-  const lastLogDate = useGamificationStore((s) => s.lastLogDate);
-  const graceUsedMonth = useGamificationStore((s) => s.graceUsedMonth);
+  const { streak, lastLogDate, graceUsedMonth } = useGamificationStore(
+    useShallow((s) => ({
+      streak: s.streak,
+      lastLogDate: s.lastLogDate,
+      graceUsedMonth: s.graceUsedMonth,
+    }))
+  );
   const now = new Date();
   const today = toLocalISODate(now);
   const yesterday = toLocalISODate(addDays(now, -1));
