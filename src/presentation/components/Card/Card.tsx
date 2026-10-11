@@ -3,7 +3,7 @@
  * Themed bordered card container with default and elevated shadow variants.
  */
 import { View, ViewStyle, StyleProp } from "react-native";
-import { ReactNode } from "react";
+import { ReactNode, memo } from "react";
 import { useSharedStyles } from "@theme/sharedStyles";
 import { spacing } from "@theme/spacing";
 interface CardProps {
@@ -11,7 +11,8 @@ interface CardProps {
   children: ReactNode;
   variant?: "default" | "elevated";
 }
-export function Card({ style, children, variant = "default" }: CardProps) {
+// Optimization: Memoized with React.memo to prevent unnecessary re-renders when parent components update but card props remain unchanged.
+export const Card = memo(function Card({ style, children, variant = "default" }: CardProps) {
   const { colors, borderRadius: br } = useSharedStyles();
   const cardStyle: ViewStyle = {
     backgroundColor: colors.card,
@@ -31,4 +32,4 @@ export function Card({ style, children, variant = "default" }: CardProps) {
         }
       : {};
   return <View style={[cardStyle, elevatedStyle, style]}>{children}</View>;
-}
+});
