@@ -1,8 +1,7 @@
 /** @format */
 /**
- * Memoized themed View whose background resolves from a ColorKey design token.
+ * Themed View whose background resolves from a ColorKey design token.
  */
-import { memo } from "react";
 import type { ViewProps as RNViewProps, StyleProp, ViewStyle } from "react-native";
 import { View as RNView } from "react-native";
 import { useUI } from "@hooks/useUI";
@@ -12,7 +11,8 @@ export interface ViewProps extends Omit<RNViewProps, "style"> {
   style?: StyleProp<ViewStyle>;
   children?: React.ReactNode;
 }
-export const View = memo<ViewProps>(({ style, backgroundColor, children, ...props }) => {
+// Optimization: Removed React.memo because it adds comparison overhead without preventing re-renders since `children` creates a new object reference on every render.
+export function View({ style, backgroundColor, children, ...props }: ViewProps) {
   const { colors, getColor } = useUI();
   const resolvedBackgroundColor = backgroundColor ? getColor(backgroundColor) : colors.surface;
   return (
@@ -20,5 +20,4 @@ export const View = memo<ViewProps>(({ style, backgroundColor, children, ...prop
       {children}
     </RNView>
   );
-});
-View.displayName = "View";
+}
