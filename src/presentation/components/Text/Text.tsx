@@ -2,7 +2,7 @@
 /**
  * Themed text component mapping variant, weight, color and RTL writing direction onto RN Text.
  */
-import { memo, useMemo } from "react";
+import { useMemo } from "react";
 import type { TextProps as RNTextProps, StyleProp, TextStyle } from "react-native";
 import { Text as RNText } from "react-native";
 import { useUI } from "@hooks/useUI";
@@ -15,7 +15,7 @@ export interface TextProps extends RNTextProps {
   style?: StyleProp<TextStyle>;
   children?: React.ReactNode;
 }
-export const Text = memo<TextProps>(
+export const Text =
   ({
     children,
     style,
@@ -25,7 +25,8 @@ export const Text = memo<TextProps>(
     centered,
     accessibilityRole = "text",
     ...props
-  }) => {
+  }: TextProps) => {
+    // Optimization: Removed React.memo since `children` always changes referentially, making memoization useless.
     const { colors, typography, direction } = useUI();
     const textStyle = useMemo<TextStyle>(() => {
       return {
@@ -55,6 +56,5 @@ export const Text = memo<TextProps>(
         {children}
       </RNText>
     );
-  }
-);
+  };
 Text.displayName = "Text";
