@@ -15,46 +15,40 @@ export interface TextProps extends RNTextProps {
   style?: StyleProp<TextStyle>;
   children?: React.ReactNode;
 }
-export const Text =
-  ({
-    children,
-    style,
-    variant = "base",
-    weight = "regular",
+export const Text = ({
+  children,
+  style,
+  variant = "base",
+  weight = "regular",
+  color,
+  centered,
+  accessibilityRole = "text",
+  ...props
+}: TextProps) => {
+  // Optimization: Removed React.memo since `children` always changes referentially, making memoization useless.
+  const { colors, typography, direction } = useUI();
+  const textStyle = useMemo<TextStyle>(() => {
+    return {
+      fontFamily: typography.fonts[weight],
+      fontSize: typography.fontSize[variant],
+      color: color ?? colors.text,
+      textAlign: centered ? "center" : "auto",
+      writingDirection: direction,
+    };
+  }, [
     color,
+    colors.text,
+    typography.fonts,
+    typography.fontSize,
+    weight,
+    variant,
     centered,
-    accessibilityRole = "text",
-    ...props
-  }: TextProps) => {
-    // Optimization: Removed React.memo since `children` always changes referentially, making memoization useless.
-    const { colors, typography, direction } = useUI();
-    const textStyle = useMemo<TextStyle>(() => {
-      return {
-        fontFamily: typography.fonts[weight],
-        fontSize: typography.fontSize[variant],
-        color: color ?? colors.text,
-        textAlign: centered ? "center" : "auto",
-        writingDirection: direction,
-      };
-    }, [
-      color,
-      colors.text,
-      typography.fonts,
-      typography.fontSize,
-      weight,
-      variant,
-      centered,
-      direction,
-    ]);
-    return (
-      <RNText
-        accessible
-        accessibilityRole={accessibilityRole}
-        style={[textStyle, style]}
-        {...props}
-      >
-        {children}
-      </RNText>
-    );
-  };
+    direction,
+  ]);
+  return (
+    <RNText accessible accessibilityRole={accessibilityRole} style={[textStyle, style]} {...props}>
+      {children}
+    </RNText>
+  );
+};
 Text.displayName = "Text";
