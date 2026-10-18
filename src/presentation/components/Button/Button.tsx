@@ -2,7 +2,7 @@
 /**
  * Themed primary/secondary/ghost button with gradient fill, press scale, spinner, and disabled blocking.
  */
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 import { Pressable, ActivityIndicator, StyleSheet, ViewStyle, StyleProp } from "react-native";
 import Animated from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
@@ -21,7 +21,11 @@ interface ButtonProps {
   style?: StyleProp<ViewStyle>;
   testID?: string;
 }
-export function Button({
+// ⚡ Bolt Optimization:
+// Wrapped Button in React.memo to prevent unnecessary re-renders across the app.
+// Impact: Reduces re-renders of leaf buttons when parent component state changes
+// (assuming parents pass stable primitive props or memoized callbacks).
+export const Button = memo(function Button({
   title,
   variant = "primary",
   onPress,
@@ -117,4 +121,4 @@ export function Button({
       )}
     </Animated.View>
   );
-}
+});
